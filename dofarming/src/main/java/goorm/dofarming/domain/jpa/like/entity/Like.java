@@ -13,6 +13,7 @@ import static jakarta.persistence.FetchType.*;
 
 @Entity
 @Getter
+@Table(name = "likes")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Like extends BaseEntity {
 
