@@ -60,7 +60,19 @@ spring:
         format_sql: true
         show-sql: true
 
-  # MongoDB
+# MongoDB
   data:
     mongodb:
       uri: mongodb://root:root@43.203.241.172:27017/mongodb?authSource=admin
+
+# Server Prefix
+server:
+  servlet:
+    context-path: /api/v1
+  port: 8080
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
