@@ -47,12 +47,12 @@ public class User extends BaseEntity {
     private List<Join> joins = new ArrayList<>();
 
     //== 생성 메서드 ==//
-    public static User user(String email, String password, String imageUrl, String nickname) {
+    public static User user(String email, String nickname, String password, String imageUrl) {
         User user = new User();
         user.email = email;
         user.password = password;
-        user.imageUrl = imageUrl;
         user.nickname = nickname;
+        user.imageUrl = imageUrl;
         user.role = Role.GUEST;
         user.status = Status.ACTIVE;
         return user;
@@ -63,5 +63,11 @@ public class User extends BaseEntity {
         this.status = Status.DELETE;
         this.getLogs().stream().forEach(Log::delete);
         this.getJoins().stream().forEach(Join::delete);
+    }
+
+    public void updateInfo(String nickname, String password, String imageUrl) {
+        this.nickname = nickname;
+        this.password = password;
+        this.imageUrl = imageUrl;
     }
 }
