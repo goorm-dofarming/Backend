@@ -16,6 +16,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@Table(name = "joins")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Join extends BaseEntity {
 
