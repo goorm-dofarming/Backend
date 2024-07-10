@@ -1,4 +1,4 @@
-package goorm.dofarming.global.common.exception;
+package goorm.dofarming.global.common.error;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ public enum ErrorCode {
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, 404),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, 401),
     CONFLICT(HttpStatus.CONFLICT, 409),
+    FORBIDDEN(HttpStatus.FORBIDDEN, 403),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 500),
 
     PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, 401),

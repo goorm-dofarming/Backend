@@ -1,4 +1,4 @@
-package goorm.dofarming.global.common.util;
+package goorm.dofarming.global.util;
 
 import java.security.SecureRandom;
 

@@ -4,7 +4,7 @@ import goorm.dofarming.domain.jpa.user.dto.request.UserModifyRequest;
 import goorm.dofarming.domain.jpa.user.dto.request.UserSignUpRequest;
 import goorm.dofarming.domain.jpa.user.dto.response.UserResponse;
 import goorm.dofarming.domain.jpa.user.service.UserService;
-import goorm.dofarming.global.common.exception.ErrorResponse;
+import goorm.dofarming.global.common.error.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

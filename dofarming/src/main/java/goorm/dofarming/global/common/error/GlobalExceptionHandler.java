@@ -1,5 +1,6 @@
-package goorm.dofarming.global.common.exception;
+package goorm.dofarming.global.common.error;
 
+import goorm.dofarming.global.common.error.exception.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -26,39 +27,28 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(ErrorCode.CONFLICT, e.getMessage()));
     }
 
-    @ExceptionHandler(SecurityException.class)
-    public ResponseEntity<ErrorResponse> securityExceptionHandler(SecurityException e) {
-        log.error("Invalid JWT Token", e);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(ErrorCode.BAD_REQUEST, "Invalid JWT Token"));
+    @ExceptionHandler(CustomInvalidJwtException.class)
+    public ResponseEntity<ErrorResponse> invalidJwtExceptionHandler(CustomInvalidJwtException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.of(ErrorCode.FORBIDDEN, e.getMessage()));
     }
 
-    @ExceptionHandler(MalformedJwtException.class)
-    public ResponseEntity<ErrorResponse> malformedJwtExceptionHandler(MalformedJwtException e) {
-        log.error("Invalid JWT Token", e);
+    @ExceptionHandler(CustomMalformedJwtException.class)
+    public ResponseEntity<ErrorResponse> malformedJwtExceptionHandler(CustomMalformedJwtException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(ErrorCode.BAD_REQUEST, "Invalid JWT Token"));
+                .body(ErrorResponse.of(ErrorCode.BAD_REQUEST, e.getMessage()));
     }
 
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ErrorResponse> expiredJwtExceptionHandler(ExpiredJwtException e) {
-        log.error("Expired JWT Token", e);
+    @ExceptionHandler(CustomExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> expiredJwtExceptionHandler(CustomExpiredJwtException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ErrorResponse.of(ErrorCode.UNAUTHORIZED, "Expired JWT Token"));
+                .body(ErrorResponse.of(ErrorCode.UNAUTHORIZED, e.getMessage()));
     }
 
-    @ExceptionHandler(UnsupportedJwtException.class)
-    public ResponseEntity<ErrorResponse> expiredJwtExceptionHandler(UnsupportedJwtException e) {
-        log.error("Unsupported JWT Token", e);
+    @ExceptionHandler(CustomUnsupportedJwtException.class)
+    public ResponseEntity<ErrorResponse> unsupportedJwtExceptionHandler(CustomUnsupportedJwtException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(ErrorCode.BAD_REQUEST, "Unsupported JWT Token"));
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> illegalArgumentExceptionHandler(IllegalArgumentException e, String message) {
-        log.error(message, e);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(ErrorCode.BAD_REQUEST, message));
+                .body(ErrorResponse.of(ErrorCode.BAD_REQUEST, e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

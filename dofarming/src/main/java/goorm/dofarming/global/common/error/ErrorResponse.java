@@ -1,12 +1,10 @@
-package goorm.dofarming.global.common.exception;
+package goorm.dofarming.global.common.error;
 
 import org.springframework.http.HttpStatus;
 
 public record ErrorResponse(
         int statusCode,
-
         HttpStatus httpStatus,
-
         String message
 ) {
 
