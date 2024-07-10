@@ -89,7 +89,7 @@ public class UserService {
     }
 
     private void isDuplicateEmail(String email) {
-        userRepository.findByEmail(email)
+        userRepository.findByEmailAndStatus(email, Status.ACTIVE)
                 .ifPresent(user -> { throw new CustomException(ErrorCode.DUPLICATE_OBJECT, "Email already exists."); });
     }
 }

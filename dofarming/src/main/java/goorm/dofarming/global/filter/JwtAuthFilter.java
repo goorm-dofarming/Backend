@@ -48,6 +48,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     // 인증 토큰 생성하여 SecurityContextHolder 에 설정
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                             new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
+
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }
             }

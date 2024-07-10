@@ -36,7 +36,7 @@ public class UserController {
                     })
             }
     )
-    @PostMapping("/users")
+    @PostMapping("/signup")
     public ResponseEntity<Long> signUp(
             @Valid
             @Parameter
