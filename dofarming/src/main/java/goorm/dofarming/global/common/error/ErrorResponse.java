@@ -1,5 +1,6 @@
 package goorm.dofarming.global.common.error;
 
+import lombok.Builder;
 import org.springframework.http.HttpStatus;
 
 public record ErrorResponse(

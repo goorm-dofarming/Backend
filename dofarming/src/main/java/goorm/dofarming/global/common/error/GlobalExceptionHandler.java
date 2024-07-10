@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponse> customExceptionHandler(CustomException e, String message) {
+    public ResponseEntity<ErrorResponse> customExceptionHandler(CustomException e) {
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-                .body(ErrorResponse.of(e.getErrorCode(), message));
+                .body(ErrorResponse.of(e.getErrorCode(), e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -49,11 +49,5 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> unsupportedJwtExceptionHandler(CustomUnsupportedJwtException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(ErrorCode.BAD_REQUEST, e.getMessage()));
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> exceptionHandler(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage()));
     }
 }

@@ -8,10 +8,16 @@ import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.common.error.exception.CustomException;
 import goorm.dofarming.global.common.error.ErrorCode;
-import goorm.dofarming.global.util.RandomNicknameGenerator;
+import goorm.dofarming.global.util.ImageUtil;
+import goorm.dofarming.global.util.RandomCodeGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
+    private final ImageUtil imageUtil;
 
     /**
      * 회원 가입
@@ -27,15 +35,11 @@ public class UserService {
     public Long createUser(UserSignUpRequest userSignUpRequest) {
         isDuplicateEmail(userSignUpRequest.email());
 
-        String nickname = "guest-" + RandomNicknameGenerator.generateCode();
+        String nickname = "guest-" + RandomCodeGenerator.generateCode();
 
-        /*
-            이미지 생성 구현
-         */
-        String imageUrl = "";
-
-        User user = User.user(userSignUpRequest.email(), nickname, userSignUpRequest.password(), imageUrl);
+        User user = User.user(userSignUpRequest.email(), nickname, userSignUpRequest.password());
         User saveUser = userRepository.save(user);
+        saveUser.encoder(encoder.encode(saveUser.getPassword()));
 
         return saveUser.getUserId();
     }
@@ -44,15 +48,41 @@ public class UserService {
      * 회원 수정
      */
     @Transactional
-    public UserResponse updateUser(UserModifyRequest userModifyRequest) {
-        User user = existByUserId(userModifyRequest.userId());
+    public UserResponse updateUser(Long userId, MultipartFile file, UserModifyRequest userModifyRequest) {
+        User user = existByUserId(userId);
 
-        /*
-            이미지 생성 구현
+        /**
+         * 패스워드 처리
          */
-        String imageUrl = "";
+        String userPassword = user.getPassword();
+        if (!encoder.matches(userModifyRequest.password(), userPassword)) {
+            userPassword = encoder.encode(userModifyRequest.password());
+        }
 
-        user.updateInfo(userModifyRequest.nickname(), userModifyRequest.password(), imageUrl);
+        /**
+         * 이미지 생성
+         */
+        // 파일에 이미지가 들어오고
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = imageUtil.makeFilePath(file);
+
+            Path newImageFilePath = Paths.get(imageUrl);
+
+            // 이미지가 존재하면
+            if (user.getImageUrl() != null) {
+                // 유저의 이미지 삭제
+                Path existImageFilePath = Paths.get(user.getImageUrl());
+                imageUtil.deleteImageUrl(existImageFilePath);
+            }
+            // 경로에 이미지 쓰기
+            imageUtil.writeImageFile(newImageFilePath, file);
+
+            user.updateInfo(userModifyRequest.nickname(), userPassword, imageUrl);
+        } else {
+            // 파일이 null 이면 그대로 imageUrl 유지
+            user.updateInfo(userModifyRequest.nickname(), userPassword, user.getImageUrl());
+        }
+
         return UserResponse.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
@@ -89,7 +119,7 @@ public class UserService {
     }
 
     private void isDuplicateEmail(String email) {
-        userRepository.findByEmail(email)
+        userRepository.findByEmailAndStatus(email, Status.ACTIVE)
                 .ifPresent(user -> { throw new CustomException(ErrorCode.DUPLICATE_OBJECT, "Email already exists."); });
     }
 }

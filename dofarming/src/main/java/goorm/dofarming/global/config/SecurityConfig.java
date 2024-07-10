@@ -30,7 +30,8 @@ public class SecurityConfig {
 
     // 인증 없이 접근할 수 있는 경로를 정의하는 화이트리스트
     private static final String[] AUTH_WHITELIST = {
-            "api/v1/recommends/**", "api/v1/signUp/**", "api/v1/signIn/**"
+            "api/v1/recommends/**", "api/v1/signup/**", "api/v1/login/**",
+            "api/v1/swagger-ui/**", "api/v1/api-docs/**"
     };
 
     @Bean

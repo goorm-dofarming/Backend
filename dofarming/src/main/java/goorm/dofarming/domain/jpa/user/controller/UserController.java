@@ -4,6 +4,7 @@ import goorm.dofarming.domain.jpa.user.dto.request.UserModifyRequest;
 import goorm.dofarming.domain.jpa.user.dto.request.UserSignUpRequest;
 import goorm.dofarming.domain.jpa.user.dto.response.UserResponse;
 import goorm.dofarming.domain.jpa.user.service.UserService;
+import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,7 +16,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "User", description = "User 관련 API")
 @RestController
@@ -36,11 +39,9 @@ public class UserController {
                     })
             }
     )
-    @PostMapping("/users")
+    @PostMapping("/signup")
     public ResponseEntity<Long> signUp(
-            @Valid
-            @Parameter
-            @RequestBody UserSignUpRequest signUpRequest
+            @Parameter @Valid @RequestBody UserSignUpRequest signUpRequest
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(signUpRequest));
     }
@@ -60,11 +61,11 @@ public class UserController {
     )
     @PutMapping("/users")
     public ResponseEntity<UserResponse> modify(
-            @Valid
-            @Parameter
-            @RequestBody UserModifyRequest modifyRequest
+            @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter @RequestPart(required = false) MultipartFile multipartFile,
+            @Parameter @Valid @RequestPart UserModifyRequest userModifyRequest
     ) {
-        return ResponseEntity.ok().body(userService.updateUser(modifyRequest));
+        return ResponseEntity.ok().body(userService.updateUser(user.getUserId(), multipartFile, userModifyRequest));
     }
 
 
@@ -80,9 +81,7 @@ public class UserController {
     )
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> delete(
-            @Valid
-            @Parameter
-            @PathVariable Long userId
+            @Parameter @Valid @PathVariable Long userId
     ) {
         userService.userDelete(userId);
         return ResponseEntity.noContent().build();
@@ -103,9 +102,7 @@ public class UserController {
     )
     @GetMapping("/users/{userId}")
     public ResponseEntity<UserResponse> getUser(
-            @Valid
-            @Parameter
-            @PathVariable Long userId
+            @Parameter @Valid @PathVariable Long userId
     ) {
         return ResponseEntity.ok().body(userService.getUser(userId));
     }
