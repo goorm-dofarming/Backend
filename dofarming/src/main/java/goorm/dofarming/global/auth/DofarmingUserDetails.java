@@ -40,6 +40,10 @@ public class DofarmingUserDetails implements UserDetails {
         return String.valueOf(authDto.userId());
     }
 
+    public Long getUserId() {
+        return authDto.userId();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         // 계정이 만료되지 않았음을 나타내기 위해 true 반환

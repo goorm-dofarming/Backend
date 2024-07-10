@@ -47,12 +47,12 @@ public class User extends BaseEntity {
     private List<Join> joins = new ArrayList<>();
 
     //== 생성 메서드 ==//
-    public static User user(String email, String nickname, String password, String imageUrl) {
+    public static User user(String email, String nickname, String password) {
         User user = new User();
         user.email = email;
         user.password = password;
         user.nickname = nickname;
-        user.imageUrl = imageUrl;
+        user.imageUrl = null;
         user.role = Role.GUEST;
         user.status = Status.ACTIVE;
         return user;

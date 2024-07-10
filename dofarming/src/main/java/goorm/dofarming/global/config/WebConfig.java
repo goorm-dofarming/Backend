@@ -1,5 +1,6 @@
 package goorm.dofarming.global.config;
 
+import goorm.dofarming.global.util.OctetStreamReadMsgConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

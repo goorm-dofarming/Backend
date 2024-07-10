@@ -70,6 +70,6 @@ class UserServiceTest {
         });
 
         //then
-        assertEquals(e.getErrorCode().getMessage(), "Resource not found");
+        assertEquals(e.getMessage(), "Resource not found");
     }
 }
