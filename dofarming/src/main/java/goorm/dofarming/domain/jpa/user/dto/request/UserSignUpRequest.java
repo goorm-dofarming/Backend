@@ -1,10 +1,9 @@
 package goorm.dofarming.domain.jpa.user.dto.request;
 
-import goorm.dofarming.global.common.exception.CustomException;
-import goorm.dofarming.global.common.exception.ErrorCode;
+import goorm.dofarming.global.common.error.exception.CustomException;
+import goorm.dofarming.global.common.error.ErrorCode;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 
 public record UserSignUpRequest(
 
@@ -20,7 +19,7 @@ public record UserSignUpRequest(
 ) {
     public UserSignUpRequest {
         if (!password.equals(confirmPassword)) {
-            throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH);
+            throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH, "Password does not match.");
         }
     }
 }

@@ -6,9 +6,9 @@ import goorm.dofarming.domain.jpa.user.dto.response.UserResponse;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.common.entity.Status;
-import goorm.dofarming.global.common.exception.CustomException;
-import goorm.dofarming.global.common.exception.ErrorCode;
-import goorm.dofarming.global.common.util.RandomNicknameGenerator;
+import goorm.dofarming.global.common.error.exception.CustomException;
+import goorm.dofarming.global.common.error.ErrorCode;
+import goorm.dofarming.global.util.RandomNicknameGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,11 +85,11 @@ public class UserService {
 
     private User existByUserId(Long userId) {
         return userRepository.findByUserIdAndStatus(userId, Status.ACTIVE)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "User not found."));
     }
 
     private void isDuplicateEmail(String email) {
         userRepository.findByEmail(email)
-                .ifPresent(user -> { throw new CustomException(ErrorCode.DUPLICATE_OBJECT); });
+                .ifPresent(user -> { throw new CustomException(ErrorCode.DUPLICATE_OBJECT, "Email already exists."); });
     }
 }
