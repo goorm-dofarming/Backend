@@ -8,14 +8,15 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    BAD_REQUEST(HttpStatus.BAD_REQUEST, 400, "Bad request"),
-    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, 404, "Resource not found"),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, 401, "Unauthorized"),
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, 400),
+    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, 404),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, 401),
+    CONFLICT(HttpStatus.CONFLICT, 409),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 500),
 
-    PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, 401, "Password not match"),
-    DUPLICATE_OBJECT(HttpStatus.CONFLICT, 409, "Duplicate Object");
+    PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, 401),
+    DUPLICATE_OBJECT(HttpStatus.CONFLICT, 409);
 
     private final HttpStatus httpStatus;
     private final int code;
-    private final String message;
 }
