@@ -10,6 +10,7 @@ import goorm.dofarming.global.common.error.exception.CustomException;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.util.RandomNicknameGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
 
     /**
      * 회원 가입
@@ -36,6 +38,7 @@ public class UserService {
 
         User user = User.user(userSignUpRequest.email(), nickname, userSignUpRequest.password(), imageUrl);
         User saveUser = userRepository.save(user);
+        saveUser.encoder(encoder.encode(saveUser.getPassword()));
 
         return saveUser.getUserId();
     }

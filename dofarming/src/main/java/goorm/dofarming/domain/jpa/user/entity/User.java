@@ -65,6 +65,10 @@ public class User extends BaseEntity {
         this.getJoins().stream().forEach(Join::delete);
     }
 
+    public void encoder(String password) {
+        this.password = password;
+    }
+
     public void updateInfo(String nickname, String password, String imageUrl) {
         this.nickname = nickname;
         this.password = password;

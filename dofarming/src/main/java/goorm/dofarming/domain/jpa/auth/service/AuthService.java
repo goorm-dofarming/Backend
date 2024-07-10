@@ -10,6 +10,7 @@ import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
 import goorm.dofarming.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 @Service
@@ -19,12 +20,18 @@ public class AuthService {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
 
     @Transactional
     public String login(SignInRequest signInRequest) {
 
         User user = userRepository.findByEmailAndStatus(signInRequest.email(), Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "User not found."));
+
+
+        if (!encoder.matches(signInRequest.password(), user.getPassword())) {
+            throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH, "Password Not Match.");
+        }
 
         AuthDto authDto = AuthDto.builder()
                 .userId(user.getUserId())
