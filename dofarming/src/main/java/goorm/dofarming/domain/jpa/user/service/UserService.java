@@ -8,7 +8,7 @@ import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.common.error.exception.CustomException;
 import goorm.dofarming.global.common.error.ErrorCode;
-import goorm.dofarming.global.util.RandomNicknameGenerator;
+import goorm.dofarming.global.util.RandomCodeGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class UserService {
     public Long createUser(UserSignUpRequest userSignUpRequest) {
         isDuplicateEmail(userSignUpRequest.email());
 
-        String nickname = "guest-" + RandomNicknameGenerator.generateCode();
+        String nickname = "guest-" + RandomCodeGenerator.generateCode();
 
         /*
             이미지 생성 구현
