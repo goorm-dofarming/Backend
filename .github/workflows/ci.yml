@@ -5,12 +5,10 @@ on:
     branches:
       - "main"
       - "develop"
-      - "feature/RAND-92"
   pull_request:
     branches:
       - "main"
       - "develop"
-      - "feature/RAND-92"
 
 jobs:
   build:
