@@ -5,6 +5,7 @@ on:
     branches:
       - "main"
       - "develop"
+      - "feature/RAND-92"
 
 env:
   AWS_REGION: ap-northeast-2
