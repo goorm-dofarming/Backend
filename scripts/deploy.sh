@@ -18,7 +18,8 @@ else
 fi
 
 echo "$TIME_NOW : copy $JAR_FILE" >> $DEPLOY_LOG
-cp $PROJECT_ROOT/build/libs/*.jar $PROJECT_ROOT
+#cp $PROJECT_ROOT/build/libs/*.jar $PROJECT_ROOT
+unzip -o $PROJECT_ROOT/$GITHUB_SHA.zip -d $PROJECT_ROOT
 
 echo "$TIME_NOW : run $JAR_FILE" >> $DEPLOY_LOG
 chmod +x $JAR_FILE
