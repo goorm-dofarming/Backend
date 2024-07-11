@@ -1,5 +1,9 @@
 # Oauth2
 spring:
+
+  jpa:
+    enabled: false
+
   security:
     oauth2:
       client:
