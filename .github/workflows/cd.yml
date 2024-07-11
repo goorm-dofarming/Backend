@@ -38,10 +38,7 @@ jobs:
         run: cd dofarming && ./gradlew build --no-daemon -x test
 
       - name: Create zip file
-        run: zip -r dofarming.zip dofarming/build/libs/
-
-#      - name: Create zip file
-#        run: cd dofarming && zip -r dofarming.zip build/libs/
+        run: zip -r dofarming-${{ github.sha }}.zip dofarming/build/libs/
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -51,18 +48,8 @@ jobs:
           aws-region: 'ap-northeast-2'
 
       - name: Upload to AWS S3
-        run: aws s3 cp dofarming.zip s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip
-
-#      - name: Upload to AWS S3
-#        run: aws s3 cp dofarming/build/libs/dofarming.zip s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip
-
-#      - name: Upload to AWS S3
-#        run: |
-#          aws deploy push \
-#            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-#            --ignore-hidden-files \
-#            --s3-location s3://${{env.S3_BUCKET_NAME}}/$GITHUB_SHA.zip \
-#            --source .
+#        run: aws s3 cp dofarming.zip s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip
+        run: aws s3 cp dofarming-${{ github.sha }}.zip s3://${{ env.S3_BUCKET_NAME }}/dofarming-${{ github.sha }}.zip
 
       - name: Deploy to AWS EC2 from S3
         run: |
@@ -70,4 +57,4 @@ jobs:
             --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
             --deployment-config-name CodeDeployDefault.AllAtOnce \
             --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-            --s3-location bucket=${{ env.S3_BUCKET_NAME }},key=$GITHUB_SHA.zip,bundleType=zip
+            --s3-location bucket=${{ env.S3_BUCKET_NAME }},key=dofarming-${{ github.sha }}.zip,bundleType=zip
