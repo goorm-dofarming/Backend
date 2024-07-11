@@ -60,19 +60,19 @@ spring:
 #        format_sql: true
 #        show-sql: true
 #
-## MongoDB
-#  data:
-#    mongodb:
-#      uri: mongodb://root:root@43.203.241.172:27017/mongodb?authSource=admin
-#
-## Mail
-#  mail:
-#    host: smtp.gmail.com
-#    username: wlzhf12@gmail.com
-#    password: hzfzbcoyeojujbnj
-#    properties:
-#      mail.smtp.auth: true
-#      mail.smtp.starttls.enable: true
+# MongoDB
+  data:
+    mongodb:
+      uri: mongodb://root:root@43.203.241.172:27017/mongodb?authSource=admin
+
+# Mail
+  mail:
+    host: smtp.gmail.com
+    username: wlzhf12@gmail.com
+    password: hzfzbcoyeojujbnj
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
 ## Server Prefix
 #server:
