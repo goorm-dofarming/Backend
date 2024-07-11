@@ -95,10 +95,10 @@ jobs:
           cache: 'gradle'
 
       - name: Grant execute permission for gradlew
-        run: chmod +x dofarm/gradlew
+        run: chmod +x dofarming/gradlew
 
       - name: Build with gradle
-        run: cd dofarm && ./gradlew build --no-daemon -x test
+        run: cd dofarming && ./gradlew build --no-daemon -x test
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

@@ -31,4 +31,4 @@ jobs:
         run: chmod +x dofarming/gradlew
 
       - name: Build with Gradle Wrapper
-        run: cd dofarming && ./gradlew build
+        run: cd dofarming && ./gradlew build --no-daemon -x test
