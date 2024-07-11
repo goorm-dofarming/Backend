@@ -49,7 +49,13 @@ jobs:
 
       - name: Upload to AWS S3
 #        run: aws s3 cp dofarming.zip s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip
-        run: aws s3 cp dofarmingV2-${{ github.sha }}.zip s3://${{ env.S3_BUCKET_NAME }}/dofarmingV2-${{ github.sha }}.zip
+#        run: aws s3 cp dofarmingV2-${{ github.sha }}.zip s3://${{ env.S3_BUCKET_NAME }}/dofarmingV2-${{ github.sha }}.zip
+        run: |
+          aws deploy push \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --ignore-hidden-files \
+            --s3-location s3://${{env.S3_BUCKET_NAME}}/dofarmingV2-${{ github.sha }}.zip \
+            --source .
 
       - name: Deploy to AWS EC2 from S3
         run: |
