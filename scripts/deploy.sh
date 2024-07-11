@@ -1,5 +1,5 @@
 PROJECT_ROOT="/home/ubuntu/app/dofarming"
-JAR_FILE="$PROJECT_ROOT/build/libs/dofarming-0.0.1-SNAPSHOT.jar"
+JAR_FILE="$PROJECT_ROOT/dofarming-0.0.1-SNAPSHOT.jar"
 
 APP_LOG="$PROJECT_ROOT/application.log"
 ERROR_LOG="$PROJECT_ROOT/error.log"
@@ -19,7 +19,6 @@ fi
 
 echo "$TIME_NOW : copy $JAR_FILE" >> $DEPLOY_LOG
 cp $PROJECT_ROOT/build/libs/*.jar $PROJECT_ROOT
-#unzip -o $PROJECT_ROOT/$GITHUB_SHA.zip -d /home/ubuntu/app
 
 echo "$TIME_NOW : run $JAR_FILE" >> $DEPLOY_LOG
 chmod +x $JAR_FILE
