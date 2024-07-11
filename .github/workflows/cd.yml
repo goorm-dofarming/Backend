@@ -113,11 +113,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'ap-northeast-2'
 
-#      - name: Upload to AWS S3
-#        run: aws s3 cp dofarming.zip s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip
-
       - name: Upload to AWS S3
-        run: aws s3 cp dofarming/build/libs/dofarming.zip s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip
+        run: aws s3 cp dofarming.zip s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip
+
+#      - name: Upload to AWS S3
+#        run: aws s3 cp dofarming/build/libs/dofarming.zip s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip
 
 #      - name: Upload to AWS S3
 #        run: |
