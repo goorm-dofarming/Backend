@@ -35,7 +35,7 @@ jobs:
         run: chmod +x dofarming/gradlew
 
       - name: Build with gradle
-        run: cd dofarming && ./gradlew build --no-daemon -x test
+        run: cd dofarming && ./gradlew clean build --no-daemon -x test
 
       - name: Create zip file
         run: zip -r dofarmingV2-${{ github.sha }}.zip dofarming/build/libs/
