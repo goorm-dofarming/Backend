@@ -4,8 +4,10 @@ package goorm.dofarming.domain.jpa.auth.service;
 import goorm.dofarming.domain.jpa.auth.dto.request.OauthRequest;
 import goorm.dofarming.domain.jpa.auth.dto.request.SignInRequest;
 import goorm.dofarming.domain.jpa.auth.dto.response.AuthDto;
+import goorm.dofarming.domain.jpa.auth.dto.response.MyInfoResponse;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.domain.jpa.user.repository.UserRepository;
+import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
@@ -49,5 +51,15 @@ public class AuthService {
         AuthDto authDto = AuthDto.from(findOrSaveUser);
 
         return jwtUtil.createAccessToken(authDto);
+    }
+
+    public MyInfoResponse myInfo(DofarmingUserDetails user) {
+        return MyInfoResponse.builder()
+                .userId(user.getUserId())
+                .email(user.getAuthDto().email())
+                .nickname(user.getAuthDto().nickname())
+                .imageUrl(user.getAuthDto().imageUrl())
+                .role(user.getAuthDto().role())
+                .build();
     }
 }

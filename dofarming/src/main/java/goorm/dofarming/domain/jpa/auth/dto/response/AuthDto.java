@@ -12,6 +12,7 @@ public record AuthDto(
         Long userId,
         String email,
         String nickname,
+        String imageUrl,
         String password,
         Role role
 ) {
@@ -21,6 +22,7 @@ public record AuthDto(
                 user.getUserId(),
                 user.getEmail(),
                 user.getNickname(),
+                user.getImageUrl(),
                 user.getPassword(),
                 user.getRole()
         );
