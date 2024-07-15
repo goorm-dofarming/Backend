@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,11 +73,11 @@ public class AuthController {
             summary = "내 정보 확인 api 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "클라이언트의 요청을 서버가 정상적으로 처리했다.", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = MyInfoResponse.class))
                     }),
             }
     )
-    @PostMapping("/me")
+    @GetMapping("/me")
     public ResponseEntity<MyInfoResponse> myInfo(
             @AuthenticationPrincipal DofarmingUserDetails user
     ) {
