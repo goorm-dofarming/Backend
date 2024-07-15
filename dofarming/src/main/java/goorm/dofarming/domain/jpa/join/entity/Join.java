@@ -5,6 +5,8 @@ import goorm.dofarming.domain.jpa.log.entity.Log;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.global.common.entity.BaseEntity;
 import goorm.dofarming.global.common.entity.Status;
+import goorm.dofarming.global.common.error.ErrorCode;
+import goorm.dofarming.global.common.error.exception.CustomException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -72,8 +74,10 @@ public class Join extends BaseEntity {
 
     //== 중복 검증 메서드 ==//
     private static void joinValidateDuplicate(User user, Chatroom chatroom) {
-        if (user.getJoins().stream().anyMatch(join -> join.getChatroom().equals(chatroom))) {
-
+        if (user.getJoins().stream()
+                .filter(join -> join.status.equals(Status.ACTIVE))
+                .anyMatch(join -> join.getChatroom().equals(chatroom))) {
+            throw new CustomException(ErrorCode.DUPLICATE_OBJECT, "이미 입장한 채팅방입니다.");
         }
     }
 }
