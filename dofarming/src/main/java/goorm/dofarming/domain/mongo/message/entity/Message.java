@@ -2,6 +2,7 @@ package goorm.dofarming.domain.mongo.message.entity;
 
 import goorm.dofarming.global.common.entity.BaseEntity;
 import goorm.dofarming.global.common.entity.Status;
+import jakarta.persistence.Lob;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class Message extends BaseEntity {
 
     private Long roomId;
 
+    @Lob
     private String content;
 
     //== 생성 메서드 ==//

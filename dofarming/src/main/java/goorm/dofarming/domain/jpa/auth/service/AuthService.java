@@ -25,6 +25,9 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
 
+    /**
+     * 일반 로그인
+     */
     @Transactional
     public String login(SignInRequest signInRequest) {
 
@@ -40,6 +43,9 @@ public class AuthService {
         return jwtUtil.createAccessToken(authDto);
     }
 
+    /**
+     * OAuth2.0 로그인
+     */
     @Transactional
     public String oauthLogin(OauthRequest oauthRequest) {
 
@@ -53,6 +59,9 @@ public class AuthService {
         return jwtUtil.createAccessToken(authDto);
     }
 
+    /**
+     * 내 정보 확인
+     */
     public MyInfoResponse myInfo(DofarmingUserDetails user) {
         return MyInfoResponse.builder()
                 .userId(user.getUserId())
