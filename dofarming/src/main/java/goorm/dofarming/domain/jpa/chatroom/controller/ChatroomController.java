@@ -1,8 +1,11 @@
 package goorm.dofarming.domain.jpa.chatroom.controller;
 
 import goorm.dofarming.domain.jpa.chatroom.dto.request.ChatroomCreateRequest;
+import goorm.dofarming.domain.jpa.chatroom.dto.request.ChatroomSearchRequest;
+import goorm.dofarming.domain.jpa.chatroom.dto.response.ChatroomResponse;
 import goorm.dofarming.domain.jpa.chatroom.service.ChatroomService;
 import goorm.dofarming.domain.jpa.user.dto.request.UserSignUpRequest;
+import goorm.dofarming.domain.jpa.user.dto.response.UserResponse;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "ChatRoom", description = "ChatRoom 관련 API")
 @RestController
@@ -93,12 +98,47 @@ public class ChatroomController {
                     })
             }
     )
-    @DeleteMapping("/chatroom/{roomId}/leave")
+    @PostMapping("/chatroom/{roomId}/leave")
     public ResponseEntity<Void> leaveChatroom(
             @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @Valid @PathVariable Long roomId
     ) {
         chatroomService.leaveRoom(user.getUserId(), roomId);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @Operation(
+            operationId = "ChatRoom",
+            summary = "오픈 채팅방 검색 api 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "클라이언트의 요청을 서버가 정상적으로 처리했다.", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ChatroomResponse.class))
+                    })
+            }
+    )
+    @GetMapping("/chatroom")
+    public ResponseEntity<List<ChatroomResponse>> getSearchChatroom(
+            @Parameter @Valid @PathVariable ChatroomSearchRequest chatroomSearchRequest
+    ) {
+
+        return ResponseEntity.ok().body(chatroomService.searchRoomList(chatroomSearchRequest));
+    }
+
+
+    @Operation(
+            operationId = "ChatRoom",
+            summary = "내 채팅방 리스트 api 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "클라이언트의 요청을 서버가 정상적으로 처리했다.", content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = ChatroomResponse.class))
+                    })
+            }
+    )
+    @GetMapping("/chatroom")
+    public ResponseEntity<List<ChatroomResponse>> getMyChatroom(
+            @AuthenticationPrincipal DofarmingUserDetails user
+    ) {
+        return ResponseEntity.ok().body(chatroomService.myRoomList(user.getUserId()));
     }
 }

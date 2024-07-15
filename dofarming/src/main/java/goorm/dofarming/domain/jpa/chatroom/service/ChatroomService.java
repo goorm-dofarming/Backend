@@ -62,13 +62,8 @@ public class ChatroomService {
     }
 
     /**
-     * 오픈 채팅방 검색
+     * 채팅방 입장
      */
-    public List<ChatroomResponse> searchRoomList(ChatroomSearchRequest chatroomSearchRequest) {
-        return chatroomRepository.search(chatroomSearchRequest)
-                .stream().map(ChatroomResponse::of).collect(Collectors.toList());
-    }
-  
     @Transactional
     public Long joinRoom(Long userId, Long roomId) {
         User user = existByUserId(userId);
@@ -79,11 +74,30 @@ public class ChatroomService {
         return saveJoin.getJoinId();
     }
 
+    /**
+     * 채팅방 퇴장
+     */
     @Transactional
     public void leaveRoom(Long userId, Long roomId) {
         Join join = joinRepository.findByUser_UserIdAndChatroom_RoomIdAndStatus(userId, roomId, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "입장한 채팅방이 아닙니다."));
         join.delete();
+    }
+
+    /**
+     * 오픈 채팅방 검색
+     */
+    public List<ChatroomResponse> searchRoomList(ChatroomSearchRequest chatroomSearchRequest) {
+        return chatroomRepository.search(chatroomSearchRequest)
+                .stream().map(ChatroomResponse::of).collect(Collectors.toList());
+    }
+
+    /**
+     * 내 채팅방 리스트
+     */
+    public List<ChatroomResponse> myRoomList(Long userId) {
+        return joinRepository.findAllByUser_UserIdAndStatus(userId, Status.ACTIVE)
+                .stream().map(join -> ChatroomResponse.of(join.getChatroom())).collect(Collectors.toList());
     }
 
     private Chatroom existByRoomId(Long roomId) {
