@@ -30,6 +30,7 @@ public class DofarmingUserDetailsService implements UserDetailsService {
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .password(user.getPassword())
+                .imageUrl(user.getImageUrl())
                 .role(user.getRole())
                 .build());
     }
