@@ -9,7 +9,7 @@ import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.common.error.exception.CustomException;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.util.ImageUtil;
-import goorm.dofarming.global.util.RandomCodeGenerator;
+import goorm.dofarming.global.util.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class UserService {
     public Long createUser(UserSignUpRequest userSignUpRequest) {
         isDuplicateEmail(userSignUpRequest.email());
 
-        String nickname = "guest-" + RandomCodeGenerator.generateCode();
+        String nickname = "guest-" + RandomGenerator.generateCode();
 
         User user = User.user(userSignUpRequest.email(), nickname, userSignUpRequest.password());
         User saveUser = userRepository.save(user);

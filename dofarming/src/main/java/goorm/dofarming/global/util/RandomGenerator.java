@@ -1,8 +1,9 @@
 package goorm.dofarming.global.util;
 
 import java.security.SecureRandom;
+import java.util.List;
 
-public class RandomCodeGenerator {
+public class RandomGenerator {
 
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyz0123456789";
     private static final int CODE_LENGTH = 8;
@@ -15,4 +16,6 @@ public class RandomCodeGenerator {
         }
         return code.toString();
     }
+
+    public List<>
 }

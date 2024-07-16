@@ -40,7 +40,9 @@ public class ChatroomService {
      * 채팅방 생성
      */
     @Transactional
-    public Long createRoom(ChatroomCreateRequest chatroomCreateRequest) {
+    public Long createRoom(Long userId, ChatroomCreateRequest chatroomCreateRequest) {
+        User user = existByUserId(userId);
+
         Chatroom chatroom = Chatroom.chatroom(chatroomCreateRequest.title(), chatroomCreateRequest.region());
         Chatroom saveChatroom = chatroomRepository.save(chatroom);
 
@@ -48,6 +50,10 @@ public class ChatroomService {
             Tag tag = Tag.tag(tagRequest.name(), tagRequest.color(), chatroom);
             tagRepository.save(tag);
         }
+
+        // 생성 후 본인 채팅방 입장 시키기
+        Join join = Join.join(user, saveChatroom);
+        joinRepository.save(join);
 
         return saveChatroom.getRoomId();
     }
