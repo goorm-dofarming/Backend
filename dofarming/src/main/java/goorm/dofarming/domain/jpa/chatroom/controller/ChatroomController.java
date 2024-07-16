@@ -41,9 +41,10 @@ public class ChatroomController {
     )
     @PostMapping("/chatroom")
     public ResponseEntity<Long> createChatroom(
+            @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @Valid @RequestBody ChatroomCreateRequest chatroomCreateRequest
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(chatroomService.createRoom(chatroomCreateRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(chatroomService.createRoom(user.getUserId(), chatroomCreateRequest));
     }
 
 
@@ -119,7 +120,7 @@ public class ChatroomController {
     )
     @GetMapping("/chatroom")
     public ResponseEntity<List<ChatroomResponse>> getSearchChatroom(
-            @Parameter @Valid @PathVariable ChatroomSearchRequest chatroomSearchRequest
+            @Parameter @Valid @RequestBody ChatroomSearchRequest chatroomSearchRequest
     ) {
 
         return ResponseEntity.ok().body(chatroomService.searchRoomList(chatroomSearchRequest));

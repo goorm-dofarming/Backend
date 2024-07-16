@@ -2,7 +2,7 @@ package goorm.dofarming.domain.jpa.email.service;
 
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
-import goorm.dofarming.global.util.RandomCodeGenerator;
+import goorm.dofarming.global.util.RandomGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +51,7 @@ public class EmailService {
 
     /* 이메일 작성 */
     public void joinEmail(String email) {
-        String emailNumber = RandomCodeGenerator.generateCode();
+        String emailNumber = RandomGenerator.generateCode();
         String customerMail = email;
         String title = "도파밍 회원 가입을 위한 이메일입니다.";
         String content =
