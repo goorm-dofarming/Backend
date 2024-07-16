@@ -6,6 +6,7 @@ import goorm.dofarming.domain.jpa.chatroom.dto.request.ChatroomSearchRequest;
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
 import goorm.dofarming.domain.jpa.chatroom.entity.Region;
 import goorm.dofarming.global.common.entity.Status;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -16,12 +17,13 @@ import static org.springframework.util.StringUtils.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
-@RequiredArgsConstructor
 public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
+    public ChatroomRepositoryImpl(EntityManager em) {
+        this.queryFactory = new JPAQueryFactory(em);
+    }
     @Override
     public List<Chatroom> search(ChatroomSearchRequest request) {
         return queryFactory

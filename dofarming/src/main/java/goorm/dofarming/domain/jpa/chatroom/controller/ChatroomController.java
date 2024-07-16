@@ -135,7 +135,7 @@ public class ChatroomController {
                     })
             }
     )
-    @GetMapping("/chatroom")
+    @GetMapping("/chatroom/my")
     public ResponseEntity<List<ChatroomResponse>> getMyChatroom(
             @AuthenticationPrincipal DofarmingUserDetails user
     ) {
