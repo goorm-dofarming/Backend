@@ -6,7 +6,7 @@ import goorm.dofarming.domain.mongo.message.entity.MessageType;
 import java.time.LocalDateTime;
 
 public record MessageResponse(
-        String messageId,
+        Long messageId,
         Long userId,
         String nickname,
         Long roomId,
