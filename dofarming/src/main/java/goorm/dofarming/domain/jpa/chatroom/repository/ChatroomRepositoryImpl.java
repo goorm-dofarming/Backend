@@ -49,7 +49,7 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
         return hasText(title) ? chatroom.title.containsIgnoreCase(title) : null;
     }
     private BooleanExpression regionEq(Region region) {
-        return hasText(region.getName()) ? chatroom.region.eq(region) : null;
+        return region != null ? chatroom.region.eq(region) : null;
     }
     private BooleanExpression tagEq(String tagName) {
         return hasText(tagName) ? tag.name.containsIgnoreCase(tagName) : null;

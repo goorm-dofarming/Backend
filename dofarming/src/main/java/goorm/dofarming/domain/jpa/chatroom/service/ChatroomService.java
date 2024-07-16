@@ -51,7 +51,6 @@ public class ChatroomService {
             tagRepository.save(tag);
         }
 
-        // 생성 후 본인 채팅방 입장 시키기
         Join join = Join.join(user, saveChatroom);
         joinRepository.save(join);
 
