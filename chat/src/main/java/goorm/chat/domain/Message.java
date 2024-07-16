@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Message {
 
     @Id
-    private String id;
+    private Long id;
 
     private Long userId;
 

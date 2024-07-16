@@ -2,22 +2,23 @@ package goorm.dofarming.domain.mongo.message.entity;
 
 import goorm.dofarming.global.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Document(collection = "messages")
+@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Message {
 
     @Id
-    private String id;
+    private Long id;
 
     private Long userId;
 
@@ -32,12 +33,4 @@ public class Message {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    //== 생성 메서드 ==//
-    public static Message message(Long userId, Long roomId, String content) {
-        Message message = new Message();
-        message.userId = userId;
-        message.roomId = roomId;
-        message.content = content;
-        return message;
-    }
 }
