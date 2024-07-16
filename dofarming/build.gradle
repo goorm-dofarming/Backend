@@ -55,6 +55,9 @@ dependencies {
 
 	// Querydsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	implementation ('com.querydsl:querydsl-mongodb') {
+		exclude group: 'org.mongodb', module: 'mongo-java-driver'
+	}
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"

@@ -9,6 +9,6 @@ import java.util.Set;
 public record ChatroomCreateRequest(
         String title,
         Region region,
-        List<TagRequest> tags
+        List<String> tagNames
 ) {
 }
