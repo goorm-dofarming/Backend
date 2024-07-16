@@ -16,6 +16,4 @@ public class RandomGenerator {
         }
         return code.toString();
     }
-
-    public List<>
 }
