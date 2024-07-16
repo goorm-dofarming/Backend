@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MessageService {
-    private MessageRepository messageRepository;
+
+    private final MessageRepository messageRepository;
 
     /**
      * 메시지 조회
