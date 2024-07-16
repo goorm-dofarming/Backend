@@ -19,6 +19,7 @@ import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
+import goorm.dofarming.global.util.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,8 +47,11 @@ public class ChatroomService {
         Chatroom chatroom = Chatroom.chatroom(chatroomCreateRequest.title(), chatroomCreateRequest.region());
         Chatroom saveChatroom = chatroomRepository.save(chatroom);
 
-        for (TagRequest tagRequest : chatroomCreateRequest.tags()) {
-            Tag tag = Tag.tag(tagRequest.name(), tagRequest.color(), chatroom);
+        List<String> tagNames = chatroomCreateRequest.tagNames();
+        List<String> randomColor = RandomGenerator.selectRandomColors(tagNames.size());
+
+        for (int i = 0; i < tagNames.size(); i++) {
+            Tag tag = Tag.tag(chatroomCreateRequest.tagNames().get(i), randomColor.get(i), chatroom);
             tagRepository.save(tag);
         }
 

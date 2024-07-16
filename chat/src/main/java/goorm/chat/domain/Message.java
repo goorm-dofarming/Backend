@@ -1,7 +1,6 @@
-package goorm.dofarming.domain.mongo.message.entity;
+package goorm.chat.domain;
 
-import goorm.dofarming.global.common.entity.BaseEntity;
-import jakarta.persistence.Entity;
+import goorm.chat.dto.MessageRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Getter
-@Document(collection = "messages")
+@Document(collection = "message")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Message {
 
@@ -33,11 +32,13 @@ public class Message {
     private LocalDateTime createdAt;
 
     //== 생성 메서드 ==//
-    public static Message message(Long userId, Long roomId, String content) {
+    public static Message message(Long roomId, MessageRequest messageRequest) {
         Message message = new Message();
-        message.userId = userId;
+        message.userId = messageRequest.userId();
+        message.nickname = messageRequest.nickname();
         message.roomId = roomId;
-        message.content = content;
+        message.messageType = messageRequest.messageType();
+        message.content = messageRequest.content();
         return message;
     }
 }
