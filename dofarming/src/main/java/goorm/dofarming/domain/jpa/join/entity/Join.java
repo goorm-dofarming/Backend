@@ -61,11 +61,13 @@ public class Join extends BaseEntity {
     public void addChatroom(Chatroom chatroom) {
         this.chatroom = chatroom;
         chatroom.getJoins().add(this);
+        chatroom.increaseCount();
     }
 
     //== 비즈니스 로직 ==//
     public void delete() {
         this.status = Status.DELETE;
+        this.getChatroom().decreaseCount();
     }
 
     public void lastVisitUpdate() {

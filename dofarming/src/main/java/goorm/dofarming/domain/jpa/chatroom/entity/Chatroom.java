@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -33,6 +34,8 @@ public class Chatroom extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private Long participantCount = 0L;
+
     @OneToMany(mappedBy = "chatroom", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
 
@@ -51,6 +54,19 @@ public class Chatroom extends BaseEntity {
     //== 비즈니스 로직 ==//
     public void delete() {
         this.status = Status.DELETE;
+        this.joins.stream().forEach(Join::delete);
         this.tags.stream().forEach(Tag::delete);
+    }
+
+    //== 참가자 수 증가 ==//
+    public void increaseCount() {
+        this.participantCount += 1;
+    }
+
+    public void decreaseCount() {
+        this.participantCount -= 1;
+        if (participantCount == 0L) {
+            this.delete();
+        }
     }
 }
