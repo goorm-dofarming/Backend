@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.stream.Collectors;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -28,7 +30,11 @@ public class ChatroomService {
     @Transactional
     public void deleteRoom(Long roomId) {
         Chatroom chatroom = existByRoomId(roomId);
-        chatroom.delete();
+        if (chatroom.getJoins().stream()
+                .filter(findJoin -> findJoin.getStatus().equals(Status.ACTIVE))
+                .collect(Collectors.toList()).size() == 0) {
+            chatroom.delete();
+        }
     }
 
     private Chatroom existByRoomId(Long roomId) {
