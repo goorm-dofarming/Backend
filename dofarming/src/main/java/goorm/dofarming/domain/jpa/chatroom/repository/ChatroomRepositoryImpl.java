@@ -1,5 +1,6 @@
 package goorm.dofarming.domain.jpa.chatroom.repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
@@ -25,14 +26,18 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
     }
     @Override
     public List<Chatroom> search(Long roomId, String condition, LocalDateTime createdAt) {
+
+        BooleanBuilder orBuilder = new BooleanBuilder()
+                .or(titleContains(condition))
+                .or(regionContains(condition))
+                .or(tagContains(condition));
+
         return queryFactory
-                .select(chatroom).distinct()
+                .selectDistinct(chatroom)
                 .from(chatroom)
                 .leftJoin(chatroom.tags, tag).fetchJoin()
                 .where(
-                        titleContains(condition),
-                        tagContains(condition),
-                        regionContains(condition),
+                        orBuilder,
                         cursorCondition(roomId, createdAt),
                         statusEq(Status.ACTIVE)
                 )
@@ -48,7 +53,7 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
         return hasText(title) ? chatroom.title.containsIgnoreCase(title) : null;
     }
     private BooleanExpression regionContains(String region) {
-        return region != null ? chatroom.region.stringValue().containsIgnoreCase(region) : null;
+        return hasText(region) ? chatroom.region.stringValue().containsIgnoreCase(region) : null;
     }
     private BooleanExpression tagContains(String tagName) {
         return hasText(tagName) ? tag.name.containsIgnoreCase(tagName) : null;
