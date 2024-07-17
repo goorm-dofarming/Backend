@@ -6,10 +6,8 @@ import goorm.dofarming.domain.jpa.chatroom.dto.response.ChatroomResponse;
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
 import goorm.dofarming.domain.jpa.chatroom.repository.ChatroomRepository;
 
-import goorm.dofarming.domain.jpa.tag.dto.request.TagRequest;
 import goorm.dofarming.domain.jpa.tag.entity.Tag;
 import goorm.dofarming.domain.jpa.tag.repository.TagRepository;
-import goorm.dofarming.domain.jpa.tag.service.TagService;
 
 import goorm.dofarming.domain.jpa.join.entity.Join;
 import goorm.dofarming.domain.jpa.join.repository.JoinRepository;
