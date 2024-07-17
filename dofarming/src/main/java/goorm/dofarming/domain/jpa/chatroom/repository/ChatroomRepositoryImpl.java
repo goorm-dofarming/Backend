@@ -2,7 +2,6 @@ package goorm.dofarming.domain.jpa.chatroom.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import goorm.dofarming.domain.jpa.chatroom.dto.request.ChatroomSearchRequest;
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
 import goorm.dofarming.domain.jpa.chatroom.entity.Region;
 import goorm.dofarming.global.common.entity.Status;
@@ -25,16 +24,16 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
     @Override
-    public List<Chatroom> search(ChatroomSearchRequest request) {
+    public List<Chatroom> search(Long roomId, String condition, LocalDateTime createdAt) {
         return queryFactory
                 .select(chatroom).distinct()
                 .from(chatroom)
                 .leftJoin(chatroom.tags, tag).fetchJoin()
                 .where(
-                        titleEq(request.title()),
-                        tagEq(request.tagName()),
-                        regionEq(request.region()),
-                        cursorCondition(request.roomId(), request.createdAt()),
+                        titleContains(condition),
+                        tagContains(condition),
+                        regionContains(condition),
+                        cursorCondition(roomId, createdAt),
                         statusEq(Status.ACTIVE)
                 )
                 .orderBy(
@@ -45,13 +44,13 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
                 .fetch();
     }
 
-    private BooleanExpression titleEq(String title) {
+    private BooleanExpression titleContains(String title) {
         return hasText(title) ? chatroom.title.containsIgnoreCase(title) : null;
     }
-    private BooleanExpression regionEq(Region region) {
-        return region != null ? chatroom.region.eq(region) : null;
+    private BooleanExpression regionContains(String region) {
+        return region != null ? chatroom.region.stringValue().containsIgnoreCase(region) : null;
     }
-    private BooleanExpression tagEq(String tagName) {
+    private BooleanExpression tagContains(String tagName) {
         return hasText(tagName) ? tag.name.containsIgnoreCase(tagName) : null;
     }
     private BooleanExpression cursorCondition(Long roomId, LocalDateTime createdAt) {

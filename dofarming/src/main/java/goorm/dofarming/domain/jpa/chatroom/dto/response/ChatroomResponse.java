@@ -21,7 +21,7 @@ public record ChatroomResponse(
         return new ChatroomResponse(
                 chatroom.getRoomId(),
                 chatroom.getTitle(),
-                chatroom.getRegion().getName(),
+                chatroom.getRegion().name(),
                 chatroom.getRegion().getImageUrl(),
                 chatroom.getTags().stream().map(TagResponse::of).collect(Collectors.toList()),
                 chatroom.getParticipantCount(),
