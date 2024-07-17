@@ -7,6 +7,7 @@ import goorm.dofarming.domain.jpa.auth.dto.response.AuthDto;
 import goorm.dofarming.domain.jpa.auth.dto.response.MyInfoResponse;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.domain.jpa.user.repository.UserRepository;
+import goorm.dofarming.domain.jpa.user.service.UserService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.common.error.ErrorCode;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final JwtUtil jwtUtil;
+    private final UserService userService;
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
 
@@ -51,10 +53,13 @@ public class AuthService {
 
         User user = User.of(oauthRequest.socialType(), oauthRequest.data());
 
-        User findOrSaveUser = userRepository.findByEmailAndStatus(user.getEmail(), Status.ACTIVE)
-                .orElseGet(() -> userRepository.save(user));
+        userRepository.findByEmailAndStatus(user.getEmail(), Status.ACTIVE)
+                .ifPresentOrElse(
+                        findUser -> findUser.updateInfo(user.getNickname(), user.getPassword(), user.getImageUrl()),
+                        () -> userRepository.save(user)
+                );
 
-        AuthDto authDto = AuthDto.from(findOrSaveUser);
+        AuthDto authDto = AuthDto.from(user);
 
         return jwtUtil.createAccessToken(authDto);
     }
