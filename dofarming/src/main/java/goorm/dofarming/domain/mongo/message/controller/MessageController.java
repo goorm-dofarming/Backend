@@ -37,9 +37,9 @@ public class MessageController {
     )
     @GetMapping("/message")
     public ResponseEntity<List<MessageResponse>> getSearchMessage(
-            @Parameter @RequestParam Long messageId,
-            @Parameter @RequestParam Long roomId,
-            @Parameter @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
+            @Parameter @RequestParam(required = false) Long messageId,
+            @Parameter @RequestParam(required = false) Long roomId,
+            @Parameter @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
     ) {
         return ResponseEntity.ok().body(messageService.searchMessageList(messageId, roomId, createdAt));
     }

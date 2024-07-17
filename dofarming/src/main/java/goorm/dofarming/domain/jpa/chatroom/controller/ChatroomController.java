@@ -122,9 +122,9 @@ public class ChatroomController {
     )
     @GetMapping("/chatroom")
     public ResponseEntity<List<ChatroomResponse>> getSearchChatroom(
-            @Parameter @RequestParam Long roomId,
-            @Parameter @RequestParam String condition,
-            @Parameter @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
+            @Parameter @RequestParam(required = false) Long roomId,
+            @Parameter @RequestParam(required = false) String condition,
+            @Parameter @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
     ) {
 
         return ResponseEntity.ok().body(chatroomService.searchRoomList(roomId, condition, createdAt));
