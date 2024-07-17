@@ -29,11 +29,11 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
 
         BooleanBuilder orBuilder = new BooleanBuilder()
                 .or(titleContains(condition))
-                .or(tagContains(condition))
-                .or(regionContains(condition));
+                .or(regionContains(condition))
+                .or(tagContains(condition));
 
         return queryFactory
-                .select(chatroom).distinct()
+                .selectDistinct(chatroom)
                 .from(chatroom)
                 .leftJoin(chatroom.tags, tag).fetchJoin()
                 .where(
@@ -53,7 +53,7 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
         return hasText(title) ? chatroom.title.containsIgnoreCase(title) : null;
     }
     private BooleanExpression regionContains(String region) {
-        return region != null ? chatroom.region.stringValue().containsIgnoreCase(region) : null;
+        return hasText(region) ? chatroom.region.stringValue().containsIgnoreCase(region) : null;
     }
     private BooleanExpression tagContains(String tagName) {
         return hasText(tagName) ? tag.name.containsIgnoreCase(tagName) : null;
