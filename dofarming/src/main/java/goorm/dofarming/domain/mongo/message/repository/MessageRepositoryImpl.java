@@ -1,7 +1,6 @@
 package goorm.dofarming.domain.mongo.message.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import goorm.dofarming.domain.mongo.message.dto.request.MessageSearchRequest;
 import goorm.dofarming.domain.mongo.message.entity.Message;
 import goorm.dofarming.domain.mongo.message.entity.QMessage;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -19,11 +18,11 @@ public class MessageRepositoryImpl extends QuerydslRepositorySupport implements 
     }
 
     @Override
-    public List<Message> search(MessageSearchRequest request) {
+    public List<Message> search(Long messageId, Long roomId, LocalDateTime createdAt) {
         return from(message)
                 .where(
-                        roomIdEq(request.roomId()),
-                        cursorCondition(request.messageId(), request.createAt())
+                        roomIdEq(roomId),
+                        cursorCondition(messageId, createdAt)
                 )
                 .orderBy(
                         message.createdAt.desc(),

@@ -61,7 +61,7 @@ public class UserController {
     )
     @PutMapping("/users")
     public ResponseEntity<UserResponse> modify(
-            @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @RequestPart(required = false) MultipartFile multipartFile,
             @Parameter @Valid @RequestPart UserModifyRequest userModifyRequest
     ) {

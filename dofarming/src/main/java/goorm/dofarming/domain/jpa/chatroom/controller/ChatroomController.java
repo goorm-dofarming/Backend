@@ -1,8 +1,8 @@
 package goorm.dofarming.domain.jpa.chatroom.controller;
 
 import goorm.dofarming.domain.jpa.chatroom.dto.request.ChatroomCreateRequest;
-import goorm.dofarming.domain.jpa.chatroom.dto.request.ChatroomSearchRequest;
 import goorm.dofarming.domain.jpa.chatroom.dto.response.ChatroomResponse;
+import goorm.dofarming.domain.jpa.chatroom.entity.Region;
 import goorm.dofarming.domain.jpa.chatroom.service.ChatroomService;
 import goorm.dofarming.domain.jpa.user.dto.request.UserSignUpRequest;
 import goorm.dofarming.domain.jpa.user.dto.response.UserResponse;
@@ -16,11 +16,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "ChatRoom", description = "ChatRoom 관련 API")
@@ -41,7 +43,7 @@ public class ChatroomController {
     )
     @PostMapping("/chatroom")
     public ResponseEntity<Long> createChatroom(
-            @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @Valid @RequestBody ChatroomCreateRequest chatroomCreateRequest
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(chatroomService.createRoom(user.getUserId(), chatroomCreateRequest));
@@ -81,7 +83,7 @@ public class ChatroomController {
     )
     @PostMapping("/chatroom/{roomId}/join")
     public ResponseEntity<Long> joinChatroom(
-            @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @Valid @PathVariable Long roomId
     ) {
 
@@ -101,7 +103,7 @@ public class ChatroomController {
     )
     @PostMapping("/chatroom/{roomId}/leave")
     public ResponseEntity<Void> leaveChatroom(
-            @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @Valid @PathVariable Long roomId
     ) {
         chatroomService.leaveRoom(user.getUserId(), roomId);
@@ -120,10 +122,12 @@ public class ChatroomController {
     )
     @GetMapping("/chatroom")
     public ResponseEntity<List<ChatroomResponse>> getSearchChatroom(
-            @Parameter @Valid @RequestBody ChatroomSearchRequest chatroomSearchRequest
+            @Parameter @RequestParam(required = false) Long roomId,
+            @Parameter @RequestParam(required = false) String condition,
+            @Parameter @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
     ) {
 
-        return ResponseEntity.ok().body(chatroomService.searchRoomList(chatroomSearchRequest));
+        return ResponseEntity.ok().body(chatroomService.searchRoomList(roomId, condition, createdAt));
     }
 
 
@@ -138,7 +142,7 @@ public class ChatroomController {
     )
     @GetMapping("/chatroom/my")
     public ResponseEntity<List<ChatroomResponse>> getMyChatroom(
-            @AuthenticationPrincipal DofarmingUserDetails user
+            @Parameter @AuthenticationPrincipal DofarmingUserDetails user
     ) {
         return ResponseEntity.ok().body(chatroomService.myRoomList(user.getUserId()));
     }

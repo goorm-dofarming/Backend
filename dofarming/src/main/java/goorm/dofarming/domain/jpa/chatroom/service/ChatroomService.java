@@ -1,9 +1,9 @@
 package goorm.dofarming.domain.jpa.chatroom.service;
 
 import goorm.dofarming.domain.jpa.chatroom.dto.request.ChatroomCreateRequest;
-import goorm.dofarming.domain.jpa.chatroom.dto.request.ChatroomSearchRequest;
 import goorm.dofarming.domain.jpa.chatroom.dto.response.ChatroomResponse;
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
+import goorm.dofarming.domain.jpa.chatroom.entity.Region;
 import goorm.dofarming.domain.jpa.chatroom.repository.ChatroomRepository;
 
 import goorm.dofarming.domain.jpa.tag.entity.Tag;
@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,8 +95,8 @@ public class ChatroomService {
     /**
      * 오픈 채팅방 검색
      */
-    public List<ChatroomResponse> searchRoomList(ChatroomSearchRequest chatroomSearchRequest) {
-        return chatroomRepository.search(chatroomSearchRequest)
+    public List<ChatroomResponse> searchRoomList(Long roomId, String condition, LocalDateTime createdAt) {
+        return chatroomRepository.search(roomId, condition, createdAt)
                 .stream().map(ChatroomResponse::of).collect(Collectors.toList());
     }
 
