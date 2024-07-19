@@ -1,5 +1,6 @@
 package goorm.dofarming.domain.mongo.message.entity;
 
+import goorm.dofarming.domain.mongo.message.dto.MessageDto;
 import goorm.dofarming.global.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -33,4 +34,12 @@ public class Message {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    public static Message message(MessageDto messageDto) {
+        Message message = new Message();
+        message.userId = messageDto.userId();
+        message.nickname = messageDto.nickname();
+        message.messageType = messageDto.messageType();
+        message.content = messageDto.content();
+        return message;
+    }
 }

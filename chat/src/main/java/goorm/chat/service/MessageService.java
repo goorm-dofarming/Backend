@@ -25,7 +25,6 @@ public class MessageService {
 
     @KafkaListener(topics = KafkaConstants.KAFKA_TOPIC)
     public void consume(MessageDto messageDto) throws IOException {
-        log.info("messageDto : {}", messageDto.content());
         simpMessagingTemplate.convertAndSend("/room/" + messageDto.roomId(), messageDto);
     }
 }
