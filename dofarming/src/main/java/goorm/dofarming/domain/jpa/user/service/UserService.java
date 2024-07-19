@@ -51,7 +51,7 @@ public class UserService {
     public UserResponse updateUser(Long userId, MultipartFile file, UserModifyRequest userModifyRequest) {
         User user = existByUserId(userId);
 
-        /**
+        /*
          * 패스워드 처리
          */
         String userPassword = user.getPassword();
@@ -59,14 +59,14 @@ public class UserService {
             userPassword = encoder.encode(userModifyRequest.password());
         }
 
-        /**
+        /*
          * 이미지 생성
          */
         // 파일에 이미지가 들어오고
         if (file != null && !file.isEmpty()) {
-            String imageUrl = imageUtil.makeFilePath(file);
+            String imageUrl = imageUtil.getImageUrl("/profile/", file);
 
-            Path newImageFilePath = Paths.get(imageUrl);
+            Path path = imageUtil.makeFilePath(imageUrl);
 
             // 이미지가 존재하면
             if (user.getImageUrl() != null) {
@@ -75,7 +75,7 @@ public class UserService {
                 imageUtil.deleteImageUrl(existImageFilePath);
             }
             // 경로에 이미지 쓰기
-            imageUtil.writeImageFile(newImageFilePath, file);
+            imageUtil.writeImageFile(path, file);
 
             user.updateInfo(userModifyRequest.nickname(), userPassword, imageUrl);
         } else {
