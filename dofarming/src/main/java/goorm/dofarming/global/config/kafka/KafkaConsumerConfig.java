@@ -1,6 +1,7 @@
 package goorm.dofarming.global.config.kafka;
 
 import com.google.common.collect.ImmutableMap;
+import goorm.dofarming.domain.mongo.message.dto.MessageDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -19,20 +20,20 @@ import java.util.Map;
 public class KafkaConsumerConfig {
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, MessageDto> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, MessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, String> consumerFactory() {
+    public ConsumerFactory<String, MessageDto> consumerFactory() {
 
-        JsonDeserializer<String> deserializer = new JsonDeserializer<>(String.class);
+        JsonDeserializer<MessageDto> deserializer = new JsonDeserializer<>(MessageDto.class);
         deserializer.setRemoveTypeHeaders(false);
         deserializer.addTrustedPackages("*");
 
-        ErrorHandlingDeserializer<String> errorHandlingDeserializer = new ErrorHandlingDeserializer<>(deserializer);
+        ErrorHandlingDeserializer<MessageDto> errorHandlingDeserializer = new ErrorHandlingDeserializer<>(deserializer);
 
         Map<String, Object> consumerConfiguration =
                 ImmutableMap.<String, Object>builder()
@@ -40,7 +41,6 @@ public class KafkaConsumerConfig {
                         .put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class)
                         .put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, errorHandlingDeserializer)
                         .put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, deserializer.getClass().getName())
-                        .put(JsonDeserializer.TRUSTED_PACKAGES, "*")
                         .put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")
                         .build();
 
