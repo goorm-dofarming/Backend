@@ -1,24 +1,30 @@
 package goorm.chat.service;
 
-import goorm.chat.domain.Message;
-import goorm.chat.dto.MessageRequest;
-import goorm.chat.dto.MessageResponse;
-import goorm.chat.repository.MessageRepository;
+import goorm.chat.config.KafkaConstants;
+import goorm.chat.dto.MessageDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class MessageService {
 
-    private final MessageRepository messageRepository;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    @Transactional
-    public MessageResponse saveMessage(Long roomId, MessageRequest messageRequest) {
-        Message message = Message.message(roomId, messageRequest);
-        Message saveMessage = messageRepository.save(message);
-        return MessageResponse.from(saveMessage);
+    public void send(Object message) {
+        kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, message);
+    }
+
+    @KafkaListener(topics = KafkaConstants.KAFKA_TOPIC)
+    public void consume(MessageDto messageDto) throws IOException {
+        simpMessagingTemplate.convertAndSend("/room/" + messageDto.roomId(), messageDto);
     }
 }

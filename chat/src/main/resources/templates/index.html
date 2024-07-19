@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Room</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script></script>
+</head>
+<body>
+<div id="username-page">
+    <h1>Enter your username</h1>
+    <input type="text" id="name" placeholder="Enter your name"/>
+    <button onclick="connect()">Join</button>
+</div>
+<div id="chat-page" style="display:none;">
+    <h1>Chat Room</h1>
+    <div id="chat">
+        <div id="messageArea"></div>
+    </div>
+    <input type="text" id="message" placeholder="Type a message..."/>
+    <button onclick="sendMessage()">Send</button>
+</div>
+<script>
+    var stompClient = null;
+    var roomId = 1;
+    var userId = Math.floor(Math.random() * 1000); // Just a random user ID for demo
+
+    function connect() {
+        var socket = new SockJS('http://54.180.126.49:8081/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            $('#username-page').hide();
+            $('#chat-page').show();
+            stompClient.subscribe('/room/1', function (message) {
+                showMessage(JSON.parse(message.body));
+            });
+
+            stompClient.send("/chat/sendMessage",
+                {},
+                JSON.stringify({roomId: roomId, userId: userId, nickname: $("#name").val(), messageType: 'JOIN', content: ''})
+            );
+        });
+    }
+
+    function sendMessage() {
+        var messageContent = $("#message").val();
+        if(messageContent && stompClient) {
+            var chatMessage = {
+                roomId: roomId,
+                userId: userId,
+                nickname: $("#name").val(),
+                messageType: 'SEND',
+                content: messageContent
+            };
+            stompClient.send("/chat/sendMessage", {}, JSON.stringify(chatMessage));
+            $("#message").val('');
+        }
+    }
+
+    function showMessage(message) {
+        var messageArea = $("#messageArea");
+        var messageElement = $("<div></div>");
+        if(message.messageType === 'JOIN') {
+            messageElement.text(message.nickname + " joined!");
+        } else if (message.messageType === 'LEAVE') {
+            messageElement.text(message.nickname + " left!");
+        } else {
+            messageElement.text(message.nickname + ": " + message.content);
+        }
+        messageArea.append(messageElement);
+    }
+</script>
+</body>
+</html>
