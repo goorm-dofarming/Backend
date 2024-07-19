@@ -40,6 +40,7 @@ public class KafkaConsumerConfig {
                         .put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class)
                         .put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, errorHandlingDeserializer)
                         .put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, deserializer.getClass().getName())
+                        .put(JsonDeserializer.TRUSTED_PACKAGES, "*")
                         .put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")
                         .build();
 
