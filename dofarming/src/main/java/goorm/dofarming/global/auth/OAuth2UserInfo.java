@@ -13,7 +13,6 @@ public abstract class OAuth2UserInfo {
     // 소셜 식별 값 : 구글 - "sub", 카카오 - "id", 네이버 - "response"
     public abstract String getId();
     public abstract String getNickname();
-
     public abstract String getEmail();
     public abstract String getImageUrl();
 }
