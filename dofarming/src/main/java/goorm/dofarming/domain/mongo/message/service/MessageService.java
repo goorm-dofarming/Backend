@@ -20,7 +20,7 @@ public class MessageService {
     /**
      * 메시지 조회
      */
-    public List<MessageResponse> searchMessageList(Long messageId, Long roomId, LocalDateTime createdAt) {
+    public List<MessageResponse> searchMessageList(String messageId, Long roomId, LocalDateTime createdAt) {
         return messageRepository.search(messageId, roomId, createdAt)
                 .stream().map(MessageResponse::from).collect(Collectors.toList());
     }

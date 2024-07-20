@@ -13,13 +13,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Getter
-@Document(collection = "messages")
 @Entity
+@Document(collection = "messages")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Message {
 
     @Id
-    private Long id;
+    private String id;
 
     private Long userId;
 
@@ -38,6 +38,7 @@ public class Message {
         Message message = new Message();
         message.userId = messageDto.userId();
         message.nickname = messageDto.nickname();
+        message.roomId = messageDto.roomId();
         message.messageType = messageDto.messageType();
         message.content = messageDto.content();
         return message;
