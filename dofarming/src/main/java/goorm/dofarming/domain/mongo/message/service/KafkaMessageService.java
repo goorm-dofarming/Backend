@@ -1,5 +1,6 @@
 package goorm.dofarming.domain.mongo.message.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import goorm.dofarming.domain.mongo.message.dto.MessageDto;
 import goorm.dofarming.domain.mongo.message.entity.Message;
 import goorm.dofarming.domain.mongo.message.repository.MessageRepository;
@@ -16,8 +17,11 @@ public class KafkaMessageService {
 
     private final MessageRepository messageRepository;
 
+    private final ObjectMapper mapper;
+
     @KafkaListener(topics = KafkaConstants.KAFKA_TOPIC, groupId = "message-group")
-    public void saveMessage(MessageDto messageDto) throws IOException {
+    public void saveMessage(String message) throws IOException {
+        MessageDto messageDto = mapper.readValue(message, MessageDto.class);
         messageRepository.save(Message.message(messageDto));
     }
 }
