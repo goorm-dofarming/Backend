@@ -8,6 +8,7 @@ public record MessageDto(
         String nickname,
         MessageType messageType,
         String content
-) implements Seri {
+){}
+        //implements Seri {
 
-}
+// }
