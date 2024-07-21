@@ -5,13 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
 import goorm.dofarming.infra.tourapi.config.WebClientConfig;
-import goorm.dofarming.infra.tourapi.domain.Activity;
-import goorm.dofarming.infra.tourapi.domain.DataType;
-import goorm.dofarming.infra.tourapi.domain.Restaurant;
-import goorm.dofarming.infra.tourapi.domain.Tour;
-import goorm.dofarming.infra.tourapi.repository.ActivityRepository;
-import goorm.dofarming.infra.tourapi.repository.RestaurantRepository;
-import goorm.dofarming.infra.tourapi.repository.TourRepository;
+import goorm.dofarming.infra.tourapi.domain.*;
+import goorm.dofarming.infra.tourapi.repository.*;
 import io.netty.handler.codec.http.HttpScheme;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +22,15 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BasicApiService {
+public class BasicDownloadApiService {
 
     private final WebClient webClient;
     private final RestaurantRepository restaurantRepository;
     private final TourRepository tourRepository;
     private final ActivityRepository activityRepository;
+    private final CafeRepository cafeRepository;
+    private final OceanRepository oceanRepository;
+    private final MountainRepository mountainRepository;
     private final ObjectMapper objectMapper;
 
     private static final String REQUEST_HOST = "apis.data.go.kr/B551011/KorService1";
@@ -48,8 +46,8 @@ public class BasicApiService {
             String category = CATEGORY_LIST.get(i);
 
             log.info("MAX_PAGE : {}", CalculateMaxPage(CATEGORY_LIST, cI++));
-
             log.info("category : {}", category);
+
             for (int pageNo = 1; pageNo <= MAX_PAGE; pageNo++) {
                 // 여기서도 Json으로 받아올 수는 있는데 그러면 xml응답일 경우 처리하기 귀찮아서 일단 String으로 받아옴.
                 String responseBody = buildURI(pageNo, category).block();
@@ -141,11 +139,11 @@ public class BasicApiService {
 
             // 파싱할 데이터가 없다면 데이터 업데이트 종료
             if (items.isMissingNode()) {
-                log.info("[[ MISSING ERROR ]]");
+                log.info("[[ MISSING ]]");
                 return;
             }
             if (items.isEmpty()) {
-                log.info("[[ SIZE ERROR ]]");
+                log.info("[[ EMPTY ]]");
             }
 
 //            log.info("[[item 저장 시작]]");
@@ -179,6 +177,15 @@ public class BasicApiService {
             } else if (dataType == DataType.Tour) {
                 Tour tour = new Tour(title, addr, tel, image, mapx, mapy);
                 tourRepository.save(tour);
+            } else if (dataType == DataType.Cafe) {
+                Cafe cafe = new Cafe(title, addr, tel, image, mapx, mapy);
+                cafeRepository.save(cafe);
+            } else if (dataType == DataType.Ocean) {
+                Ocean ocean = new Ocean(title, addr, tel, image, mapx, mapy);
+                oceanRepository.save(ocean);
+            } else if (dataType == DataType.Mountain) {
+                Mountain mountain = new Mountain(title, addr, tel, image, mapx, mapy);
+                mountainRepository.save(mountain);
             }
         } catch (Exception e) {
             throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "데이터 타입이 맞지 않습니다.");
@@ -194,7 +201,8 @@ public class BasicApiService {
             // 데이터들을 받아온다. (numOfRows 만큼 item 들이 있음)
             Integer numOfRows = root.path("response").path("body").path("numOfRows").asInt();
             Integer totalCount = root.path("response").path("body").path("totalCount").asInt();
-            MAX_PAGE = totalCount / numOfRows + 1;
+            if(totalCount <= numOfRows) MAX_PAGE = 1;
+            else MAX_PAGE = totalCount / numOfRows + 1;
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "서버 오류 입니다.");
         }
