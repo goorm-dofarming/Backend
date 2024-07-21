@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +36,7 @@ public class MessageController {
     )
     @GetMapping("/message")
     public ResponseEntity<List<MessageResponse>> getSearchMessage(
-            @Parameter @RequestParam(required = false) Long messageId,
+            @Parameter @RequestParam(required = false) String messageId,
             @Parameter @RequestParam(required = false) Long roomId,
             @Parameter @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
     ) {

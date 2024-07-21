@@ -12,7 +12,6 @@ public record ChatroomResponse(
         Long roomId,
         String title,
         String regionName,
-        String regionImageUrl,
         List<TagResponse> tags,
         Long participantCount,
         LocalDateTime createAt
@@ -22,7 +21,6 @@ public record ChatroomResponse(
                 chatroom.getRoomId(),
                 chatroom.getTitle(),
                 chatroom.getRegion().name(),
-                chatroom.getRegion().getImageUrl(),
                 chatroom.getTags().stream().map(TagResponse::of).collect(Collectors.toList()),
                 chatroom.getParticipantCount(),
                 chatroom.getCreatedAt()

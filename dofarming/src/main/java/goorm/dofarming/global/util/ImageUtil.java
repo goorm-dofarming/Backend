@@ -16,19 +16,18 @@ import java.util.UUID;
 @Component
 public class ImageUtil {
 
+    private static UUID uuid = UUID.randomUUID();
+
     @Value("${image.file.path}")
     private String folder;
 
-    public String makeFilePath (MultipartFile imageFile) {
+    public String getImageUrl(String root, MultipartFile multipartFile) {
+        return root + uuid + "_" + multipartFile.getOriginalFilename();
+    }
 
-        // 파일 이름 생성
-        UUID uuid = UUID.randomUUID();
-        String imageFileName = uuid + "_" + imageFile.getOriginalFilename();
-
+    public Path makeFilePath (String fileName) {
         // 파일 경로 생성
-        String imageFilePath = folder + imageFileName;
-
-        return imageFilePath;
+        return Paths.get(folder + fileName);
     }
 
     public void writeImageFile(Path path, MultipartFile file) {
