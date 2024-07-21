@@ -11,9 +11,8 @@ public record Item(
         @JsonProperty("mapx") String mapX,
         @JsonProperty("mapy") String mapY,
         @JsonProperty("firstimage") String image,
-        @JsonProperty("contentid") String contentId,
-        @JsonProperty("cat3") String cat3,
         @JsonProperty("cat1") String cat1,
-        @JsonProperty("cat2") String cat2
+        @JsonProperty("cat2") String cat2,
+        @JsonProperty("cat3") String cat3
 ) {
 }

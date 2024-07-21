@@ -1,4 +1,4 @@
-package goorm.dofarming.infra.tourapi.service;
+package goorm.dofarming.infra.tourapi.service.testpackage;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -7,6 +7,7 @@ import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
 import goorm.dofarming.infra.tourapi.domain.DataType;
 import goorm.dofarming.infra.tourapi.dto.Item;
+import goorm.dofarming.infra.tourapi.service.BasicDownloadApiService;
 import io.netty.handler.codec.http.HttpScheme;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,23 +27,23 @@ public class TestApiService {
 
     private static final String REQUEST_HOST = "apis.data.go.kr";  // API 요청을 위한 호스트 주소
     private static final String REQUEST_PATH = "/B551011/KorService1/locationBasedList1";  // API 요청 경로
-    List<String> ACTIVITY_CODE_LIST_CAT3 = Arrays.asList("A02020400", "A02020800", "A02030100", "A02030200", "A02030300", "A02030400", "A04010700");
-    List<String> ACTIVITY_CODE_LIST_CAT1 = Arrays.asList("A03"); // 예외) 골프 : cat3 = A03020700
+//    List<String> ACTIVITY_CODE_LIST_CAT3 = Arrays.asList("A02020400", "A02020800", "A02030100", "A02030200", "A02030300", "A02030400", "A04010700");
+//    List<String> ACTIVITY_CODE_LIST_CAT1 = Arrays.asList("A03"); // 예외) 골프 : cat3 = A03020700
+    List<String> RESTAURANT_CODE_LIST_CAT3 = Arrays.asList("A05020200", "A05020300", "A05020400", "A05020700");
 
     private final WebClient webClient;  // WebClient 인스턴스
-    private final BasicApiService basicApiService;
+    private final BasicDownloadApiService basicApiService;
 
     // 모든 소분류에 대해서 받아옴.
-    public Mono<String> DownloadRestaurantDataByCat3() {
-        basicApiService.fetchByCategory(ACTIVITY_CODE_LIST_CAT3, DataType.Activity);
-        return basicApiService.buildURL(1, 0, ACTIVITY_CODE_LIST_CAT3); // 확인용 return 값
+    public String DownloadRestaurantDataByCat3() {
+        return basicApiService.fetchByCategory(RESTAURANT_CODE_LIST_CAT3, DataType.Restaurant);
     }
 
-    // 대분류에서 받아옴
-    public Mono<String> DownloadRestaurantDataByCat1() {
-        basicApiService.fetchByCategory(ACTIVITY_CODE_LIST_CAT1, DataType.Activity);
-        return basicApiService.buildURL(1, 0, ACTIVITY_CODE_LIST_CAT1); // 확인용 return 값
-    }
+//    // 대분류에서 받아옴
+//    public Mono<String> DownloadRestaurantDataByCat1() {
+//        basicApiService.fetchByCategory(ACTIVITY_CODE_LIST_CAT1, DataType.Activity);
+//        return basicApiService.buildURL(1, 0, ACTIVITY_CODE_LIST_CAT1); // 확인용 return 값
+//    }
 
 
 
