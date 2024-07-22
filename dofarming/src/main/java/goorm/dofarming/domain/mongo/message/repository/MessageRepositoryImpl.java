@@ -18,7 +18,7 @@ public class MessageRepositoryImpl extends QuerydslRepositorySupport implements 
     }
 
     @Override
-    public List<Message> search(Long messageId, Long roomId, LocalDateTime createdAt) {
+    public List<Message> search(String messageId, Long roomId, LocalDateTime createdAt) {
         return from(message)
                 .where(
                         roomIdEq(roomId),
@@ -35,7 +35,7 @@ public class MessageRepositoryImpl extends QuerydslRepositorySupport implements 
     private BooleanExpression roomIdEq(Long roomId) {
         return roomId != null ? message.roomId.eq(roomId) : null;
     }
-    private BooleanExpression cursorCondition(Long id, LocalDateTime createdAt) {
+    private BooleanExpression cursorCondition(String id, LocalDateTime createdAt) {
         if (id == null || createdAt == null) {
             return null;
         }

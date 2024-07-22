@@ -6,5 +6,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MessageRepositoryCustom {
-    List<Message> search(Long messageId, Long roomId, LocalDateTime createdAt);
+    List<Message> search(String messageId, Long roomId, LocalDateTime createdAt);
 }

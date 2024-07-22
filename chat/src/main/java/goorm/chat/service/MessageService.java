@@ -1,5 +1,7 @@
 package goorm.chat.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import goorm.chat.config.KafkaConstants;
 import goorm.chat.dto.MessageDto;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +18,29 @@ import java.io.IOException;
 @Slf4j
 public class MessageService {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public void send(Object message) {
-        kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, message);
+    private final ObjectMapper mapper;
+
+    public void send(MessageDto message) {
+        try {
+            final String payload = mapper.writeValueAsString(message);
+            kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, payload);
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @KafkaListener(topics = KafkaConstants.KAFKA_TOPIC)
-    public void consume(MessageDto messageDto) throws IOException {
-        simpMessagingTemplate.convertAndSend("/room/" + messageDto.roomId(), messageDto);
+    public void consume(String message) throws IOException {
+        try {
+            MessageDto messageDto = mapper.readValue(message, MessageDto.class);
+            simpMessagingTemplate.convertAndSend("/room/" + messageDto.roomId(), messageDto);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

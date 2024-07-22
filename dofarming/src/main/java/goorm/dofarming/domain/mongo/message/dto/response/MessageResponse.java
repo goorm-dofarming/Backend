@@ -8,9 +8,8 @@ import java.time.LocalDateTime;
 
 @Schema(description = "메시지 응답 정보를 담는 DTO")
 public record MessageResponse(
-
-        @Schema(description = "메시지 ID", example = "1")
-        Long messageId,
+        @Schema(description = "메시지 ID", example = "1sdfxc9lskji1")
+        String messageId,
 
         @Schema(description = "사용자 ID", example = "1")
         Long userId,

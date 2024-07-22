@@ -29,9 +29,7 @@ public class KafkaConsumerConfig {
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
 
-        JsonDeserializer<String> deserializer = new JsonDeserializer<>(String.class);
-        deserializer.setRemoveTypeHeaders(false);
-        deserializer.addTrustedPackages("*");
+        StringDeserializer deserializer = new StringDeserializer();
 
         ErrorHandlingDeserializer<String> errorHandlingDeserializer= new ErrorHandlingDeserializer<>(deserializer);
 
@@ -41,7 +39,6 @@ public class KafkaConsumerConfig {
                         .put(ConsumerConfig.GROUP_ID_CONFIG, KafkaConstants.GROUP_ID)
                         .put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class)
                         .put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, errorHandlingDeserializer)
-                        .put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, deserializer.getClass().getName())
                         .put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")
                         .build();
 

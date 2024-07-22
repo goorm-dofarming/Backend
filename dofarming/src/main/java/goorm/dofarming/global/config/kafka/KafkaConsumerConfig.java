@@ -1,6 +1,7 @@
 package goorm.dofarming.global.config.kafka;
 
 import com.google.common.collect.ImmutableMap;
+import goorm.dofarming.domain.mongo.message.dto.MessageDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -28,21 +29,17 @@ public class KafkaConsumerConfig {
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
 
-        JsonDeserializer<String> deserializer = new JsonDeserializer<>(String.class);
-        deserializer.setRemoveTypeHeaders(false);
-        deserializer.addTrustedPackages("*");
+        StringDeserializer deserializer = new StringDeserializer();
 
-        ErrorHandlingDeserializer<String> errorHandlingDeserializer = new ErrorHandlingDeserializer<>(deserializer);
+        ErrorHandlingDeserializer<String> errorHandlingDeserializer= new ErrorHandlingDeserializer<>(deserializer);
 
         Map<String, Object> consumerConfiguration =
                 ImmutableMap.<String, Object>builder()
                         .put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConstants.KAFKA_BROKER)
                         .put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class)
                         .put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, errorHandlingDeserializer)
-                        .put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, deserializer.getClass().getName())
                         .put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")
                         .build();
-
 
         return new DefaultKafkaConsumerFactory<>(consumerConfiguration, new StringDeserializer(), errorHandlingDeserializer);
     }
