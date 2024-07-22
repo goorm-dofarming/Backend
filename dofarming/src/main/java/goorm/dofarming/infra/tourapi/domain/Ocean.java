@@ -1,9 +1,7 @@
 package goorm.dofarming.infra.tourapi.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import goorm.dofarming.global.common.entity.Status;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -20,6 +18,12 @@ public class Ocean {
     private String image;
     private Double mapX;
     private Double mapY;
+
+    @Column(name = "data_type")
+    private int dataType = 1;
+
+//    @Enumerated(EnumType.STRING)
+//    private Status status = Status.ACTIVE;
 
     public Ocean(String title, String addr, String tel, String image, Double mapX, Double mapY) {
         this.title = title;
