@@ -1,37 +1,53 @@
 package goorm.dofarming.infra.tourapi.controller;
 
-import goorm.dofarming.infra.tourapi.dto.Item;
-import goorm.dofarming.infra.tourapi.service.ContentBasedApiService;
-import goorm.dofarming.infra.tourapi.service.LocationBasedApiService;
+import goorm.dofarming.infra.tourapi.service.DownloadApiService;
+import goorm.dofarming.infra.tourapi.service.testpackage.TestApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
-
-import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/apiCall")
 public class ApiController {
 
-    private final LocationBasedApiService locationBasedApiService;
-    private final ContentBasedApiService contentBasedApiService;
+    private final TestApiService testApiService;
+    private final DownloadApiService downloadApiService;
 
-    @GetMapping("/apiCall")
-    public Mono<Map<Integer, List<Item>>> fetchLocation(
-            @RequestParam double mapX,
-            @RequestParam double mapY,
-            @RequestParam List<Integer> contentTypeIds
-    ) {
-        return locationBasedApiService.fetchLocationBasedLists(mapX, mapY, contentTypeIds);
+    @GetMapping("/testApi")
+    public String testApi() {
+        return testApiService.DownloadRestaurantDataByCat3();
     }
 
-    @GetMapping("/apiCall/mountains")
-    public Mono<List<Item>> fetchMountains(
-            @RequestParam double mapX,
-            @RequestParam double mapY
-    ) {
-        return contentBasedApiService.fetchMountains(mapX, mapY);
+    @GetMapping("/download/Restaurant")
+    public String updateRestaurant() {
+        return downloadApiService.DownloadRestaurantListByCat3();
     }
+
+    @GetMapping("/download/Activity")
+    public String updateActivity() {
+        return downloadApiService.DownloadActivityListByCat3();
+    }
+
+    @GetMapping("/download/TourAttraction")
+    public String updateTourAttraction() {
+        return downloadApiService.DownloadTourListByCat3();
+    }
+
+    @GetMapping("/download/Cafe")
+    public String updateCafe() {
+        return downloadApiService.DownloadCafeListByCat3();
+    }
+
+    @GetMapping("/download/Ocean")
+    public String updateOcean() {
+        return downloadApiService.DownloadOceanListByCat3();
+    }
+
+    @GetMapping("/download/Mountain")
+    public String updateMountain() {
+        return downloadApiService.DownloadMountainListByCat3();
+    }
+
 }

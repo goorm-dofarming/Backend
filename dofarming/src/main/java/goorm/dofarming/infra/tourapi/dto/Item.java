@@ -47,5 +47,6 @@ public record Item(
         @Schema(description = "카테고리 2", example = "A02")
         @JsonProperty("cat2")
         String cat2
+
 ) {
 }
