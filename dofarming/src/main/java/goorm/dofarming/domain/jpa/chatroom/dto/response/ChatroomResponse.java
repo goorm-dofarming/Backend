@@ -27,7 +27,7 @@ public record ChatroomResponse(
         Long participantCount,
 
         @Schema(description = "채팅방 생성 시간", example = "2023-07-20T12:55:56")
-        LocalDateTime createAt
+        LocalDateTime createdAt
 ) {
     public static ChatroomResponse of(Chatroom chatroom) {
         return new ChatroomResponse(
