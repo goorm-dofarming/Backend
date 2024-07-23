@@ -3,6 +3,7 @@ package goorm.dofarming.domain.jpa.user.service;
 import goorm.dofarming.domain.jpa.user.dto.request.UserModifyRequest;
 import goorm.dofarming.domain.jpa.user.dto.request.UserSignUpRequest;
 import goorm.dofarming.domain.jpa.user.dto.response.UserResponse;
+import goorm.dofarming.domain.jpa.user.entity.Role;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.common.entity.Status;
@@ -33,9 +34,9 @@ public class UserService {
      */
     @Transactional
     public Long createUser(UserSignUpRequest userSignUpRequest) {
-        isDuplicateEmail(userSignUpRequest.email());
+        isDuplicateEmail(userSignUpRequest.email(), Role.DOFARMING);
 
-        String nickname = "guest-" + RandomGenerator.generateCode();
+        String nickname = RandomGenerator.generateNickname();
 
         User user = User.user(userSignUpRequest.email(), nickname, userSignUpRequest.password());
         User saveUser = userRepository.save(user);
@@ -118,8 +119,8 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "User not found."));
     }
 
-    private void isDuplicateEmail(String email) {
-        userRepository.findByEmailAndStatus(email, Status.ACTIVE)
+    private void isDuplicateEmail(String email, Role role) {
+        userRepository.findByEmailAndRoleAndStatus(email, role, Status.ACTIVE)
                 .ifPresent(user -> { throw new CustomException(ErrorCode.DUPLICATE_OBJECT, "Email already exists."); });
     }
 }
