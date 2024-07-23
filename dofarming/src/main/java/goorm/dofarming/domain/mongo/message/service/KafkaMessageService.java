@@ -21,7 +21,7 @@ public class KafkaMessageService {
 
     private final ObjectMapper mapper;
 
-    @KafkaListener(topics = KafkaConstants.KAFKA_TOPIC, groupId = "message-group")
+    @KafkaListener(topics = KafkaConstants.CHAT_TOPIC, groupId = "message-group")
     public void saveMessage(String message) throws IOException {
         MessageDto messageDto = mapper.readValue(message, MessageDto.class);
         messageRepository.save(Message.message(messageDto));
