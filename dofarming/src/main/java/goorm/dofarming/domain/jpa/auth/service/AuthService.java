@@ -53,13 +53,10 @@ public class AuthService {
 
         User user = User.of(oauthRequest.socialType(), oauthRequest.data());
 
-        userRepository.findByEmailAndStatus(user.getEmail(), Status.ACTIVE)
-                .ifPresentOrElse(
-                        findUser -> findUser.updateInfo(user.getNickname(), user.getPassword(), user.getImageUrl()),
-                        () -> userRepository.save(user)
-                );
+        User findUser = userRepository.findByEmailAndRoleAndStatus(user.getEmail(), user.getRole(), Status.ACTIVE)
+                .orElseGet(() -> userRepository.save(user));
 
-        AuthDto authDto = AuthDto.from(user);
+        AuthDto authDto = AuthDto.from(findUser);
 
         return jwtUtil.createAccessToken(authDto);
     }
