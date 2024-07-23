@@ -27,7 +27,7 @@ public record MessageResponse(
         String content,
 
         @Schema(description = "메시지 생성 시간", example = "2024-07-20T12:34:56")
-        LocalDateTime createAt
+        LocalDateTime createdAt
 ) {
     public static MessageResponse from(Message message) {
         return new MessageResponse(
