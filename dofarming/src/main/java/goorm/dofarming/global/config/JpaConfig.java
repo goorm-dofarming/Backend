@@ -7,7 +7,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableJpaAuditing
 @EnableJpaRepositories(
-        basePackages = "goorm.dofarming.domain.jpa"
+        basePackages = {
+                "goorm.dofarming.domain.jpa",
+                "goorm.dofarming.infra.tourapi"
+        }
 )
 public class JpaConfig {
 }

@@ -13,8 +13,8 @@ public class RandomGenerator {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private static final  List<String> colors = Arrays.asList(
-            "AFC2FF", "93E0B0", "67B5A0", "CFB6FF", "97D8F0", "000000",
-            "DFE199", "F98DEE", "F2BCBE", "4EEC39", "F4E35E", "FFD147"
+            "AFC2FF", "93E0B0", "67B5A0", "CFB6FF", "97D8F0", "FFD3B6",
+            "DFE199", "FFCEEA", "F2BCBE", "FFB22C", "F4E35E", "DFDAD5"
     );
 
     public static String generateCode() {
