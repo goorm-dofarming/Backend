@@ -21,12 +21,15 @@ public class Location extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "location_id")
     private Long locationId;
-    // 위도
-    private String latitude;
-    // 경도
-    private String longitude;
+    // placeId + dataType 으로 데이터 조회 가능
+    // 추천된 장소의 위도
+//    private String latitude;
+    // 추천된 장소의 경도
+//    private String longitude;
 
     private String placeId;
+
+    private int dataType;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -38,11 +41,14 @@ public class Location extends BaseEntity {
     private List<Recommend> recommends = new ArrayList<>();
 
     //== 생성 메서드 ==//
-    public static Location location(String latitude, String longitude, String placeId) {
+    public static Location location(String placeId, Integer dataType) {
         Location location = new Location();
-        location.latitude = latitude;
-        location.longitude = longitude;
+        location.dataType = dataType;
+        location.placeId = placeId;
         location.status = Status.ACTIVE;
+//        location.latitude = latitude;
+//        location.longitude = longitude;
         return location;
     }
+
 }

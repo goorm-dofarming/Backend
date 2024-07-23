@@ -1,9 +1,13 @@
 package goorm.dofarming.domain.jpa.recommend.service;
 
+import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.location.repository.LocationRepository;
+import goorm.dofarming.domain.jpa.log.entity.Log;
 import goorm.dofarming.domain.jpa.log.repository.LogRepository;
 import goorm.dofarming.domain.jpa.recommend.repository.RecommendRepository;
 import goorm.dofarming.domain.jpa.recommend.util.RecommendConfig;
+import goorm.dofarming.domain.jpa.user.entity.User;
+import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
 import goorm.dofarming.infra.tourapi.domain.Ocean;
@@ -31,6 +35,7 @@ public class RecommendService {
     private final TourRepository tourRepository;
     private final RestaurantRepository restaurantRepository;
     private final CafeRepository cafeRepository;
+    private final UserRepository userRepository;
     private final static double firstRadius = RecommendConfig.firstRadius;
     private final static double secondRadius = RecommendConfig.secondRadius;
 
@@ -50,6 +55,36 @@ public class RecommendService {
         themes.forEach(theme -> {
             if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 8) {
                 List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
+                recommendList.addAll(randomSelect8(themeLocations));
+            } else {
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
+                recommendList.addAll(randomSelect8(themeLocations));
+            }
+        });
+
+        return recommendList;
+    }
+
+    public List<Object> recommendWithOcean(List<Integer> themes, Long userId) {
+
+        ArrayList<Object> recommendList = new ArrayList<>();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 회원입니다."));
+
+        Ocean ocean = randomOcean();
+        recommendList.add(ocean);
+
+        // 해수욕장 위치가 핑으로 찍힘
+        Double mapX = ocean.getMapX();
+        Double mapY = ocean.getMapY();
+
+        Log log = Log.log(mapX, mapY, "Ocean", user);
+
+        // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 8가지 뽑고 추천!!
+        themes.forEach(theme -> {
+            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 8) {
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
+//                Location.location();
                 recommendList.addAll(randomSelect8(themeLocations));
             } else {
                 List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
@@ -127,6 +162,24 @@ public class RecommendService {
             default:
                 throw new IllegalArgumentException("findLocationById 에서 Type Error");
         }
+    }
+
+    public String returnDataType(Integer theme) {
+        return switch (theme) {
+            case 1 -> // Ocean
+                    "Ocean";
+            case 2 -> // Mountain
+                    "Mountain";
+            case 3 -> // Activity
+                    "Activity";
+            case 4 -> // Tour
+                    "Tour";
+            case 5 -> // Restaurant
+                    "Restaurant";
+            case 6 -> // Cafe
+                    "Cafe";
+            default -> throw new IllegalArgumentException("Type Error");
+        };
     }
 
     private Ocean randomOcean() {
