@@ -1,10 +1,11 @@
 package goorm.dofarming.infra.tourapi.domain;
 
 public enum DataType {
-    Restaurant, // 1
-    Tour, // 2
+    // 우선순위에 따라 번호를 메김
+    Ocean, // 1
+    Mountain, // 2
     Activity, // 3
-    Cafe, // 4
-    Ocean, // 5
-    Mountain // 6
+    Tour, // 4
+    Restaurant, // 5
+    Cafe // 6
 }
