@@ -3,12 +3,9 @@ package goorm.dofarming.domain.jpa.join.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import goorm.dofarming.domain.jpa.join.dto.request.AlarmDto;
-import goorm.dofarming.domain.jpa.join.entity.Join;
 import goorm.dofarming.domain.jpa.join.repository.JoinRepository;
-import goorm.dofarming.domain.mongo.message.dto.MessageDto;
-import goorm.dofarming.domain.mongo.message.entity.Message;
-import goorm.dofarming.domain.mongo.message.entity.MessageType;
-import goorm.dofarming.domain.mongo.message.repository.MessageRepository;
+import goorm.dofarming.domain.jpa.message.dto.MessageDto;
+import goorm.dofarming.domain.jpa.message.entity.MessageType;
 import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.config.kafka.KafkaConstants;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +14,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

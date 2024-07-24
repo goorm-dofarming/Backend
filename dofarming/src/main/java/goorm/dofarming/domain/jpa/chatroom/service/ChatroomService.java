@@ -1,9 +1,9 @@
 package goorm.dofarming.domain.jpa.chatroom.service;
 
 import goorm.dofarming.domain.jpa.chatroom.dto.request.ChatroomCreateRequest;
-import goorm.dofarming.domain.jpa.chatroom.dto.response.ChatroomResponse;
+import goorm.dofarming.domain.jpa.chatroom.dto.response.OpenChatroomResponse;
+import goorm.dofarming.domain.jpa.chatroom.dto.response.MyChatroomResponse;
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
-import goorm.dofarming.domain.jpa.chatroom.entity.Region;
 import goorm.dofarming.domain.jpa.chatroom.repository.ChatroomRepository;
 
 import goorm.dofarming.domain.jpa.tag.entity.Tag;
@@ -95,17 +95,17 @@ public class ChatroomService {
     /**
      * 오픈 채팅방 검색
      */
-    public List<ChatroomResponse> searchRoomList(Long roomId, String condition, LocalDateTime createdAt) {
+    public List<OpenChatroomResponse> searchRoomList(Long roomId, String condition, LocalDateTime createdAt) {
         return chatroomRepository.search(roomId, condition, createdAt)
-                .stream().map(ChatroomResponse::of).collect(Collectors.toList());
+                .stream().map(OpenChatroomResponse::of).collect(Collectors.toList());
     }
 
     /**
      * 내 채팅방 리스트
      */
-    public List<ChatroomResponse> myRoomList(Long userId) {
+    public List<MyChatroomResponse> myRoomList(Long userId) {
         return joinRepository.findAllByUser_UserIdAndStatus(userId, Status.ACTIVE)
-                .stream().map(join -> ChatroomResponse.of(join.getChatroom())).collect(Collectors.toList());
+                .stream().map(join -> MyChatroomResponse.of(join)).collect(Collectors.toList());
     }
 
     private Chatroom existByRoomId(Long roomId) {

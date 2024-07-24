@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Schema(description = "채팅방 응답 정보를 담는 DTO")
-public record ChatroomResponse(
+public record OpenChatroomResponse(
 
         @Schema(description = "채팅방 ID", example = "1")
         Long roomId,
@@ -29,8 +29,8 @@ public record ChatroomResponse(
         @Schema(description = "채팅방 생성 시간", example = "2023-07-20T12:55:56")
         LocalDateTime createdAt
 ) {
-    public static ChatroomResponse of(Chatroom chatroom) {
-        return new ChatroomResponse(
+    public static OpenChatroomResponse of(Chatroom chatroom) {
+        return new OpenChatroomResponse(
                 chatroom.getRoomId(),
                 chatroom.getTitle(),
                 chatroom.getRegion().name(),
