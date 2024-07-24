@@ -4,6 +4,7 @@ import goorm.dofarming.domain.jpa.auth.dto.response.AuthDto;
 import goorm.dofarming.domain.jpa.join.entity.Join;
 import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.log.entity.Log;
+import goorm.dofarming.domain.jpa.message.entity.Message;
 import goorm.dofarming.global.auth.GoogleOAuth2UserInfo;
 import goorm.dofarming.global.auth.KakaoOAuth2UserInfo;
 import goorm.dofarming.global.auth.NaverOAuth2UserInfo;

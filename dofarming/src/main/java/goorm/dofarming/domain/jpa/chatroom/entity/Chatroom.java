@@ -1,6 +1,7 @@
 package goorm.dofarming.domain.jpa.chatroom.entity;
 
 import goorm.dofarming.domain.jpa.join.entity.Join;
+import goorm.dofarming.domain.jpa.message.entity.Message;
 import goorm.dofarming.domain.jpa.tag.entity.Tag;
 import goorm.dofarming.global.common.entity.BaseEntity;
 import goorm.dofarming.global.common.entity.Status;
@@ -37,10 +38,14 @@ public class Chatroom extends BaseEntity {
     private Long participantCount = 0L;
 
     @OneToMany(mappedBy = "chatroom", cascade = CascadeType.ALL)
+    private List<Message> messages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "chatroom", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
 
     @OneToMany(mappedBy = "chatroom", cascade = CascadeType.ALL)
     private List<Tag> tags = new ArrayList<>();
+
 
     //== 생성 메서드 ==//
     public static Chatroom chatroom(String title, Region region) {
