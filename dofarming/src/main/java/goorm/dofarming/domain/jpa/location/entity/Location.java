@@ -27,7 +27,7 @@ public class Location extends BaseEntity {
     // 추천된 장소의 경도
 //    private String longitude;
 
-    private String placeId;
+    private Long placeId;
 
     private int dataType;
 
@@ -41,7 +41,7 @@ public class Location extends BaseEntity {
     private List<Recommend> recommends = new ArrayList<>();
 
     //== 생성 메서드 ==//
-    public static Location location(String placeId, Integer dataType) {
+    public static Location location(Long placeId, Integer dataType) {
         Location location = new Location();
         location.dataType = dataType;
         location.placeId = placeId;
