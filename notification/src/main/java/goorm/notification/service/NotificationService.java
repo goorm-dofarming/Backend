@@ -56,7 +56,7 @@ public class NotificationService {
     public void sendAlarm(String message) throws IOException {
         AlarmDto alarmDto = mapper.readValue(message, AlarmDto.class);
 
-        send(alarmDto.receiveId(), "alarm");
+        send(alarmDto.receiveId(), alarmDto);
     }
 
     private void sendToClient(SseEmitter emitter, String emitterId, Object data) {

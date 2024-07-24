@@ -1,7 +1,7 @@
-package goorm.dofarming.domain.mongo.message.dto.response;
+package goorm.dofarming.domain.jpa.message.dto.response;
 
-import goorm.dofarming.domain.mongo.message.entity.Message;
-import goorm.dofarming.domain.mongo.message.entity.MessageType;
+import goorm.dofarming.domain.jpa.message.entity.Message;
+import goorm.dofarming.domain.jpa.message.entity.MessageType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Schema(description = "메시지 응답 정보를 담는 DTO")
 public record MessageResponse(
         @Schema(description = "메시지 ID", example = "1sdfxc9lskji1")
-        String messageId,
+        Long messageId,
 
         @Schema(description = "사용자 ID", example = "1")
         Long userId,
@@ -31,10 +31,10 @@ public record MessageResponse(
 ) {
     public static MessageResponse from(Message message) {
         return new MessageResponse(
-                message.getId(),
-                message.getUserId(),
+                message.getMessageId(),
+                message.getJoin().getUser().getUserId(),
                 message.getNickname(),
-                message.getRoomId(),
+                message.getJoin().getChatroom().getRoomId(),
                 message.getMessageType(),
                 message.getContent(),
                 message.getCreatedAt()
