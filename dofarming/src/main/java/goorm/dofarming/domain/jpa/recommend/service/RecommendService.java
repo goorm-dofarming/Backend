@@ -36,7 +36,6 @@ public class RecommendService {
     private final RestaurantRepository restaurantRepository;
     private final CafeRepository cafeRepository;
     private final UserRepository userRepository;
-    private final ObjectMapper objectMapper;
     private final static double firstRadius = RecommendConfig.firstRadius;
     private final static double secondRadius = RecommendConfig.secondRadius;
 

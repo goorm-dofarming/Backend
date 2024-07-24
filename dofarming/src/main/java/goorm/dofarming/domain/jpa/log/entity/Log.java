@@ -1,5 +1,6 @@
 package goorm.dofarming.domain.jpa.log.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import goorm.dofarming.domain.jpa.recommend.entity.Recommend;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.global.common.entity.BaseEntity;
@@ -38,9 +39,11 @@ public class Log extends BaseEntity {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "log", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Recommend> recommends = new ArrayList<>();
 
     //== 생성 메서드 ==//
