@@ -1,21 +1,25 @@
 package goorm.dofarming.domain.jpa.recommend.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.location.repository.LocationRepository;
+import goorm.dofarming.domain.jpa.log.entity.Log;
 import goorm.dofarming.domain.jpa.log.repository.LogRepository;
+import goorm.dofarming.domain.jpa.recommend.entity.Recommend;
 import goorm.dofarming.domain.jpa.recommend.repository.RecommendRepository;
 import goorm.dofarming.domain.jpa.recommend.util.RecommendConfig;
+import goorm.dofarming.domain.jpa.user.entity.User;
+import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
-import goorm.dofarming.infra.tourapi.domain.Ocean;
+import goorm.dofarming.infra.tourapi.domain.*;
 import goorm.dofarming.infra.tourapi.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -31,13 +35,15 @@ public class RecommendService {
     private final TourRepository tourRepository;
     private final RestaurantRepository restaurantRepository;
     private final CafeRepository cafeRepository;
+    private final UserRepository userRepository;
     private final static double firstRadius = RecommendConfig.firstRadius;
     private final static double secondRadius = RecommendConfig.secondRadius;
 
-    // 바다 포함 추천, 바다관련은 422개 (테마 선택 O)
-    public List<Object> recommendWithOcean(List<Integer> themes) {
+    // 바다 테마 선택, 바다 테마의 종류는 422가지
+    public List<?> recommendOcean(Long userId) {
 
         ArrayList<Object> recommendList = new ArrayList<>();
+        List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
 
         Ocean ocean = randomOcean();
         recommendList.add(ocean);
@@ -46,70 +52,118 @@ public class RecommendService {
         Double mapX = ocean.getMapX();
         Double mapY = ocean.getMapY();
 
-        // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 8가지 뽑고 추천!!
-        themes.forEach(theme -> {
-            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 8) {
-                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
-                recommendList.addAll(randomSelect8(themeLocations));
-            } else {
-                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
-                recommendList.addAll(randomSelect8(themeLocations));
-            }
-        });
+        // 산 혹은 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
+        Log log = saveLog(userId, mapX, mapY, 1); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
-        return recommendList;
+        // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
+        return recommendLocation(mapX, mapY, recommendList, themes, log);
     }
 
-
-    // 바다 빼고 추천 (테마 선택 O)
-    public List<?> recommendWithoutOcean(List<Integer> themes, double mapX, double mapY) {
+    // 산 테마 선택, 산 테마의 종류는 636가지
+    public List<?> recommendMountain(Long userId) {
 
         ArrayList<Object> recommendList = new ArrayList<>();
+        List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
 
-        themes.forEach(theme -> {
-            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 8) {
-                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
-                recommendList.addAll(randomSelect8(themeLocations));
-            } else {
-                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
-                recommendList.addAll(randomSelect8(themeLocations));
-            }
-        });
+        Mountain mountain = randomMountain();
+        recommendList.add(mountain);
 
+        // 산의 위치가 핑으로 찍힘
+        Double mapX = mountain.getMapX();
+        Double mapY = mountain.getMapY();
+
+        // 산 혹은 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
+        Log log = saveLog(userId, mapX, mapY, 2); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
+
+        // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
+        return recommendLocation(mapX, mapY, recommendList, themes, log);
+    }
+
+    // ( 바다, 산을 제외한 ) 테마 선택
+    public List<?> recommendTheme(int dataType, double mapX, double mapY, Long userId) {
+
+        ArrayList<Object> recommendList = new ArrayList<>();
+        Log log = saveLog(userId, mapX, mapY, dataType);
+
+        if (getLocationsWithinRadius(dataType, mapX, mapY, firstRadius).size() < 8) {
+            List<?> themeLocations = getLocationsWithinRadius(dataType, mapX, mapY, secondRadius);
+            recommendList.addAll(randomSelect(themeLocations, 8));
+        } else {
+            List<?> themeLocations = getLocationsWithinRadius(dataType, mapX, mapY, firstRadius);
+            recommendList.addAll(randomSelect(themeLocations, 8));
+        }
+
+        createRecommend(recommendList, log);
         return recommendList;
     }
 
-    // 완전 랜덤 추천 (테마 선택 X)
+    // 완전 랜덤 추천 (테마 선택 X) - 유저 전용
     // 이 경우에는 바다 테마를 검색해보고 주변에 바다가 있으면 6개 중 랜덤 아니면 5개 중 랜덤 2개 선택해서 보내줌.
-    public List<?> recommendRandom(double mapX, double mapY) {
+    public List<?> recommendRandomForUser(double mapX, double mapY, Long userId) {
 
         ArrayList<Object> recommendList = new ArrayList<>();
-        ArrayList<Integer> selectedThemes = new ArrayList<>();
+        List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
 
-        // 핑 근처에 바다가 없을 때, 바다를 제외한 테마 중에서 2가지 테마를 골라서 추천
-        if (getLocationsWithinRadius(1, mapX, mapY, secondRadius).isEmpty()) randomSelectTheme(selectedThemes, false);
-            // 핑 근처제 바다가 있을때, 전체 테마 중에서 2가지 테마를 골라서 추천
-        else randomSelectTheme(selectedThemes, true);
+        Log log = saveLog(userId, mapX, mapY, 0);
 
-        if (getLocationsWithinRadius(selectedThemes.get(0), mapX, mapY, firstRadius).size() < 8) {
-            List<?> theme1Locations = getLocationsWithinRadius(selectedThemes.get(0), mapX, mapY, secondRadius);
-            recommendList.addAll(theme1Locations);
-        } else {
-            List<?> theme1Locations = getLocationsWithinRadius(selectedThemes.get(0), mapX, mapY, firstRadius);
-            recommendList.addAll(theme1Locations);
+        // 핑 근처에 바다가 있을 때, 테마 추가
+        if (!getLocationsWithinRadius(1, mapX, mapY, secondRadius).isEmpty()) {
+            themes.add(1);
         }
-        if (getLocationsWithinRadius(selectedThemes.get(1), mapX, mapY, firstRadius).size() < 8) {
-            List<?> theme2Locations = getLocationsWithinRadius(selectedThemes.get(1), mapX, mapY, secondRadius);
-            recommendList.addAll(theme2Locations);
-        } else {
-            List<?> theme2Locations = getLocationsWithinRadius(selectedThemes.get(1), mapX, mapY, firstRadius);
-            recommendList.addAll(theme2Locations);
+        // 핑 근처에 산이 있을 때, 테마 추가
+        if (!getLocationsWithinRadius(2, mapX, mapY, secondRadius).isEmpty()) {
+            themes.add(2);
         }
+
+        return recommendLocation(mapX, mapY, recommendList, themes, log);
+    }
+
+    // 완전 랜덤 추천 - 게스트 전용
+    public List<?> recommendRandomForGuest(double mapX, double mapY) {
+
+        ArrayList<Object> recommendList = new ArrayList<>();
+        List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
+
+        // 핑 근처에 바다가 있을 때, 테마 추가
+        if (!getLocationsWithinRadius(1, mapX, mapY, secondRadius).isEmpty()) {
+            themes.add(1);
+        }
+        // 핑 근처에 산이 있을 때, 테마 추가
+        if (!getLocationsWithinRadius(2, mapX, mapY, secondRadius).isEmpty()) {
+            themes.add(2);
+        }
+
+        themes.forEach(theme -> {
+            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
+                recommendList.addAll(randomSelect(themeLocations, 2));
+            } else {
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
+                recommendList.addAll(randomSelect(themeLocations, 2));
+            }
+        });
 
         return recommendList;
     }
 
-    // 현재 위치 기반해서 radius 이하의 거리를 찾음.
+    // 테마에 따른 장소 추천
+    private List<?> recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log) {
+
+        themes.forEach(theme -> {
+            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
+                recommendList.addAll(randomSelect(themeLocations, 2));
+            } else {
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
+                recommendList.addAll(randomSelect(themeLocations, 2));
+            }
+        });
+
+        createRecommend(recommendList, log);
+        return recommendList;
+    }
+
+    // 현재 위치 기반해서 radius 범위 이하의 장소를 찾음.
     public List<?> getLocationsWithinRadius(Integer theme, double mapX, double mapY, double radius) {
         switch (theme) {
             case 1: // Ocean
@@ -131,42 +185,153 @@ public class RecommendService {
 
     private Ocean randomOcean() {
         Random random = new Random();
-        Long randomOcean = random.nextLong(422) + 1; // 1 ~ 422
+        Long randomOceanId = random.nextLong(422) + 1; // 1 ~ 422
 
-        return oceanRepository.findById(randomOcean)
+        return oceanRepository.findById(randomOceanId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "Ocean Not Found"));
     }
 
-    private List<?> randomSelect8(List<?> themeLocations) {
+    private Mountain randomMountain() {
+        Random random = new Random();
+        Long randomMountainId = random.nextLong(636) + 1; // 1 ~ 636
+
+        return mountainRepository.findById(randomMountainId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "Mountain Not Found"));
+    }
+
+    private List<?> randomSelect(List<?> themeLocations, int size) {
+
         List<Object> themes = new ArrayList<>(themeLocations);
-        if (themes.size() <= 8) return themes;
+        if (themes.size() <= size) return themes;
         else {
             List<Object> selectedItems = new ArrayList<>();
             Collections.shuffle(themes, new Random());
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < size; i++) {
                 selectedItems.add(themes.get(i));
             }
             return selectedItems;
         }
     }
 
-    private static void randomSelectTheme(List<Integer> selectedThemes, boolean withinOcean) {
-        Random random = new Random();
-        ArrayList<Integer> themes = new ArrayList<>();
-
-        if (withinOcean) {
-            for (Integer i = 1; i <= 6; i++) {
-                themes.add(i);
-            }
+    private Log saveLog(Long userId, Double mapX, Double mapY, int dataType) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 회원입니다."));
+        if (dataType == 1) {
+            Log log = Log.log(mapX, mapY, "Ocean", user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 2) {
+            Log log = Log.log(mapX, mapY, "Mountain", user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 3) {
+            Log log = Log.log(mapX, mapY, "Activity", user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 4) {
+            Log log = Log.log(mapX, mapY, "TourAttraction", user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 5) {
+            Log log = Log.log(mapX, mapY, "Restaurant", user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 6) {
+            Log log = Log.log(mapX, mapY, "Cafe", user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 0) {
+            Log log = Log.log(mapX, mapY, "Random", user);
+            logRepository.save(log);
+            return log;
         } else {
-            for (int i = 2; i <= 6; i++) {
-                themes.add(i);
+            return null;
+        }
+    }
+
+    private void createRecommend(List<Object> recommendList, Log log) {
+
+        for (Object obj : recommendList) {
+            Long id = null;
+            Integer dataType = null;
+
+            if (obj instanceof Ocean ocean) {
+                id = ocean.getId();
+                dataType = ocean.getDataType();
+            } else if (obj instanceof Activity activity) {
+                id = activity.getId();
+                dataType = activity.getDataType();
+            } else if (obj instanceof Tour tour) {
+                id = tour.getId();
+                dataType = tour.getDataType();
+            } else if (obj instanceof Restaurant restaurant) {
+                id = restaurant.getId();
+                dataType = restaurant.getDataType();
+            } else if (obj instanceof Cafe cafe) {
+                id = cafe.getId();
+                dataType = cafe.getDataType();
+            }
+
+            if (id != null && dataType != null) {
+                // 확인
+//                System.out.println("ID: " + id + ", DataType: " + dataType);
+                Location location = Location.location(id, dataType);
+                Recommend recommend = Recommend.recommend(log, location);
+                locationRepository.save(location);
+                recommendRepository.save(recommend);
             }
         }
-
-        Collections.shuffle(themes, random);
-        selectedThemes.add(themes.get(0));
-        selectedThemes.add(themes.get(1));
-        return;
     }
+
+    // 바다 테마 선택, 바다관련은 422개
+    // 이 버전은 테마를 복수 선택할 수 있을 때, 쓸 수 있는 버전이다.
+//    public List<Object> recommendOcean(List<Integer> themes, Long userId) {
+//
+//        ArrayList<Object> recommendList = new ArrayList<>();
+//
+//        Ocean ocean = randomOcean();
+//        recommendList.add(ocean);
+//
+//        // 해수욕장 위치가 핑으로 찍힘
+//        Double mapX = ocean.getMapX();
+//        Double mapY = ocean.getMapY();
+//
+//        // 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
+//        Log log = saveLog(userId, mapX, mapY); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
+//
+//        // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 8가지 뽑고 추천!!
+//        themes.forEach(theme -> {
+//            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 8) {
+//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
+//                recommendList.addAll(randomSelect8(themeLocations));
+//            } else {
+//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
+//                recommendList.addAll(randomSelect8(themeLocations));
+//            }
+//        });
+//
+//        // 여기에서 recommendList 로 id, type 받아와서 location 생성 -> 각 recommend 만들면 될듯
+//        createRecommend(recommendList, log);
+//        return recommendList;
+//    }
+
+    // 바다 빼고 추천 (테마 선택 O) - 복수도 테마 선택이 가능한 버전
+//    public List<?> recommendWithoutOcean(List<Integer> themes, double mapX, double mapY, Long userId) {
+//
+//        ArrayList<Object> recommendList = new ArrayList<>();
+//        Log log = saveLog(userId, mapX, mapY);
+//
+//        themes.forEach(theme -> {
+//            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
+//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
+//                recommendList.addAll(randomSelect(themeLocations, 2));
+//            } else {
+//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
+//                recommendList.addAll(randomSelect(themeLocations, 2));
+//            }
+//        });
+//
+//        createRecommend(recommendList, log);
+//        return recommendList;
+//    }
 }
