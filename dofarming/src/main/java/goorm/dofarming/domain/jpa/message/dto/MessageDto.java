@@ -1,6 +1,6 @@
-package goorm.dofarming.domain.mongo.message.dto;
+package goorm.dofarming.domain.jpa.message.dto;
 
-import goorm.dofarming.domain.mongo.message.entity.MessageType;
+import goorm.dofarming.domain.jpa.message.entity.MessageType;
 
 import java.io.Serializable;
 
@@ -11,5 +11,4 @@ public record MessageDto(
         MessageType messageType,
         String content
 ) implements Serializable {
-
 }

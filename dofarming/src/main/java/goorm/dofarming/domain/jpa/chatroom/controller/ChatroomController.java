@@ -1,11 +1,9 @@
 package goorm.dofarming.domain.jpa.chatroom.controller;
 
 import goorm.dofarming.domain.jpa.chatroom.dto.request.ChatroomCreateRequest;
-import goorm.dofarming.domain.jpa.chatroom.dto.response.ChatroomResponse;
-import goorm.dofarming.domain.jpa.chatroom.entity.Region;
+import goorm.dofarming.domain.jpa.chatroom.dto.response.OpenChatroomResponse;
+import goorm.dofarming.domain.jpa.chatroom.dto.response.MyChatroomResponse;
 import goorm.dofarming.domain.jpa.chatroom.service.ChatroomService;
-import goorm.dofarming.domain.jpa.user.dto.request.UserSignUpRequest;
-import goorm.dofarming.domain.jpa.user.dto.response.UserResponse;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -116,12 +114,12 @@ public class ChatroomController {
             summary = "오픈 채팅방 검색 api 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "클라이언트의 요청을 서버가 정상적으로 처리했다.", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = ChatroomResponse.class))
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = OpenChatroomResponse.class))
                     })
             }
     )
     @GetMapping("/chatroom")
-    public ResponseEntity<List<ChatroomResponse>> getSearchChatroom(
+    public ResponseEntity<List<OpenChatroomResponse>> getSearchChatroom(
             @Parameter @RequestParam(required = false) Long roomId,
             @Parameter @RequestParam(required = false) String condition,
             @Parameter @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
@@ -136,12 +134,12 @@ public class ChatroomController {
             summary = "내 채팅방 리스트 api 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "클라이언트의 요청을 서버가 정상적으로 처리했다.", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = ChatroomResponse.class))
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = OpenChatroomResponse.class))
                     })
             }
     )
     @GetMapping("/chatroom/my")
-    public ResponseEntity<List<ChatroomResponse>> getMyChatroom(
+    public ResponseEntity<List<MyChatroomResponse>> getMyChatroom(
             @Parameter @AuthenticationPrincipal DofarmingUserDetails user
     ) {
         return ResponseEntity.ok().body(chatroomService.myRoomList(user.getUserId()));
