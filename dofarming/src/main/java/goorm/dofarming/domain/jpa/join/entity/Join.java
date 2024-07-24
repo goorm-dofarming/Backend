@@ -2,6 +2,7 @@ package goorm.dofarming.domain.jpa.join.entity;
 
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
 import goorm.dofarming.domain.jpa.log.entity.Log;
+import goorm.dofarming.domain.jpa.message.entity.Message;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.global.common.entity.BaseEntity;
 import goorm.dofarming.global.common.entity.Status;
@@ -13,6 +14,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -27,7 +30,9 @@ public class Join extends BaseEntity {
     @Column(name = "join_id")
     private Long joinId;
 
-    private LocalDateTime lastVisit;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "message_id")
+    private Message lastReadMessage;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -39,6 +44,9 @@ public class Join extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "chatroom_id")
     private Chatroom chatroom;
+
+    @OneToMany(mappedBy = "join", cascade = CascadeType.ALL)
+    private List<Message> messages = new ArrayList<>();
 
     //== 생성 메서드 ==//
     public static Join join(User user, Chatroom chatroom) {
@@ -70,8 +78,9 @@ public class Join extends BaseEntity {
         this.getChatroom().decreaseCount();
     }
 
-    public void lastVisitUpdate() {
-        this.lastVisit = LocalDateTime.now();
+    public void lastReadMessageUpdate(Message message) {
+        this.lastReadMessage = message;
+        message.getReadJoins().add(this);
     }
 
     //== 중복 검증 메서드 ==//

@@ -4,11 +4,8 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
-import goorm.dofarming.domain.jpa.chatroom.entity.Region;
 import goorm.dofarming.global.common.entity.Status;
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import static goorm.dofarming.domain.jpa.chatroom.entity.QChatroom.*;
 import static goorm.dofarming.domain.jpa.tag.entity.QTag.*;

@@ -1,5 +1,6 @@
 package goorm.dofarming.domain.jpa.user.repository;
 
+import goorm.dofarming.domain.jpa.user.entity.Role;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.global.common.entity.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailAndStatus(String email, Status status);
+
+    Optional<User> findByEmailAndRoleAndStatus(String email, Role role, Status status);
 
     Optional<User> findByUserIdAndStatus(Long userId, Status status);
 }
