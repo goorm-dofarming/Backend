@@ -11,7 +11,6 @@ public record UserModifyRequest(
         String nickname,
 
         @Schema(description = "사용자 비밀번호", example = "userpassword")
-        @NotEmpty(message = "비밀번호는 필수 항목입니다.")
         String password
 ) {
 }

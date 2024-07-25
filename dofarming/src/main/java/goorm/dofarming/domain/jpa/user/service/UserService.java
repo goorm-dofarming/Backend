@@ -56,7 +56,7 @@ public class UserService {
          * 패스워드 처리
          */
         String userPassword = user.getPassword();
-        if (!encoder.matches(userModifyRequest.password(), userPassword)) {
+        if (userModifyRequest.password() != null && !encoder.matches(userModifyRequest.password(), userPassword)) {
             userPassword = encoder.encode(userModifyRequest.password());
         }
 

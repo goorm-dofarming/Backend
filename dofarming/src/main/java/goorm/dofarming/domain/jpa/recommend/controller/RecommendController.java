@@ -1,7 +1,9 @@
 package goorm.dofarming.domain.jpa.recommend.controller;
 
 import goorm.dofarming.domain.jpa.recommend.service.RecommendService;
+import goorm.dofarming.global.auth.DofarmingUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,26 +18,41 @@ public class RecommendController {
 
     private final RecommendService recommendService;
 
-    // 제대로 잘 됌.
-    @GetMapping("/withOcean")
-    public List<?> recommendWithOcean(@RequestParam("themes") List<Integer> themes) {
-        return recommendService.recommendWithOcean(themes);
+    @GetMapping("/ocean")
+    public List<?> recommendOcean(@AuthenticationPrincipal DofarmingUserDetails user) {
+        Long userId = user.getUserId();
+        return recommendService.recommendOcean(userId);
     }
 
-    @GetMapping("/withoutOcean")
-    public List<?> recommendWithoutOcean(
-            @RequestParam("themes") List<Integer> themes,
+    @GetMapping("/mountain")
+    public List<?> recommendMountain(@AuthenticationPrincipal DofarmingUserDetails user) {
+        Long userId = user.getUserId();
+        return recommendService.recommendMountain(userId);
+    }
+
+    @GetMapping("/theme")
+    public List<?> recommendTheme(
+            @AuthenticationPrincipal DofarmingUserDetails user,
+            @RequestParam("theme") int dataType,
             @RequestParam("mapX") double mapX,
             @RequestParam("mapY") double mapY
     ) {
-        return recommendService.recommendWithoutOcean(themes, mapX, mapY);
+        Long userId = user.getUserId();
+        return recommendService.recommendTheme(dataType, mapX, mapY, userId);
     }
 
-    @GetMapping("/withoutTheme")
-    public List<?> recommendWithoutTheme(
+    @GetMapping("/random")
+    public List<?> recommendRandom(
             @RequestParam("mapX") double mapX,
-            @RequestParam("mapY") double mapY
+            @RequestParam("mapY") double mapY,
+            @AuthenticationPrincipal DofarmingUserDetails user
     ) {
-        return recommendService.recommendRandom(mapX, mapY);
+        if(user != null){
+            Long userId = user.getUserId();
+            return recommendService.recommendRandomForUser(mapX, mapY, userId);
+        }
+        else {
+            return recommendService.recommendRandomForGuest(mapX, mapY);
+        }
     }
 }

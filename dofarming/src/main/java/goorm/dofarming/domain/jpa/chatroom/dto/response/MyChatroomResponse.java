@@ -43,7 +43,7 @@ public record MyChatroomResponse(
                 join.getChatroom().getRegion().name(),
                 join.getChatroom().getTags().stream().map(TagResponse::of).collect(Collectors.toList()),
                 join.getChatroom().getParticipantCount(),
-                join.getChatroom().getMessages().stream().filter(message -> message.getMessageId() > join.getLastReadMessage().getMessageId()).count(),
+                join.getChatroom().getMessages().stream().filter(message -> message.getMessageId() > join.getLastReadMessageId()).count(),
                 join.getChatroom().getCreatedAt()
         );
     }

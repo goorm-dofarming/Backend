@@ -42,9 +42,6 @@ public class Message extends BaseEntity {
     @JoinColumn(name = "room_id")
     private Chatroom chatroom;
 
-    @OneToMany(mappedBy = "lastReadMessage", cascade = CascadeType.ALL)
-    private List<Join> readJoins = new ArrayList<>();
-
     public static Message message(Join join, String nickname, MessageType messageType, String content) {
         Message message = new Message();
         message.addJoin(join);

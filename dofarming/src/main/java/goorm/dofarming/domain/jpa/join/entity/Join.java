@@ -30,9 +30,7 @@ public class Join extends BaseEntity {
     @Column(name = "join_id")
     private Long joinId;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "message_id")
-    private Message lastReadMessage;
+    private Long lastReadMessageId;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -56,6 +54,7 @@ public class Join extends BaseEntity {
         Join join = new Join();
         join.addUser(user);
         join.addChatroom(chatroom);
+        join.lastReadMessageId = 0L;
         join.status = Status.ACTIVE;
         return join;
     }
@@ -78,9 +77,8 @@ public class Join extends BaseEntity {
         this.getChatroom().decreaseCount();
     }
 
-    public void lastReadMessageUpdate(Message message) {
-        this.lastReadMessage = message;
-        message.getReadJoins().add(this);
+    public void updateWatermark(Long messageId) {
+        this.lastReadMessageId = messageId;
     }
 
     //== 중복 검증 메서드 ==//
