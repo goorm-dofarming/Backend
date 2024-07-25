@@ -32,10 +32,6 @@ public class Like extends BaseEntity {
     @JsonIgnore
     private User user;
 
-//    @ManyToOne(fetch = LAZY)
-//    @JoinColumn(name = "location_id")
-//    private Location location;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "ocean_id")
     @JsonIgnore
@@ -94,43 +90,56 @@ public class Like extends BaseEntity {
         if (location instanceof Cafe) {
             this.cafe = (Cafe) location;
             ((Cafe) location).getLikes().add(this);
+            cafe.incrementLikeCount();
         } else if (location instanceof Ocean) {
             this.ocean = (Ocean) location;
             ((Ocean) location).getLikes().add(this);
+            ocean.incrementLikeCount();
         } else if (location instanceof Mountain) {
             this.mountain = (Mountain) location;
             ((Mountain) location).getLikes().add(this);
+            mountain.incrementLikeCount();
         } else if (location instanceof Activity) {
             this.activity = (Activity) location;
             ((Activity) location).getLikes().add(this);
+            activity.incrementLikeCount();
         } else if (location instanceof Tour) {
             this.tour = (Tour) location;
             ((Tour) location).getLikes().add(this);
+            tour.incrementLikeCount();
         } else if (location instanceof Restaurant) {
             this.restaurant = (Restaurant) location;
             ((Restaurant) location).getLikes().add(this);
+            restaurant.incrementLikeCount();
         }
     }
 
     //== 비즈니스 로직 ==//
     public void delete() {
-        if (this.status != Status.ACTIVE) {  // 상태가 ACTIVE가 아닐 때만 증가시킴
-            incrementLikeCount();
+        if (this.status == Status.ACTIVE) {
+            decrementLikeCount();
         }
         this.status = Status.DELETE;
     }
 
     public void active() {
+        System.out.println("ACTIVE????");
+        if (this.status != Status.ACTIVE) {
+            System.out.println("ACTIVE!!!!");
+            incrementLikeCount();
+        }
         this.status = Status.ACTIVE;
-        incrementLikeCount();
     }
 
     public void reverseStatus() {
+        System.out.println("REVERSE!!!!");
         if (this.status == Status.ACTIVE) {
             this.status = Status.DELETE;
+            System.out.println("MINUS!!!!");
             decrementLikeCount();
         } else {
             this.status = Status.ACTIVE;
+            System.out.println("PLUS!!!!");
             incrementLikeCount();
         }
     }
@@ -170,6 +179,8 @@ public class Like extends BaseEntity {
             this.tour.incrementLikeCount();
         } else if (this.restaurant != null) {
             this.restaurant.incrementLikeCount();
+        } else {
+            System.out.println("ERROR");
         }
     }
 

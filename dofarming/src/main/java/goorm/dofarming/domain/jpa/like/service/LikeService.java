@@ -9,6 +9,7 @@ import goorm.dofarming.global.common.error.exception.CustomException;
 import goorm.dofarming.infra.tourapi.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class LikeService {
     private final TourRepository tourRepository;
     private final RestaurantRepository restaurantRepository;
 
+    @Transactional
     public Like like(Long userId, Long placeId, int dataType) {
 
         Object location;
@@ -57,6 +59,8 @@ public class LikeService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원 정보를 찾을 수 없습니다."));
+
+
 
         return likeRepository.save(Like.like(user, location));
     }

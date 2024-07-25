@@ -37,10 +37,12 @@ public class Activity {
     private int likeCount = 0;
 
     public void incrementLikeCount() {
+        System.out.println("activity increment");
         this.likeCount++;
     }
 
     public void decrementLikeCount() {
+        System.out.println("activity decrement");
         this.likeCount--;
     }
 

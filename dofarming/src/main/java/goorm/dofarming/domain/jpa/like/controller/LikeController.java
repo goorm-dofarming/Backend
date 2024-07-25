@@ -29,5 +29,4 @@ public class LikeController {
         return likeService.like(userId, placeId, dataType);
     }
 
-
 }
