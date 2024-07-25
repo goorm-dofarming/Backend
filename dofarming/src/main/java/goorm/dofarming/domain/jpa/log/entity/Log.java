@@ -1,5 +1,6 @@
 package goorm.dofarming.domain.jpa.log.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import goorm.dofarming.domain.jpa.recommend.entity.Recommend;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.global.common.entity.BaseEntity;
@@ -26,27 +27,30 @@ public class Log extends BaseEntity {
 
     private String theme;
 
-    private String address;
-    // 위도
-    private String latitude;
-    // 경도
-    private String longitude;
+    // 일단 좌표만 보내는 걸로...
+//    private String address;
+    // 추천된 위치의 위도
+    private Double latitude;
+    // 추천된 위치의 경도
+    private Double longitude;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "log", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Recommend> recommends = new ArrayList<>();
 
     //== 생성 메서드 ==//
-    public static Log log(String theme, String address, String latitude, String longitude, User user) {
+    public static Log log(Double longitude, Double latitude, String theme, User user) {
         Log log = new Log();
         log.theme = theme;
-        log.address = address;
+//        log.address = address;
         log.latitude = latitude;
         log.longitude = longitude;
         log.status = Status.ACTIVE;
