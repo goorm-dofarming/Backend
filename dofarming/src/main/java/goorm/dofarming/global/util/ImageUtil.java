@@ -21,8 +21,8 @@ public class ImageUtil {
     @Value("${image.file.path}")
     private String folder;
 
-    public String getImageUrl(String root, MultipartFile multipartFile) {
-        return root + uuid + "_" + multipartFile.getOriginalFilename();
+    public String getImageUrl(MultipartFile multipartFile) {
+        return uuid + "_" + multipartFile.getOriginalFilename();
     }
 
     public Path makeFilePath (String fileName) {
