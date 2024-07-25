@@ -1,8 +1,12 @@
 package goorm.dofarming.infra.tourapi.domain;
 
+import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.global.common.entity.Status;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -21,6 +25,13 @@ public class Restaurant {
 
     @Column(name = "dataType")
     private int dataType = 5;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<Like> likes = new ArrayList<>();
+
+    public int countLikes() {
+        return likes.size();
+    }
 
 //    @Enumerated(EnumType.STRING)
 //    private Status status = Status.ACTIVE;

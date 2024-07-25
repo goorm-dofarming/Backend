@@ -70,6 +70,6 @@ public class LogService {
     }
 
     public List<Log> getLogsByUserId(Long userId) {
-        return logRepository.findAllByUser_UserId(userId);
+        return logRepository.find50ByUser_UserId(userId);
     }
 }

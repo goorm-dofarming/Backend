@@ -1,8 +1,12 @@
 package goorm.dofarming.infra.tourapi.domain;
 
+import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.global.common.entity.Status;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -21,6 +25,13 @@ public class Ocean {
 
     @Column(name = "data_type")
     private int dataType = 1;
+
+    @OneToMany(mappedBy = "ocean", cascade = CascadeType.ALL)
+    private List<Like> likes = new ArrayList<>();
+
+    public int countLikes() {
+        return likes.size();
+    }
 
 //    @Enumerated(EnumType.STRING)
 //    private Status status = Status.ACTIVE;
