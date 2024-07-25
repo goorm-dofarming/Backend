@@ -5,6 +5,7 @@ import goorm.dofarming.domain.jpa.auth.dto.request.OauthRequest;
 import goorm.dofarming.domain.jpa.auth.dto.request.SignInRequest;
 import goorm.dofarming.domain.jpa.auth.dto.response.AuthDto;
 import goorm.dofarming.domain.jpa.auth.dto.response.MyInfoResponse;
+import goorm.dofarming.domain.jpa.user.entity.Role;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.domain.jpa.user.service.UserService;
@@ -23,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final JwtUtil jwtUtil;
-    private final UserService userService;
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
 
@@ -33,7 +33,7 @@ public class AuthService {
     @Transactional
     public String login(SignInRequest signInRequest) {
 
-        User user = userRepository.findByEmailAndStatus(signInRequest.email(), Status.ACTIVE)
+        User user = userRepository.findByEmailAndRoleAndStatus(signInRequest.email(), Role.DOFARMING, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "User not found."));
 
         if (!encoder.matches(signInRequest.password(), user.getPassword())) {
