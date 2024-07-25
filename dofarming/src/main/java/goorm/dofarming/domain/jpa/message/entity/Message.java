@@ -38,8 +38,9 @@ public class Message extends BaseEntity {
     @JoinColumn(name = "join_id")
     private Join join;
 
-    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL)
-    private List<Join> readJoins = new ArrayList<>();
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "room_id")
+    private Chatroom chatroom;
 
     public static Message message(Join join, String nickname, MessageType messageType, String content) {
         Message message = new Message();
@@ -58,6 +59,7 @@ public class Message extends BaseEntity {
     }
 
     public void addMessage(Join join) {
+        this.chatroom = join.getChatroom();
         join.getChatroom().getMessages().add(this);
     }
 }
