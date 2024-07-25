@@ -12,6 +12,7 @@ import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.util.ImageUtil;
 import goorm.dofarming.global.util.RandomGenerator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import java.nio.file.Paths;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -66,8 +68,10 @@ public class UserService {
         // 파일에 이미지가 들어오고
         if (file != null && !file.isEmpty()) {
             String imageUrl = imageUtil.getImageUrl(file);
+            log.info("url={}", imageUrl);
 
             Path path = imageUtil.makeFilePath(imageUrl);
+            log.info("path={}", path);
 
             // 이미지가 존재하면
             if (user.getImageUrl() != null) {
