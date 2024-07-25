@@ -65,7 +65,7 @@ public class UserService {
          */
         // 파일에 이미지가 들어오고
         if (file != null && !file.isEmpty()) {
-            String imageUrl = imageUtil.getImageUrl("/profile/", file);
+            String imageUrl = imageUtil.getImageUrl(file);
 
             Path path = imageUtil.makeFilePath(imageUrl);
 
