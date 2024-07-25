@@ -1,5 +1,7 @@
 package goorm.dofarming.infra.tourapi.domain;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.global.common.entity.Status;
 import jakarta.persistence.*;
@@ -14,6 +16,7 @@ public class Restaurant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "restaurant_id")
     private Long id;
 
     private String title;
@@ -27,14 +30,24 @@ public class Restaurant {
     private int dataType = 5;
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Like> likes = new ArrayList<>();
 
-    public int countLikes() {
-        return likes.size();
+    @Column(name = "like_count")
+    private int likeCount = 0;
+
+    public void incrementLikeCount() {
+        this.likeCount++;
     }
 
-//    @Enumerated(EnumType.STRING)
-//    private Status status = Status.ACTIVE;
+    public void decrementLikeCount() {
+        this.likeCount--;
+    }
+
+    @JsonGetter("countLikes")
+    public int getLikeCount() {
+        return this.likeCount;
+    }
 
     public Restaurant(String title, String addr, String tel, String image, Double mapX, Double mapY) {
         this.title = title;

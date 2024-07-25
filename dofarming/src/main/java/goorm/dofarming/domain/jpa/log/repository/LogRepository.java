@@ -12,6 +12,6 @@ public interface LogRepository extends JpaRepository<Log,Long> {
 
     List<Log> findAllByUser_UserId(Long userId); // 모든 로그 조회
 
-    @Query(value = "SELECT * FROM log l WHERE l.user_id = :userId ORDER BY l.id DESC LIMIT 50", nativeQuery = true)
-    List<Log> find50ByUser_UserId(Long userId); // 최신화해서 50개까지 조회
+    @Query(value = "SELECT * FROM log l WHERE l.user_id = :userId ORDER BY l.id DESC LIMIT 100", nativeQuery = true)
+    List<Log> find100ByUser_UserId(Long userId); // 최신화해서 50개까지 조회
 }

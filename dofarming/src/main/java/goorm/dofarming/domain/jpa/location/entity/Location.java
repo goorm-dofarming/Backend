@@ -34,8 +34,8 @@ public class Location extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
-    private List<Like> likes = new ArrayList<>();
+//    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+//    private List<Like> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
     private List<Recommend> recommends = new ArrayList<>();

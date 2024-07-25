@@ -1,6 +1,6 @@
 package goorm.dofarming.domain.jpa.like.controller;
 
-import goorm.dofarming.domain.jpa.like.entity.LikeV2;
+import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.like.service.LikeService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorCode;
@@ -18,7 +18,7 @@ public class LikeController {
     private final LikeService likeService;
 
     @PostMapping("/like")
-    public LikeV2 like(
+    public Like like(
             @AuthenticationPrincipal DofarmingUserDetails user,
             @RequestParam Long placeId,
             @RequestParam int dataType
@@ -28,4 +28,6 @@ public class LikeController {
 
         return likeService.like(userId, placeId, dataType);
     }
+
+
 }

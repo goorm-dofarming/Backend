@@ -1,8 +1,8 @@
 package goorm.dofarming.domain.jpa.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import goorm.dofarming.domain.jpa.join.entity.Join;
 import goorm.dofarming.domain.jpa.like.entity.Like;
-import goorm.dofarming.domain.jpa.like.entity.LikeV2;
 import goorm.dofarming.domain.jpa.log.entity.Log;
 import goorm.dofarming.global.auth.GoogleOAuth2UserInfo;
 import goorm.dofarming.global.auth.KakaoOAuth2UserInfo;
@@ -47,11 +47,13 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Like> likes = new ArrayList<>();
 
-    // 테스트용
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<LikeV2> likesV2 = new ArrayList<>();
+//    // 테스트용
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private List<LikeV2> likesV2 = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Log> logs = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
