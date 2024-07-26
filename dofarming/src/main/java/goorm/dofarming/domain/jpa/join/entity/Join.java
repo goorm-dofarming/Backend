@@ -54,7 +54,8 @@ public class Join extends BaseEntity {
         Join join = new Join();
         join.addUser(user);
         join.addChatroom(chatroom);
-        join.lastReadMessageId = 0L;
+        join.lastReadMessageId =
+                chatroom.getMessages() == null ? 0L : chatroom.getMessages().get(chatroom.getMessages().size() - 1).getMessageId();
         join.status = Status.ACTIVE;
         return join;
     }
