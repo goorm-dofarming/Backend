@@ -7,7 +7,6 @@ import goorm.dofarming.domain.jpa.log.repository.LogRepository;
 import goorm.dofarming.domain.jpa.recommend.entity.Recommend;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
-import goorm.dofarming.infra.tourapi.domain.*;
 import goorm.dofarming.infra.tourapi.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -70,6 +69,6 @@ public class LogService {
     }
 
     public List<Log> getLogsByUserId(Long userId) {
-        return logRepository.findAllByUser_UserId(userId);
+        return logRepository.find100ByUser_UserId(userId);
     }
 }

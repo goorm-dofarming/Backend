@@ -2,6 +2,8 @@ package goorm.dofarming.domain.jpa.recommend.controller;
 
 import goorm.dofarming.domain.jpa.recommend.service.RecommendService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
+import goorm.dofarming.global.common.error.ErrorCode;
+import goorm.dofarming.global.common.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +22,14 @@ public class RecommendController {
 
     @GetMapping("/ocean")
     public List<?> recommendOcean(@AuthenticationPrincipal DofarmingUserDetails user) {
+        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
         return recommendService.recommendOcean(userId);
     }
 
     @GetMapping("/mountain")
     public List<?> recommendMountain(@AuthenticationPrincipal DofarmingUserDetails user) {
+        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
         return recommendService.recommendMountain(userId);
     }
@@ -37,6 +41,7 @@ public class RecommendController {
             @RequestParam("mapX") double mapX,
             @RequestParam("mapY") double mapY
     ) {
+        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
         return recommendService.recommendTheme(dataType, mapX, mapY, userId);
     }
