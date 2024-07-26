@@ -43,10 +43,11 @@ public class MessageController {
     )
     @GetMapping("/message")
     public ResponseEntity<List<MessageResponse>> getSearchMessage(
+            @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @RequestParam(required = false) Long messageId,
             @Parameter @RequestParam(required = false) Long roomId,
             @Parameter @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
     ) {
-        return ResponseEntity.ok().body(messageService.searchMessageList(messageId, roomId, createdAt));
+        return ResponseEntity.ok().body(messageService.searchMessageList(user.getUserId(), messageId, roomId, createdAt));
     }
 }

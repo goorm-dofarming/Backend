@@ -95,9 +95,11 @@ public class ChatroomService {
     /**
      * 오픈 채팅방 검색
      */
-    public List<OpenChatroomResponse> searchRoomList(Long roomId, String condition, LocalDateTime createdAt) {
+    public List<OpenChatroomResponse> searchRoomList(Long userId, Long roomId, String condition, LocalDateTime createdAt) {
         return chatroomRepository.search(roomId, condition, createdAt)
-                .stream().map(OpenChatroomResponse::of).collect(Collectors.toList());
+                .stream()
+                .filter(chatroom -> chatroom.getJoins().stream().noneMatch(join -> join.getUser().getUserId() == userId))
+                .map(OpenChatroomResponse::of).collect(Collectors.toList());
     }
 
     /**
