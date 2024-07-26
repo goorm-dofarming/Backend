@@ -86,9 +86,7 @@ public class ChatroomService {
      * 채팅방 퇴장
      */
     @Transactional
-    public void leaveRoom(Long userId, Long roomId) {
-        Join join = joinRepository.findByUser_UserIdAndChatroom_RoomIdAndStatus(userId, roomId, Status.ACTIVE)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "입장한 채팅방이 아닙니다."));
+    public void leaveRoom(Join join) {
         join.delete();
     }
 
@@ -105,8 +103,8 @@ public class ChatroomService {
     /**
      * 내 채팅방 리스트
      */
-    public List<MyChatroomResponse> myRoomList(Long userId) {
-        return joinRepository.findAllByUser_UserIdAndStatus(userId, Status.ACTIVE)
+    public List<MyChatroomResponse> myRoomList(Long userId, Long roomId, String condition, LocalDateTime createdAt) {
+        return joinRepository.search(userId, roomId, condition, createdAt)
                 .stream().map(join -> MyChatroomResponse.of(join)).collect(Collectors.toList());
     }
 
