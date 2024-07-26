@@ -89,7 +89,7 @@ public class ChatroomController {
     }
 
 
-    @Operation(
+/*    @Operation(
             operationId = "ChatRoom",
             summary = "채팅방 퇴장 api 입니다.",
             responses = {
@@ -106,7 +106,7 @@ public class ChatroomController {
     ) {
         chatroomService.leaveRoom(user.getUserId(), roomId);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 
 
     @Operation(

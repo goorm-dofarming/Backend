@@ -40,22 +40,35 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
                 )
                 .fetch();
 
-        List<Message> previousMessage = queryFactory
+        List<Message> paging = queryFactory
                 .select(message)
                 .from(message)
-                .join(message.join, join).fetchJoin()
-                .join(join.chatroom, chatroom).fetchJoin()
                 .where(
                         roomIdEq(roomId),
                         cursorCondition(messageId, createdAt),
-                        beforeChat(lastReadMessageId),
                         entryTime(time)
                 )
                 .orderBy(
                         message.createdAt.desc(),
                         message.messageId.desc()
                 )
-                .limit(100)
+                .limit(50)
+                .fetch();
+
+
+        List<Message> previousMessage = queryFactory
+                .select(message)
+                .from(message)
+                .join(message.join, join).fetchJoin()
+                .join(join.chatroom, chatroom).fetchJoin()
+                .where(
+                        message.in(paging),
+                        beforeChat(lastReadMessageId)
+                )
+                .orderBy(
+                        message.createdAt.desc(),
+                        message.messageId.desc()
+                )
                 .fetch();
 
         List<Message> result = new ArrayList<>();
@@ -76,7 +89,7 @@ public class MessageRepositoryImpl implements MessageRepositoryCustom {
         return time != null ? message.createdAt.after(time) : null;
     }
     private BooleanExpression roomIdEq(Long roomId) {
-        return roomId != null ? join.chatroom.roomId.eq(roomId) : null;
+        return roomId != null ? message.chatroom.roomId.eq(roomId) : null;
     }
     private BooleanExpression cursorCondition(Long messageId, LocalDateTime createdAt) {
         if (messageId == null || createdAt == null) {

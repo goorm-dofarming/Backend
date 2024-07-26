@@ -3,6 +3,7 @@ package goorm.dofarming.domain.jpa.join.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
 import goorm.dofarming.domain.jpa.join.entity.Join;
 import goorm.dofarming.domain.jpa.user.entity.QUser;
 import goorm.dofarming.global.common.entity.Status;
@@ -31,21 +32,36 @@ public class JoinRepositoryImpl implements JoinRepositoryCustom {
                 .or(regionContains(condition))
                 .or(tagContains(condition));
 
+        List<Chatroom> rooms = queryFactory
+                .select(chatroom)
+                .from(chatroom)
+                .leftJoin(chatroom.tags, tag)
+                .where(
+                        orBuilder,
+                        cursorCondition(roomId, createdAt),
+                        roomStatusEq(Status.ACTIVE)
+                )
+                .orderBy(
+                        chatroom.createdAt.desc(),
+                        chatroom.roomId.desc()
+                )
+                .limit(20)
+                .fetch();
+
+
         return queryFactory
                 .selectDistinct(join)
                 .from(join)
                 .join(join.chatroom, chatroom).fetchJoin()
                 .join(join.user, user).fetchJoin()
-                .leftJoin(chatroom.tags, tag)
                 .where(
+                        chatroom.in(rooms),
                         userIdEq(userId),
-                        orBuilder,
-                        cursorCondition(roomId, createdAt),
-                        statusEq(Status.ACTIVE)
+                        joinStatusEq(Status.ACTIVE)
                 )
                 .orderBy(
-                        chatroom.createdAt.desc(),
-                        chatroom.roomId.desc()
+                        join.lastReadMessageId.desc(),
+                        join.joinId.desc()
                 )
                 .limit(20)
                 .fetch();
@@ -71,7 +87,11 @@ public class JoinRepositoryImpl implements JoinRepositoryCustom {
         return chatroom.createdAt.before(createdAt)
                 .or(chatroom.createdAt.eq(createdAt).and(chatroom.roomId.lt(roomId)));
     }
-    private BooleanExpression statusEq(Status status) {
+    private BooleanExpression joinStatusEq(Status status) {
         return hasText(status.name()) ? join.status.eq(status) : null;
+    }
+
+    private BooleanExpression roomStatusEq(Status status) {
+        return hasText(status.name()) ? chatroom.status.eq(status) : null;
     }
 }

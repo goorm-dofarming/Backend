@@ -33,15 +33,13 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
                 .or(regionContains(condition))
                 .or(tagContains(condition));
 
-        return queryFactory
-                .selectDistinct(chatroom)
+        List<Chatroom> rooms = queryFactory
+                .select(chatroom)
                 .from(chatroom)
-                .leftJoin(chatroom.joins, join).fetchJoin()
                 .leftJoin(chatroom.tags, tag)
                 .where(
                         orBuilder,
                         cursorCondition(roomId, createdAt),
-                        joinStatusEq(Status.ACTIVE),
                         statusEq(Status.ACTIVE)
                 )
                 .orderBy(
@@ -49,6 +47,20 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
                         chatroom.roomId.desc()
                 )
                 .limit(20)
+                .fetch();
+
+        return queryFactory
+                .select(chatroom)
+                .from(chatroom)
+                .leftJoin(chatroom.joins, join).fetchJoin()
+                .where(
+                        chatroom.in(rooms),
+                        joinStatusEq(Status.ACTIVE)
+                )
+                .orderBy(
+                        chatroom.createdAt.desc(),
+                        chatroom.roomId.desc()
+                )
                 .fetch();
     }
 
