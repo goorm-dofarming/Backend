@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
+import goorm.dofarming.domain.jpa.join.entity.Join;
 import goorm.dofarming.domain.jpa.join.entity.QJoin;
 import goorm.dofarming.domain.jpa.user.entity.QUser;
 import goorm.dofarming.global.common.entity.Status;
@@ -11,6 +12,7 @@ import jakarta.persistence.EntityManager;
 
 import static goorm.dofarming.domain.jpa.chatroom.entity.QChatroom.*;
 import static goorm.dofarming.domain.jpa.join.entity.QJoin.*;
+import static goorm.dofarming.domain.jpa.message.entity.QMessage.message;
 import static goorm.dofarming.domain.jpa.tag.entity.QTag.*;
 import static goorm.dofarming.domain.jpa.user.entity.QUser.*;
 import static org.springframework.util.StringUtils.*;
@@ -25,6 +27,7 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
     public ChatroomRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
+
     @Override
     public List<Chatroom> search(Long roomId, String condition, LocalDateTime createdAt) {
 
@@ -50,7 +53,7 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
                 .fetch();
 
         return queryFactory
-                .select(chatroom)
+                .selectDistinct(chatroom)
                 .from(chatroom)
                 .leftJoin(chatroom.joins, join).fetchJoin()
                 .where(

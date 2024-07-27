@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
 import goorm.dofarming.domain.jpa.join.entity.Join;
+import goorm.dofarming.domain.jpa.message.entity.QMessage;
 import goorm.dofarming.domain.jpa.user.entity.QUser;
 import goorm.dofarming.global.common.entity.Status;
 import jakarta.persistence.EntityManager;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static goorm.dofarming.domain.jpa.chatroom.entity.QChatroom.chatroom;
 import static goorm.dofarming.domain.jpa.join.entity.QJoin.join;
+import static goorm.dofarming.domain.jpa.message.entity.QMessage.*;
 import static goorm.dofarming.domain.jpa.tag.entity.QTag.tag;
 import static goorm.dofarming.domain.jpa.user.entity.QUser.*;
 import static org.springframework.util.StringUtils.hasText;
@@ -32,13 +34,17 @@ public class JoinRepositoryImpl implements JoinRepositoryCustom {
                 .or(regionContains(condition))
                 .or(tagContains(condition));
 
-        List<Chatroom> rooms = queryFactory
-                .select(chatroom)
-                .from(chatroom)
+        List<Long> joins = queryFactory
+                .select(join.joinId)
+                .from(join)
+                .join(join.chatroom, chatroom)
+                .join(join.user, user)
                 .leftJoin(chatroom.tags, tag)
                 .where(
+                        userIdEq(userId),
                         orBuilder,
                         cursorCondition(roomId, createdAt),
+                        joinStatusEq(Status.ACTIVE),
                         roomStatusEq(Status.ACTIVE)
                 )
                 .orderBy(
@@ -50,20 +56,17 @@ public class JoinRepositoryImpl implements JoinRepositoryCustom {
 
 
         return queryFactory
-                .selectDistinct(join)
+                .select(join)
                 .from(join)
                 .join(join.chatroom, chatroom).fetchJoin()
-                .join(join.user, user).fetchJoin()
+                .leftJoin(chatroom.messages, message)
                 .where(
-                        chatroom.in(rooms),
-                        userIdEq(userId),
-                        joinStatusEq(Status.ACTIVE)
+                        join.joinId.in(joins)
                 )
                 .orderBy(
-                        join.lastReadMessageId.desc(),
-                        join.joinId.desc()
+                        message.createdAt.desc(),
+                        message.messageId.desc()
                 )
-                .limit(20)
                 .fetch();
     }
 

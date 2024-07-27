@@ -32,6 +32,9 @@ public record MyChatroomResponse(
         @Schema(description = "안 읽은 메시지 수", example = "34")
         Long unreadMessageCount,
 
+        @Schema(description = "최근 메시지 내용", example = "안녕하세요.")
+        String latestMessage,
+
         @Schema(description = "채팅방 생성 시간", example = "2023-07-20T12:55:56")
         LocalDateTime createdAt
 ) {
@@ -44,7 +47,12 @@ public record MyChatroomResponse(
                 join.getChatroom().getTags().stream().map(TagResponse::of).collect(Collectors.toList()),
                 join.getChatroom().getParticipantCount(),
                 join.getChatroom().getMessages().stream().filter(message -> message.getMessageId() > join.getLastReadMessageId()).count(),
+                getLatestMessage(join),
                 join.getChatroom().getCreatedAt()
         );
+    }
+
+    private static String getLatestMessage(Join join) {
+        return (join.getChatroom().getMessages() == null || join.getChatroom().getMessages().isEmpty()) ? "" : join.getChatroom().getMessages().get(join.getChatroom().getMessages().size() - 1).getContent();
     }
 }

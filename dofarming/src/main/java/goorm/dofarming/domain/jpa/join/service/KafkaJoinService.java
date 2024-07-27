@@ -38,10 +38,8 @@ public class KafkaJoinService {
     public void makeAlarm(String message) throws IOException {
         MessageDto messageDto = mapper.readValue(message, MessageDto.class);
 
-        if (messageDto.messageType().equals(MessageType.SEND)) {
-            joinRepository.findAllByChatroom_RoomIdAndStatus(messageDto.roomId(), Status.ACTIVE)
-                    .stream()
-                    .forEach(join -> send(AlarmDto.of(join.getUser().getUserId(), messageDto)));
-        }
+        joinRepository.findAllByChatroom_RoomIdAndStatus(messageDto.roomId(), Status.ACTIVE)
+                .stream()
+                .forEach(join -> send(AlarmDto.of(join.getUser().getUserId(), messageDto)));
     }
 }

@@ -104,6 +104,7 @@ public class ChatroomController {
             @Parameter @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @Valid @PathVariable Long roomId
     ) {
+
         chatroomService.leaveRoom(user.getUserId(), roomId);
         return ResponseEntity.noContent().build();
     }*/
