@@ -28,40 +28,24 @@ public class JoinRepositoryImpl implements JoinRepositoryCustom {
     }
 
     @Override
-    public List<Join> search(Long userId, Long roomId, String condition, LocalDateTime createdAt) {
+    public List<Join> search(Long userId, String condition) {
         BooleanBuilder orBuilder = new BooleanBuilder()
                 .or(titleContains(condition))
                 .or(regionContains(condition))
                 .or(tagContains(condition));
 
-        List<Long> joins = queryFactory
-                .select(join.joinId)
+        return queryFactory
+                .select(join)
                 .from(join)
-                .join(join.chatroom, chatroom)
-                .join(join.user, user)
+                .join(join.user, user).fetchJoin()
+                .join(join.chatroom, chatroom).fetchJoin()
+                .leftJoin(chatroom.messages, message)
                 .leftJoin(chatroom.tags, tag)
                 .where(
                         userIdEq(userId),
                         orBuilder,
-                        cursorCondition(roomId, createdAt),
                         joinStatusEq(Status.ACTIVE),
                         roomStatusEq(Status.ACTIVE)
-                )
-                .orderBy(
-                        chatroom.createdAt.desc(),
-                        chatroom.roomId.desc()
-                )
-                .limit(20)
-                .fetch();
-
-
-        return queryFactory
-                .select(join)
-                .from(join)
-                .join(join.chatroom, chatroom).fetchJoin()
-                .leftJoin(chatroom.messages, message)
-                .where(
-                        join.joinId.in(joins)
                 )
                 .orderBy(
                         message.createdAt.desc(),
@@ -83,13 +67,7 @@ public class JoinRepositoryImpl implements JoinRepositoryCustom {
     private BooleanExpression userIdEq(Long userId) {
         return userId != null ? user.userId.eq(userId) : null;
     }
-    private BooleanExpression cursorCondition(Long roomId, LocalDateTime createdAt) {
-        if (roomId == null || createdAt == null) {
-            return null;
-        }
-        return chatroom.createdAt.before(createdAt)
-                .or(chatroom.createdAt.eq(createdAt).and(chatroom.roomId.lt(roomId)));
-    }
+
     private BooleanExpression joinStatusEq(Status status) {
         return hasText(status.name()) ? join.status.eq(status) : null;
     }

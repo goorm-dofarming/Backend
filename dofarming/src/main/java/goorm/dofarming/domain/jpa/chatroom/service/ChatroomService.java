@@ -103,8 +103,8 @@ public class ChatroomService {
     /**
      * 내 채팅방 리스트
      */
-    public List<MyChatroomResponse> myRoomList(Long userId, Long roomId, String condition, LocalDateTime createdAt) {
-        return joinRepository.search(userId, roomId, condition, createdAt)
+    public List<MyChatroomResponse> myRoomList(Long userId, String condition) {
+        return joinRepository.search(userId, condition)
                 .stream().map(join -> MyChatroomResponse.of(join)).collect(Collectors.toList());
     }
 

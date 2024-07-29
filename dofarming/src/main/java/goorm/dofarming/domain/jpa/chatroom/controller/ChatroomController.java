@@ -143,10 +143,8 @@ public class ChatroomController {
     @GetMapping("/chatroom/my")
     public ResponseEntity<List<MyChatroomResponse>> getMyChatroom(
             @Parameter @AuthenticationPrincipal DofarmingUserDetails user,
-            @Parameter @RequestParam(required = false) Long roomId,
-            @Parameter @RequestParam(required = false) String condition,
-            @Parameter @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
+            @Parameter @RequestParam(required = false) String condition
     ) {
-        return ResponseEntity.ok().body(chatroomService.myRoomList(user.getUserId(), roomId, condition, createdAt));
+        return ResponseEntity.ok().body(chatroomService.myRoomList(user.getUserId(), condition));
     }
 }

@@ -6,5 +6,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface JoinRepositoryCustom {
-    List<Join> search(Long userId, Long roomId, String condition, LocalDateTime createdAt);
+    List<Join> search(Long userId, String condition);
 }

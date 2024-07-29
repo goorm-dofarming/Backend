@@ -2,6 +2,8 @@ package goorm.dofarming.domain.jpa.chatroom.dto.response;
 
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
 import goorm.dofarming.domain.jpa.join.entity.Join;
+import goorm.dofarming.domain.jpa.message.dto.response.MessageResponse;
+import goorm.dofarming.domain.jpa.message.dto.response.SimpleMessageResponse;
 import goorm.dofarming.domain.jpa.tag.dto.response.TagResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -33,7 +35,7 @@ public record MyChatroomResponse(
         Long unreadMessageCount,
 
         @Schema(description = "최근 메시지 내용", example = "안녕하세요.")
-        String latestMessage,
+        SimpleMessageResponse latestMessage,
 
         @Schema(description = "채팅방 생성 시간", example = "2023-07-20T12:55:56")
         LocalDateTime createdAt
@@ -52,7 +54,11 @@ public record MyChatroomResponse(
         );
     }
 
-    private static String getLatestMessage(Join join) {
-        return (join.getChatroom().getMessages() == null || join.getChatroom().getMessages().isEmpty()) ? "" : join.getChatroom().getMessages().get(join.getChatroom().getMessages().size() - 1).getContent();
+    private static SimpleMessageResponse getLatestMessage(Join join) {
+        return (join.getChatroom().getMessages() == null || join.getChatroom().getMessages().isEmpty()) ?
+                null : SimpleMessageResponse.from(
+                            join.getChatroom().getMessages().get(join.getChatroom().getMessages().size() - 1)
+        );
+
     }
 }
