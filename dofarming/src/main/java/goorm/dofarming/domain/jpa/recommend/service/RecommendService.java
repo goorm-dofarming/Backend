@@ -6,6 +6,7 @@ import goorm.dofarming.domain.jpa.location.repository.LocationRepository;
 import goorm.dofarming.domain.jpa.log.entity.Log;
 import goorm.dofarming.domain.jpa.log.repository.LogRepository;
 import goorm.dofarming.domain.jpa.recommend.entity.Recommend;
+import goorm.dofarming.domain.jpa.recommend.entity.RecommendDTO;
 import goorm.dofarming.domain.jpa.recommend.repository.RecommendRepository;
 import goorm.dofarming.domain.jpa.recommend.util.RecommendConfig;
 import goorm.dofarming.domain.jpa.user.entity.User;
@@ -118,6 +119,25 @@ public class RecommendService {
         return recommendLocation(mapX, mapY, recommendList, themes, log);
     }
 
+    public RecommendDTO recommendRandomForUserTest(double mapX, double mapY, Long userId) {
+
+        ArrayList<Object> recommendList = new ArrayList<>();
+        List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
+
+        Log log = saveLog(userId, mapX, mapY, 0);
+
+        // 핑 근처에 바다가 있을 때, 테마 추가
+        if (!getLocationsWithinRadius(1, mapX, mapY, secondRadius).isEmpty()) {
+            themes.add(1);
+        }
+        // 핑 근처에 산이 있을 때, 테마 추가
+        if (!getLocationsWithinRadius(2, mapX, mapY, secondRadius).isEmpty()) {
+            themes.add(2);
+        }
+
+        return recommendLocationTest(mapX, mapY, recommendList, themes, log);
+    }
+
     // 완전 랜덤 추천 - 게스트 전용
     public List<?> recommendRandomForGuest(double mapX, double mapY) {
 
@@ -149,6 +169,9 @@ public class RecommendService {
     // 테마에 따른 장소 추천
     private List<?> recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log) {
 
+        Long logId = log.getLogId();
+        recommendList.add("logId: " + logId);
+
         themes.forEach(theme -> {
             if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
                 List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
@@ -161,6 +184,24 @@ public class RecommendService {
 
         createRecommend(recommendList, log);
         return recommendList;
+    }
+
+    private RecommendDTO recommendLocationTest(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log) {
+
+        Long logId = log.getLogId();
+
+        themes.forEach(theme -> {
+            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
+                recommendList.addAll(randomSelect(themeLocations, 2));
+            } else {
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
+                recommendList.addAll(randomSelect(themeLocations, 2));
+            }
+        });
+
+        createRecommend(recommendList, log);
+        return new RecommendDTO(logId, "testAddress", recommendList);
     }
 
     // 현재 위치 기반해서 radius 범위 이하의 장소를 찾음.

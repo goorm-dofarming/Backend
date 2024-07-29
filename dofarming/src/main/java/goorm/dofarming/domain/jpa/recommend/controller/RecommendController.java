@@ -1,5 +1,6 @@
 package goorm.dofarming.domain.jpa.recommend.controller;
 
+import goorm.dofarming.domain.jpa.recommend.entity.RecommendDTO;
 import goorm.dofarming.domain.jpa.recommend.service.RecommendService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorCode;
@@ -25,6 +26,16 @@ public class RecommendController {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
         return recommendService.recommendOcean(userId);
+    }
+
+    @GetMapping("/randomTest")
+    public RecommendDTO recommendTest(
+            @AuthenticationPrincipal DofarmingUserDetails user,
+            @RequestParam("mapX") double mapX,
+            @RequestParam("mapY") double mapY) {
+        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
+        Long userId = user.getUserId();
+        return recommendService.recommendRandomForUserTest(mapX, mapY, userId);
     }
 
     @GetMapping("/mountain")
