@@ -56,7 +56,7 @@ public class RecommendService {
         // 산 혹은 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
         Log log = saveLog(userId, mapX, mapY, 1); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
-        String address = "";
+        String address = parseAddress(ocean.getAddr());
         // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
         return recommendLocation(mapX, mapY, recommendList, themes, log, address);
     }
@@ -77,7 +77,7 @@ public class RecommendService {
         // 산 혹은 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
         Log log = saveLog(userId, mapX, mapY, 2); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
-        String address = "";
+        String address = parseAddress(mountain.getAddr());
 
         // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
         return recommendLocation(mapX, mapY, recommendList, themes, log, address);
@@ -120,25 +120,6 @@ public class RecommendService {
         }
 
         return recommendLocation(mapX, mapY, recommendList, themes, log, address);
-    }
-
-    public RecommendDTO recommendRandomForUserTest(double mapX, double mapY, Long userId) {
-
-        ArrayList<Object> recommendList = new ArrayList<>();
-        List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
-
-        Log log = saveLog(userId, mapX, mapY, 0);
-
-        // 핑 근처에 바다가 있을 때, 테마 추가
-        if (!getLocationsWithinRadius(1, mapX, mapY, secondRadius).isEmpty()) {
-            themes.add(1);
-        }
-        // 핑 근처에 산이 있을 때, 테마 추가
-        if (!getLocationsWithinRadius(2, mapX, mapY, secondRadius).isEmpty()) {
-            themes.add(2);
-        }
-
-        return recommendLocationTest(mapX, mapY, recommendList, themes, log);
     }
 
     // 완전 랜덤 추천 - 게스트 전용
@@ -306,6 +287,15 @@ public class RecommendService {
                 locationRepository.save(location);
                 recommendRepository.save(recommend);
             }
+        }
+    }
+
+    private String parseAddress(String address) {
+        String[] parts = address.split(" ");
+        if (parts.length >= 3) {
+            return parts[0] + " " + parts[1] + " " + parts[2];
+        } else {
+            return address; // 주소가 3 단락 이하인 경우 전체 주소 반환
         }
     }
 
