@@ -22,53 +22,45 @@ public class RecommendController {
     private final RecommendService recommendService;
 
     @GetMapping("/ocean")
-    public List<?> recommendOcean(@AuthenticationPrincipal DofarmingUserDetails user) {
+    public RecommendDTO recommendOcean(@AuthenticationPrincipal DofarmingUserDetails user) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
         return recommendService.recommendOcean(userId);
     }
 
-    @GetMapping("/randomTest")
-    public RecommendDTO recommendTest(
-            @AuthenticationPrincipal DofarmingUserDetails user,
-            @RequestParam("mapX") double mapX,
-            @RequestParam("mapY") double mapY) {
-        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
-        Long userId = user.getUserId();
-        return recommendService.recommendRandomForUserTest(mapX, mapY, userId);
-    }
-
     @GetMapping("/mountain")
-    public List<?> recommendMountain(@AuthenticationPrincipal DofarmingUserDetails user) {
+    public RecommendDTO recommendMountain(@AuthenticationPrincipal DofarmingUserDetails user) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
         return recommendService.recommendMountain(userId);
     }
 
     @GetMapping("/theme")
-    public List<?> recommendTheme(
+    public RecommendDTO recommendTheme(
             @AuthenticationPrincipal DofarmingUserDetails user,
             @RequestParam("theme") int dataType,
             @RequestParam("mapX") double mapX,
-            @RequestParam("mapY") double mapY
+            @RequestParam("mapY") double mapY,
+            @RequestParam("address") String address
     ) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
-        return recommendService.recommendTheme(dataType, mapX, mapY, userId);
+        return recommendService.recommendTheme(dataType, mapX, mapY, userId, address);
     }
 
     @GetMapping("/random")
-    public List<?> recommendRandom(
+    public RecommendDTO recommendRandom(
             @RequestParam("mapX") double mapX,
             @RequestParam("mapY") double mapY,
+            @RequestParam("address") String address,
             @AuthenticationPrincipal DofarmingUserDetails user
     ) {
         if(user != null){
             Long userId = user.getUserId();
-            return recommendService.recommendRandomForUser(mapX, mapY, userId);
+            return recommendService.recommendRandomForUser(mapX, mapY, userId, address);
         }
         else {
-            return recommendService.recommendRandomForGuest(mapX, mapY);
+            return recommendService.recommendRandomForGuest(mapX, mapY, address);
         }
     }
 }

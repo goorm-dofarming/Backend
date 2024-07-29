@@ -41,7 +41,7 @@ public class RecommendService {
     private final static double secondRadius = RecommendConfig.secondRadius;
 
     // 바다 테마 선택, 바다 테마의 종류는 422가지
-    public List<?> recommendOcean(Long userId) {
+    public RecommendDTO recommendOcean(Long userId) {
 
         ArrayList<Object> recommendList = new ArrayList<>();
         List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
@@ -56,12 +56,13 @@ public class RecommendService {
         // 산 혹은 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
         Log log = saveLog(userId, mapX, mapY, 1); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
+        String address = "";
         // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
-        return recommendLocation(mapX, mapY, recommendList, themes, log);
+        return recommendLocation(mapX, mapY, recommendList, themes, log, address);
     }
 
     // 산 테마 선택, 산 테마의 종류는 636가지
-    public List<?> recommendMountain(Long userId) {
+    public RecommendDTO recommendMountain(Long userId) {
 
         ArrayList<Object> recommendList = new ArrayList<>();
         List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
@@ -76,12 +77,14 @@ public class RecommendService {
         // 산 혹은 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
         Log log = saveLog(userId, mapX, mapY, 2); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
+        String address = "";
+
         // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
-        return recommendLocation(mapX, mapY, recommendList, themes, log);
+        return recommendLocation(mapX, mapY, recommendList, themes, log, address);
     }
 
     // ( 바다, 산을 제외한 ) 테마 선택
-    public List<?> recommendTheme(int dataType, double mapX, double mapY, Long userId) {
+    public RecommendDTO recommendTheme(int dataType, double mapX, double mapY, Long userId, String address) {
 
         ArrayList<Object> recommendList = new ArrayList<>();
         Log log = saveLog(userId, mapX, mapY, dataType);
@@ -95,12 +98,12 @@ public class RecommendService {
         }
 
         createRecommend(recommendList, log);
-        return recommendList;
+        return new RecommendDTO(log.getLogId(), address, recommendList);
     }
 
     // 완전 랜덤 추천 (테마 선택 X) - 유저 전용
     // 이 경우에는 바다 테마를 검색해보고 주변에 바다가 있으면 6개 중 랜덤 아니면 5개 중 랜덤 2개 선택해서 보내줌.
-    public List<?> recommendRandomForUser(double mapX, double mapY, Long userId) {
+    public RecommendDTO recommendRandomForUser(double mapX, double mapY, Long userId, String address) {
 
         ArrayList<Object> recommendList = new ArrayList<>();
         List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
@@ -116,7 +119,7 @@ public class RecommendService {
             themes.add(2);
         }
 
-        return recommendLocation(mapX, mapY, recommendList, themes, log);
+        return recommendLocation(mapX, mapY, recommendList, themes, log, address);
     }
 
     public RecommendDTO recommendRandomForUserTest(double mapX, double mapY, Long userId) {
@@ -139,7 +142,7 @@ public class RecommendService {
     }
 
     // 완전 랜덤 추천 - 게스트 전용
-    public List<?> recommendRandomForGuest(double mapX, double mapY) {
+    public RecommendDTO recommendRandomForGuest(double mapX, double mapY, String address) {
 
         ArrayList<Object> recommendList = new ArrayList<>();
         List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
@@ -163,11 +166,11 @@ public class RecommendService {
             }
         });
 
-        return recommendList;
+        return new RecommendDTO(null, address, recommendList);
     }
 
     // 테마에 따른 장소 추천
-    private List<?> recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log) {
+    private RecommendDTO recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log, String address) {
 
         Long logId = log.getLogId();
         recommendList.add("logId: " + logId);
@@ -183,25 +186,7 @@ public class RecommendService {
         });
 
         createRecommend(recommendList, log);
-        return recommendList;
-    }
-
-    private RecommendDTO recommendLocationTest(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log) {
-
-        Long logId = log.getLogId();
-
-        themes.forEach(theme -> {
-            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
-                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
-                recommendList.addAll(randomSelect(themeLocations, 2));
-            } else {
-                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
-                recommendList.addAll(randomSelect(themeLocations, 2));
-            }
-        });
-
-        createRecommend(recommendList, log);
-        return new RecommendDTO(logId, "testAddress", recommendList);
+        return new RecommendDTO(logId, address, recommendList);
     }
 
     // 현재 위치 기반해서 radius 범위 이하의 장소를 찾음.
