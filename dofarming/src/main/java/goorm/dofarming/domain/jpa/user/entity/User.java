@@ -47,11 +47,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Like> likes = new ArrayList<>();
 
-//    // 테스트용
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<LikeV2> likesV2 = new ArrayList<>();
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Log> logs = new ArrayList<>();

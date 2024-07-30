@@ -20,12 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RecommendService {
+public class RecommendServiceV2 {
 
     private final RecommendRepository recommendRepository;
     private final LogRepository logRepository;
@@ -60,7 +59,7 @@ public class RecommendService {
         String address = parseAddress(ocean.getAddr());
 
         // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
-        return recommendLocation(mapX, mapY, recommendList, themes, log, address);
+        return recommendLocationTest(mapX, mapY, recommendList, themes, log, address);
     }
 
     // 산 테마 선택, 산 테마의 종류는 636가지
@@ -152,7 +151,28 @@ public class RecommendService {
         return new RecommendDTO(null, address, recommendList);
     }
 
+    // 테마에 따른 장소 추천
     private RecommendDTO recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log, String address) {
+
+        Long logId = log.getLogId();
+        recommendList.add("logId: " + logId);
+
+        themes.forEach(theme -> {
+            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
+                recommendList.addAll(randomSelect(themeLocations, 2));
+            } else {
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
+                recommendList.addAll(randomSelect(themeLocations, 2));
+            }
+        });
+
+        createRecommend(recommendList, log);
+        return new RecommendDTO(logId, address, recommendList);
+    }
+
+    private RecommendDTO recommendLocationTest(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log, String address) {
+
         User user = log.getUser();
         Long logId = log.getLogId();
 
@@ -195,17 +215,7 @@ public class RecommendService {
         });
 
         createRecommend(recommendList, log);
-
-        // 새로운 List<Object>로 변환
-        List<Object> finalRecommendations = new ArrayList<>();
-        for (RecommendDTO.Recommendation rec : recommendations) {
-            Map<String, Object> locationWithLike = new HashMap<>();
-            locationWithLike.put("location", rec.getLocation());
-            locationWithLike.put("isLiked", rec.isLiked());
-            finalRecommendations.add(locationWithLike);
-        }
-
-        return new RecommendDTO(logId, address, finalRecommendations);
+        return new RecommendDTO(logId, address, null, recommendations);
     }
 
     // 현재 위치 기반해서 radius 범위 이하의 장소를 찾음.
@@ -385,25 +395,5 @@ public class RecommendService {
 //
 //        createRecommend(recommendList, log);
 //        return recommendList;
-//    }
-
-    // 테마에 따른 장소 추천 - isLiked 가 들어가지 않은 구 버전
-//    private RecommendDTO recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log, String address) {
-//
-//        Long logId = log.getLogId();
-//        recommendList.add("logId: " + logId);
-//
-//        themes.forEach(theme -> {
-//            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
-//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
-//                recommendList.addAll(randomSelect(themeLocations, 2));
-//            } else {
-//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
-//                recommendList.addAll(randomSelect(themeLocations, 2));
-//            }
-//        });
-//
-//        createRecommend(recommendList, log);
-//        return new RecommendDTO(logId, address, recommendList);
 //    }
 }
