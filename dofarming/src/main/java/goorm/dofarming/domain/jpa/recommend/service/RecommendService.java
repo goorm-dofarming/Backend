@@ -152,26 +152,6 @@ public class RecommendService {
         return new RecommendDTO(null, address, recommendList);
     }
 
-    // 테마에 따른 장소 추천
-//    private RecommendDTO recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log, String address) {
-//
-//        Long logId = log.getLogId();
-//        recommendList.add("logId: " + logId);
-//
-//        themes.forEach(theme -> {
-//            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
-//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
-//                recommendList.addAll(randomSelect(themeLocations, 2));
-//            } else {
-//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
-//                recommendList.addAll(randomSelect(themeLocations, 2));
-//            }
-//        });
-//
-//        createRecommend(recommendList, log);
-//        return new RecommendDTO(logId, address, recommendList);
-//    }
-
     private RecommendDTO recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log, String address) {
         User user = log.getUser();
         Long logId = log.getLogId();
@@ -405,5 +385,25 @@ public class RecommendService {
 //
 //        createRecommend(recommendList, log);
 //        return recommendList;
+//    }
+
+    // 테마에 따른 장소 추천 - isLiked 가 들어가지 않은 구 버전
+//    private RecommendDTO recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log, String address) {
+//
+//        Long logId = log.getLogId();
+//        recommendList.add("logId: " + logId);
+//
+//        themes.forEach(theme -> {
+//            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
+//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
+//                recommendList.addAll(randomSelect(themeLocations, 2));
+//            } else {
+//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
+//                recommendList.addAll(randomSelect(themeLocations, 2));
+//            }
+//        });
+//
+//        createRecommend(recommendList, log);
+//        return new RecommendDTO(logId, address, recommendList);
 //    }
 }
