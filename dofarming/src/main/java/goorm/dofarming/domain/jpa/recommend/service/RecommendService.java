@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Service
@@ -54,12 +53,11 @@ public class RecommendService {
         Double mapX = ocean.getMapX();
         Double mapY = ocean.getMapY();
 
-        // 산 혹은 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
-//        Log log = saveLog(userId, mapX, mapY, 1); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
-
         String address = parseAddress(ocean.getAddr());
 
-        Log log = saveLogTest(userId, mapX, mapY, 1, address); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
+        // 산 혹은 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
+        Log log = saveLog(userId, mapX, mapY, 1, address); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
+//        Log log = saveLog(userId, mapX, mapY, 1); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
         // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
         return recommendLocation(mapX, mapY, recommendList, themes, log, address);
@@ -78,10 +76,11 @@ public class RecommendService {
         Double mapX = mountain.getMapX();
         Double mapY = mountain.getMapY();
 
-        // 산 혹은 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
-        Log log = saveLog(userId, mapX, mapY, 2); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
-
         String address = parseAddress(mountain.getAddr());
+
+        // 산 혹은 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
+        Log log = saveLog(userId, mapX, mapY, 2, address); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
+//        Log log = saveLog(userId, mapX, mapY, 2); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
         // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
         return recommendLocation(mapX, mapY, recommendList, themes, log, address);
@@ -90,8 +89,11 @@ public class RecommendService {
     // ( 바다, 산을 제외한 ) 테마 선택
     public RecommendDTO recommendTheme(int dataType, double mapX, double mapY, Long userId, String address) {
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 회원입니다."));
         ArrayList<Object> recommendList = new ArrayList<>();
-        Log log = saveLog(userId, mapX, mapY, dataType);
+        Log log = saveLog(userId, mapX, mapY, dataType, address); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
+//        Log log = saveLog(userId, mapX, mapY, dataType); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
         if (getLocationsWithinRadius(dataType, mapX, mapY, firstRadius).size() < 8) {
             List<?> themeLocations = getLocationsWithinRadius(dataType, mapX, mapY, secondRadius);
@@ -100,6 +102,8 @@ public class RecommendService {
             List<?> themeLocations = getLocationsWithinRadius(dataType, mapX, mapY, firstRadius);
             recommendList.addAll(randomSelect(themeLocations, 8));
         }
+
+        isLiked(recommendList, user);
 
         createRecommend(recommendList, log);
         return new RecommendDTO(log.getLogId(), address, recommendList);
@@ -112,7 +116,8 @@ public class RecommendService {
         ArrayList<Object> recommendList = new ArrayList<>();
         List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
 
-        Log log = saveLog(userId, mapX, mapY, 0);
+        Log log = saveLog(userId, mapX, mapY, 0, address); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
+//        Log log = saveLog(userId, mapX, mapY, 0); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
         // 핑 근처에 바다가 있을 때, 테마 추가
         if (!getLocationsWithinRadius(1, mapX, mapY, secondRadius).isEmpty()) {
@@ -155,59 +160,46 @@ public class RecommendService {
     }
 
     private RecommendDTO recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log, String address) {
-        User user = log.getUser();
+
         Long logId = log.getLogId();
-
-        List<RecommendDTO.Recommendation> recommendations = new ArrayList<>();
-
-        // 모든 항목을 하나의 리스트로 합침
-        List<Object> allLocations = new ArrayList<>(recommendList);
+        User user = log.getUser();
 
         themes.forEach(theme -> {
-            List<?> themeLocations;
             if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
-                themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
-                themeLocations = randomSelect(themeLocations, 2);  // 최대 2개의 항목 선택
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
+                recommendList.addAll(randomSelect(themeLocations, 2));
             } else {
-                themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
-                themeLocations = randomSelect(themeLocations, 2);  // 최대 2개의 항목 선택
+                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
+                recommendList.addAll(randomSelect(themeLocations, 2));
             }
-            allLocations.addAll(themeLocations);
         });
 
-        // allLocations 리스트에서 각 항목 처리
-        allLocations.forEach(location -> {
-            boolean isLiked = false;
-
-            if (location instanceof Ocean ocean) {
-                isLiked = likeService.checkIfAlreadyLiked(user, 1, ocean.getId());
-            } else if (location instanceof Mountain mountain) {
-                isLiked = likeService.checkIfAlreadyLiked(user, 2, mountain.getId());
-            } else if (location instanceof Activity activity) {
-                isLiked = likeService.checkIfAlreadyLiked(user, 3, activity.getId());
-            } else if (location instanceof Tour tour) {
-                isLiked = likeService.checkIfAlreadyLiked(user, 4, tour.getId());
-            } else if (location instanceof Restaurant restaurant) {
-                isLiked = likeService.checkIfAlreadyLiked(user, 5, restaurant.getId());
-            } else if (location instanceof Cafe cafe) {
-                isLiked = likeService.checkIfAlreadyLiked(user, 6, cafe.getId());
-            }
-
-            recommendations.add(new RecommendDTO.Recommendation(location, isLiked));
-        });
+        isLiked(recommendList, user);
 
         createRecommend(recommendList, log);
 
-        // 새로운 List<Object>로 변환
-        List<Object> finalRecommendations = new ArrayList<>();
-        for (RecommendDTO.Recommendation rec : recommendations) {
-            Map<String, Object> locationWithLike = new HashMap<>();
-            locationWithLike.put("location", rec.getLocation());
-            locationWithLike.put("isLiked", rec.isLiked());
-            finalRecommendations.add(locationWithLike);
-        }
+        return new RecommendDTO(logId, address, recommendList);
+    }
 
-        return new RecommendDTO(logId, address, finalRecommendations);
+    private void isLiked(ArrayList<Object> recommendList, User user) {
+        for (Object location : recommendList) {
+            boolean isLiked = false;
+
+            if (location instanceof Ocean ocean) {
+                ocean.setLiked(likeService.checkIfAlreadyLiked(user, 1, ocean.getId()));
+            } else if (location instanceof Mountain mountain) {
+                mountain.setLiked(likeService.checkIfAlreadyLiked(user, 2, mountain.getId()));
+            } else if (location instanceof Activity activity) {
+                activity.setLiked(likeService.checkIfAlreadyLiked(user, 3, activity.getId()));
+            } else if (location instanceof Tour tour) {
+                tour.setLiked(likeService.checkIfAlreadyLiked(user, 4, tour.getId()));
+            } else if (location instanceof Restaurant restaurant) {
+                restaurant.setLiked(likeService.checkIfAlreadyLiked(user, 5, restaurant.getId()));
+            } else if (location instanceof Cafe cafe) {
+                cafe.setLiked(likeService.checkIfAlreadyLiked(user, 6, cafe.getId()));
+            }
+
+        }
     }
 
     // 현재 위치 기반해서 radius 범위 이하의 장소를 찾음.
@@ -260,43 +252,7 @@ public class RecommendService {
         }
     }
 
-    private Log saveLog(Long userId, Double mapX, Double mapY, int dataType) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 회원입니다."));
-        if (dataType == 1) {
-            Log log = Log.log(mapX, mapY, "Ocean", user);
-            logRepository.save(log);
-            return log;
-        } else if (dataType == 2) {
-            Log log = Log.log(mapX, mapY, "Mountain", user);
-            logRepository.save(log);
-            return log;
-        } else if (dataType == 3) {
-            Log log = Log.log(mapX, mapY, "Activity", user);
-            logRepository.save(log);
-            return log;
-        } else if (dataType == 4) {
-            Log log = Log.log(mapX, mapY, "TourAttraction", user);
-            logRepository.save(log);
-            return log;
-        } else if (dataType == 5) {
-            Log log = Log.log(mapX, mapY, "Restaurant", user);
-            logRepository.save(log);
-            return log;
-        } else if (dataType == 6) {
-            Log log = Log.log(mapX, mapY, "Cafe", user);
-            logRepository.save(log);
-            return log;
-        } else if (dataType == 0) {
-            Log log = Log.log(mapX, mapY, "Random", user);
-            logRepository.save(log);
-            return log;
-        } else {
-            return null;
-        }
-    }
-
-    private Log saveLogTest(Long userId, Double mapX, Double mapY, int dataType, String address) {
+    private Log saveLog(Long userId, Double mapX, Double mapY, int dataType, String address) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 회원입니다."));
         if (dataType == 1) {
@@ -353,6 +309,9 @@ public class RecommendService {
             } else if (obj instanceof Cafe cafe) {
                 id = cafe.getId();
                 dataType = cafe.getDataType();
+            } else if (obj instanceof Mountain mountain) {
+                id = mountain.getId();
+                dataType = mountain.getDataType();
             }
 
             if (id != null && dataType != null) {
@@ -429,7 +388,6 @@ public class RecommendService {
 //    private RecommendDTO recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log, String address) {
 //
 //        Long logId = log.getLogId();
-//        recommendList.add("logId: " + logId);
 //
 //        themes.forEach(theme -> {
 //            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
@@ -442,6 +400,64 @@ public class RecommendService {
 //        });
 //
 //        createRecommend(recommendList, log);
+//
+//        return new RecommendDTO(logId, address, recommendList);
+//    }
+
+//     로그에 주소를 담기 전버전
+//    private Log saveLog(Long userId, Double mapX, Double mapY, int dataType) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 회원입니다."));
+//        if (dataType == 1) {
+//            Log log = Log.log(mapX, mapY, "Ocean", user);
+//            logRepository.save(log);
+//            return log;
+//        } else if (dataType == 2) {
+//            Log log = Log.log(mapX, mapY, "Mountain", user);
+//            logRepository.save(log);
+//            return log;
+//        } else if (dataType == 3) {
+//            Log log = Log.log(mapX, mapY, "Activity", user);
+//            logRepository.save(log);
+//            return log;
+//        } else if (dataType == 4) {
+//            Log log = Log.log(mapX, mapY, "TourAttraction", user);
+//            logRepository.save(log);
+//            return log;
+//        } else if (dataType == 5) {
+//            Log log = Log.log(mapX, mapY, "Restaurant", user);
+//            logRepository.save(log);
+//            return log;
+//        } else if (dataType == 6) {
+//            Log log = Log.log(mapX, mapY, "Cafe", user);
+//            logRepository.save(log);
+//            return log;
+//        } else if (dataType == 0) {
+//            Log log = Log.log(mapX, mapY, "Random", user);
+//            logRepository.save(log);
+//            return log;
+//        } else {
+//            return null;
+//        }
+//    }
+
+    // 기존 추천,,,
+    //    private RecommendDTO recommendLocation(double mapX, double mapY, ArrayList<Object> recommendList, List<Integer> themes, Log log, String address) {
+//
+//        Long logId = log.getLogId();
+//
+//        themes.forEach(theme -> {
+//            if (getLocationsWithinRadius(theme, mapX, mapY, firstRadius).size() < 2) {
+//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, secondRadius);
+//                recommendList.addAll(randomSelect(themeLocations, 2));
+//            } else {
+//                List<?> themeLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
+//                recommendList.addAll(randomSelect(themeLocations, 2));
+//            }
+//        });
+//
+//        createRecommend(recommendList, log);
+//
 //        return new RecommendDTO(logId, address, recommendList);
 //    }
 }

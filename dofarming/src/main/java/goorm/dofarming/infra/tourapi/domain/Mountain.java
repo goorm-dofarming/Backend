@@ -29,6 +29,13 @@ public class Mountain {
     @Column(name = "dataType")
     private int dataType = 2;
 
+    @Transient
+    private boolean isLiked;
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
+
     @OneToMany(mappedBy = "mountain", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Like> likes = new ArrayList<>();

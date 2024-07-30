@@ -29,12 +29,19 @@ public class Activity {
     @Column(name = "dataType")
     private int dataType = 3;
 
+    @Column(name = "like_count")
+    private int likeCount = 0;
+
+    @Transient
+    private boolean isLiked;
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
+
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Like> likes = new ArrayList<>();
-
-    @Column(name = "like_count")
-    private int likeCount = 0;
 
     public void incrementLikeCount() {
         System.out.println("activity increment");
