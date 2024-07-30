@@ -29,6 +29,13 @@ public class Cafe {
     @Column(name = "dataType")
     private int dataType = 6;
 
+    @Transient
+    private boolean isLiked;
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
+
     @OneToMany(mappedBy = "cafe", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Like> likes = new ArrayList<>();

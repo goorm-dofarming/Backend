@@ -108,7 +108,10 @@ public class LikeService {
 
     public boolean checkIfAlreadyLiked(User user, int dataType, Long placeId) {
         List<Like> likes = user.getLikes();
-        return likes.stream().anyMatch(like -> like.alreadyLike(dataType, placeId));
+//        return likes.stream().anyMatch(like -> like.alreadyLike(dataType, placeId));
+        return likes.stream()
+                .filter(like -> like.getStatus() != Status.DELETE) // Status가 DELETE가 아닌 것만 필터링
+                .anyMatch(like -> like.alreadyLike(dataType, placeId)); // 필터링된 항목 중 하나라도 조건을 만족하는지 체크
     }
 
 }

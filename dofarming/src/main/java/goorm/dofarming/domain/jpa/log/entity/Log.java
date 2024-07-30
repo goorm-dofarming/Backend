@@ -30,7 +30,7 @@ public class Log extends BaseEntity {
     private String theme;
 
     // 일단 좌표만 보내는 걸로...
-//    private String address;
+    private String address;
     // 추천된 위치의 위도
     private Double latitude;
     // 추천된 위치의 경도
@@ -59,6 +59,19 @@ public class Log extends BaseEntity {
         log.addUser(user);
         return log;
     }
+
+    public static Log log(Double longitude, Double latitude, String theme, String address, User user) {
+        Log log = new Log();
+        log.theme = theme;
+        log.address = address;
+        log.latitude = latitude;
+        log.longitude = longitude;
+        log.status = Status.ACTIVE;
+        log.addUser(user);
+        return log;
+    }
+
+
 
     //== 연관관계 메서드 ==//
     public void addUser(User user) {

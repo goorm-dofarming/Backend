@@ -36,6 +36,13 @@ public class Ocean {
     @Column(name = "like_count")
     private int likeCount = 0;
 
+    @Transient
+    private boolean isLiked;
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
+
     public void incrementLikeCount() {
         this.likeCount++;
     }
