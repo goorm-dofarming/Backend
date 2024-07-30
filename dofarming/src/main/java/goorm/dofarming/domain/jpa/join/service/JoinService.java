@@ -22,6 +22,6 @@ public class JoinService {
         Join join = joinRepository.findByUser_UserIdAndChatroom_RoomIdAndStatus(userId, watermarkRequest.roomId(), Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "Join Not Found"));
 
-        join.getLastReadMessageId();
+        join.updateWatermark(watermarkRequest.messageId());
     }
 }

@@ -89,7 +89,7 @@ public class ChatroomController {
     }
 
 
-    @Operation(
+/*    @Operation(
             operationId = "ChatRoom",
             summary = "채팅방 퇴장 api 입니다.",
             responses = {
@@ -104,9 +104,10 @@ public class ChatroomController {
             @Parameter @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @Valid @PathVariable Long roomId
     ) {
+
         chatroomService.leaveRoom(user.getUserId(), roomId);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 
 
     @Operation(
@@ -120,12 +121,13 @@ public class ChatroomController {
     )
     @GetMapping("/chatroom")
     public ResponseEntity<List<OpenChatroomResponse>> getSearchChatroom(
+            @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @RequestParam(required = false) Long roomId,
             @Parameter @RequestParam(required = false) String condition,
             @Parameter @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
     ) {
 
-        return ResponseEntity.ok().body(chatroomService.searchRoomList(roomId, condition, createdAt));
+        return ResponseEntity.ok().body(chatroomService.searchRoomList(user.getUserId(), roomId, condition, createdAt));
     }
 
 
@@ -140,8 +142,9 @@ public class ChatroomController {
     )
     @GetMapping("/chatroom/my")
     public ResponseEntity<List<MyChatroomResponse>> getMyChatroom(
-            @Parameter @AuthenticationPrincipal DofarmingUserDetails user
+            @Parameter @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter @RequestParam(required = false) String condition
     ) {
-        return ResponseEntity.ok().body(chatroomService.myRoomList(user.getUserId()));
+        return ResponseEntity.ok().body(chatroomService.myRoomList(user.getUserId(), condition));
     }
 }

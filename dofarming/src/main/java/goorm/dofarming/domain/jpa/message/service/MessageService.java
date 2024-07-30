@@ -27,12 +27,20 @@ import java.util.stream.Collectors;
 public class MessageService {
 
     private final MessageRepository messageRepository;
+    private final JoinRepository joinRepository;
 
     /**
      * 메시지 조회
      */
-    public List<MessageResponse> searchMessageList(Long messageId, Long roomId, LocalDateTime createdAt) {
-        return messageRepository.search(messageId, roomId, createdAt)
+    public List<MessageResponse> searchMessageList(Long userId, Long messageId, Long roomId, LocalDateTime createdAt) {
+
+
+        Join join = joinRepository.findByUser_UserIdAndChatroom_RoomIdAndStatus(userId, roomId, Status.ACTIVE)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "Join not found."));
+
+        LocalDateTime entryTime = join.getCreatedAt();
+
+        return messageRepository.search(entryTime, join.getLastReadMessageId(), messageId, roomId, createdAt)
                 .stream().map(MessageResponse::from).collect(Collectors.toList());
     }
 }

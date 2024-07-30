@@ -3,12 +3,14 @@ package goorm.dofarming.domain.jpa.message.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import goorm.dofarming.domain.jpa.chatroom.repository.ChatroomRepository;
+import goorm.dofarming.domain.jpa.chatroom.service.ChatroomService;
 import goorm.dofarming.domain.jpa.join.dto.request.AlarmDto;
 import goorm.dofarming.domain.jpa.join.entity.Join;
 import goorm.dofarming.domain.jpa.join.repository.JoinRepository;
 import goorm.dofarming.domain.jpa.message.dto.MessageDto;
 import goorm.dofarming.domain.jpa.message.dto.response.MessageResponse;
 import goorm.dofarming.domain.jpa.message.entity.Message;
+import goorm.dofarming.domain.jpa.message.entity.MessageType;
 import goorm.dofarming.domain.jpa.message.repository.MessageRepository;
 import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.common.error.ErrorCode;
@@ -31,6 +33,7 @@ public class KafkaMessageService {
 
     private final JoinRepository joinRepository;
     private final MessageRepository messageRepository;
+    private final ChatroomService chatroomService;
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper mapper;
@@ -55,7 +58,10 @@ public class KafkaMessageService {
 
         Message createMessage = Message.message(findJoin, messageDto.nickname(), messageDto.messageType(), messageDto.content());
         messageRepository.save(createMessage);
-
         send(MessageResponse.from(createMessage));
+
+        if (messageDto.messageType().equals(MessageType.LEAVE)) {
+            chatroomService.leaveRoom(findJoin);
+        }
     }
 }

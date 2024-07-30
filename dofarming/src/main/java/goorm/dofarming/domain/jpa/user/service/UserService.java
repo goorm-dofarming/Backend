@@ -65,27 +65,26 @@ public class UserService {
         /*
          * 이미지 생성
          */
-        // 파일에 이미지가 들어오고
-        if (file != null && !file.isEmpty()) {
+        if (file == null) {
+            user.updateInfo(userModifyRequest.nickname(), userPassword, user.getImageUrl());
+
+        } else if (file.isEmpty()) {
+            // 이미지가 존재하면 삭제
+            deleteUserImageFIle(user);
+            // 유저 업데이트
+            user.updateInfo(userModifyRequest.nickname(), userPassword, null);
+
+        } else {
             String imageUrl = imageUtil.getImageUrl(file);
-            log.info("url={}", imageUrl);
 
             Path path = imageUtil.makeFilePath(imageUrl);
-            log.info("path={}", path);
 
-            // 이미지가 존재하면
-            if (user.getImageUrl() != null) {
-                // 유저의 이미지 삭제
-                Path existImageFilePath = Paths.get(user.getImageUrl());
-                imageUtil.deleteImageUrl(existImageFilePath);
-            }
+            // 이미지가 존재하면 삭제
+            deleteUserImageFIle(user);
             // 경로에 이미지 쓰기
             imageUtil.writeImageFile(path, file);
 
             user.updateInfo(userModifyRequest.nickname(), userPassword, imageUrl);
-        } else {
-            // 파일이 null 이면 그대로 imageUrl 유지
-            user.updateInfo(userModifyRequest.nickname(), userPassword, user.getImageUrl());
         }
 
         return UserResponse.builder()
@@ -94,6 +93,14 @@ public class UserService {
                 .imageUrl(user.getImageUrl())
                 .nickname(user.getNickname())
                 .build();
+    }
+
+    private void deleteUserImageFIle(User user) {
+        if (user.getImageUrl() != null) {
+            // 유저의 이미지 삭제
+            Path existImageFilePath = Paths.get(user.getImageUrl());
+            imageUtil.deleteImageUrl(existImageFilePath);
+        }
     }
 
     /**

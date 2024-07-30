@@ -4,11 +4,17 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
+import goorm.dofarming.domain.jpa.join.entity.Join;
+import goorm.dofarming.domain.jpa.join.entity.QJoin;
+import goorm.dofarming.domain.jpa.user.entity.QUser;
 import goorm.dofarming.global.common.entity.Status;
 import jakarta.persistence.EntityManager;
 
 import static goorm.dofarming.domain.jpa.chatroom.entity.QChatroom.*;
+import static goorm.dofarming.domain.jpa.join.entity.QJoin.*;
+import static goorm.dofarming.domain.jpa.message.entity.QMessage.message;
 import static goorm.dofarming.domain.jpa.tag.entity.QTag.*;
+import static goorm.dofarming.domain.jpa.user.entity.QUser.*;
 import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDateTime;
@@ -21,6 +27,7 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
     public ChatroomRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
+
     @Override
     public List<Chatroom> search(Long roomId, String condition, LocalDateTime createdAt) {
 
@@ -29,10 +36,10 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
                 .or(regionContains(condition))
                 .or(tagContains(condition));
 
-        return queryFactory
-                .selectDistinct(chatroom)
+        List<Chatroom> rooms = queryFactory
+                .select(chatroom)
                 .from(chatroom)
-                .leftJoin(chatroom.tags, tag).fetchJoin()
+                .leftJoin(chatroom.tags, tag)
                 .where(
                         orBuilder,
                         cursorCondition(roomId, createdAt),
@@ -43,6 +50,20 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
                         chatroom.roomId.desc()
                 )
                 .limit(20)
+                .fetch();
+
+        return queryFactory
+                .selectDistinct(chatroom)
+                .from(chatroom)
+                .leftJoin(chatroom.joins, join).fetchJoin()
+                .where(
+                        chatroom.in(rooms),
+                        joinStatusEq(Status.ACTIVE)
+                )
+                .orderBy(
+                        chatroom.createdAt.desc(),
+                        chatroom.roomId.desc()
+                )
                 .fetch();
     }
 
@@ -64,5 +85,8 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
     }
     private BooleanExpression statusEq(Status status) {
         return hasText(status.name()) ? chatroom.status.eq(status) : null;
+    }
+    private BooleanExpression joinStatusEq(Status status) {
+        return hasText(status.name()) ? join.status.eq(status) : null;
     }
 }

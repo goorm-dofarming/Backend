@@ -1,5 +1,6 @@
 package goorm.dofarming.domain.jpa.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import goorm.dofarming.domain.jpa.join.entity.Join;
 import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.log.entity.Log;
@@ -47,6 +48,7 @@ public class User extends BaseEntity {
     private List<Like> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Log> logs = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
