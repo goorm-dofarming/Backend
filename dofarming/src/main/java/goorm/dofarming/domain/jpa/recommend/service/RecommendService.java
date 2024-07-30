@@ -55,9 +55,11 @@ public class RecommendService {
         Double mapY = ocean.getMapY();
 
         // 산 혹은 바다 테마의 경우는 해수욕장 위치가 추천 로그가 된다.
-        Log log = saveLog(userId, mapX, mapY, 1); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
+//        Log log = saveLog(userId, mapX, mapY, 1); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
         String address = parseAddress(ocean.getAddr());
+
+        Log log = saveLogTest(userId, mapX, mapY, 1, address); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
         // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
         return recommendLocation(mapX, mapY, recommendList, themes, log, address);
@@ -287,6 +289,42 @@ public class RecommendService {
             return log;
         } else if (dataType == 0) {
             Log log = Log.log(mapX, mapY, "Random", user);
+            logRepository.save(log);
+            return log;
+        } else {
+            return null;
+        }
+    }
+
+    private Log saveLogTest(Long userId, Double mapX, Double mapY, int dataType, String address) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 회원입니다."));
+        if (dataType == 1) {
+            Log log = Log.log(mapX, mapY, "Ocean", address, user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 2) {
+            Log log = Log.log(mapX, mapY, "Mountain", address, user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 3) {
+            Log log = Log.log(mapX, mapY, "Activity", address, user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 4) {
+            Log log = Log.log(mapX, mapY, "TourAttraction", address, user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 5) {
+            Log log = Log.log(mapX, mapY, "Restaurant", address, user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 6) {
+            Log log = Log.log(mapX, mapY, "Cafe", address, user);
+            logRepository.save(log);
+            return log;
+        } else if (dataType == 0) {
+            Log log = Log.log(mapX, mapY, "Random", address, user);
             logRepository.save(log);
             return log;
         } else {
