@@ -39,7 +39,10 @@ public class LikeService {
 
         for (Like like : likes) {
 
+            if(like.getStatus() == Status.DELETE) continue;
+
             if (like.getStatus() == Status.ACTIVE) {
+                // for 로 refactoring 가능
                 if (like.getCafe() != null) {
                     Cafe cafe = like.getCafe();
                     likedLocations.add(new LikeDTO(like.getLikeId(), "Cafe", cafe.getTitle(), cafe.getAddr(), cafe.getTel(), cafe.getImage(), cafe.getMapX(), cafe.getMapY(), cafe.getLikeCount()));
@@ -100,9 +103,12 @@ public class LikeService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원 정보를 찾을 수 없습니다."));
 
-
-
         return likeRepository.save(Like.like(user, location));
+    }
+
+    public boolean checkIfAlreadyLiked(User user, int dataType, Long placeId) {
+        List<Like> likes = user.getLikes();
+        return likes.stream().anyMatch(like -> like.alreadyLike(dataType, placeId));
     }
 
 }

@@ -5,11 +5,15 @@ import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.global.common.entity.BaseEntity;
 import goorm.dofarming.global.common.entity.Status;
+import goorm.dofarming.global.common.error.ErrorCode;
+import goorm.dofarming.global.common.error.exception.CustomException;
 import goorm.dofarming.infra.tourapi.domain.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 import static jakarta.persistence.FetchType.*;
 
@@ -197,6 +201,24 @@ public class Like extends BaseEntity {
             this.tour.decrementLikeCount();
         } else if (this.restaurant != null) {
             this.restaurant.decrementLikeCount();
+        }
+    }
+
+    public boolean alreadyLike(int dataType, Long placeId) {
+        if (dataType == 1) {
+            return ocean != null && Objects.equals(placeId, ocean.getId());
+        } else if (dataType == 2) {
+            return mountain != null && Objects.equals(placeId, mountain.getId());
+        } else if (dataType == 3) {
+            return activity != null && Objects.equals(placeId, activity.getId());
+        } else if (dataType == 4) {
+            return tour != null && Objects.equals(placeId, tour.getId());
+        } else if (dataType == 5) {
+            return restaurant != null && Objects.equals(placeId, restaurant.getId());
+        } else if (dataType == 6) {
+            return cafe != null && Objects.equals(placeId, cafe.getId());
+        } else {
+            throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "등록되지 않은 장소입니다.");
         }
     }
 
