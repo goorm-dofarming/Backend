@@ -127,23 +127,18 @@ public class Like extends BaseEntity {
     }
 
     public void active() {
-        System.out.println("ACTIVE????");
         if (this.status != Status.ACTIVE) {
-            System.out.println("ACTIVE!!!!");
             incrementLikeCount();
         }
         this.status = Status.ACTIVE;
     }
 
     public void reverseStatus() {
-        System.out.println("REVERSE!!!!");
         if (this.status == Status.ACTIVE) {
             this.status = Status.DELETE;
-            System.out.println("MINUS!!!!");
             decrementLikeCount();
         } else {
             this.status = Status.ACTIVE;
-            System.out.println("PLUS!!!!");
             incrementLikeCount();
         }
     }
@@ -184,7 +179,7 @@ public class Like extends BaseEntity {
         } else if (this.restaurant != null) {
             this.restaurant.incrementLikeCount();
         } else {
-            System.out.println("ERROR");
+            throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 테마입니다.");
         }
     }
 

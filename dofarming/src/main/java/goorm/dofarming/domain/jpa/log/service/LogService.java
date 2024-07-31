@@ -4,6 +4,7 @@ import goorm.dofarming.domain.jpa.like.service.LikeService;
 import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.location.repository.LocationRepository;
 import goorm.dofarming.domain.jpa.log.entity.Log;
+import goorm.dofarming.domain.jpa.log.entity.LogDTO;
 import goorm.dofarming.domain.jpa.log.repository.LogRepository;
 import goorm.dofarming.domain.jpa.recommend.entity.Recommend;
 import goorm.dofarming.domain.jpa.user.entity.User;
@@ -33,7 +34,7 @@ public class LogService {
     private final LikeService likeService;
     private final UserRepository userRepository;
 
-    public List<Object> getLogData(Long logId) {
+    public LogDTO getLogData(Long logId) {
 
         List<Object> logsData = new ArrayList<>();
         Log log = logRepository.findById(logId)
@@ -55,12 +56,14 @@ public class LogService {
             Object recommendData = getRecommendData(dataType, placeId);
 
 //            System.out.println(recommendData);
-            logsData.add(recommendData);
+                logsData.add(recommendData);
         });
 
         isLiked(logsData, user);
 
-        return logsData;
+        LogDTO logDTO = new LogDTO(log.getTheme(), log.getAddress(), log.getLongitude(), log.getLatitude(), logsData);
+
+        return logDTO;
     }
 
     public <T> Object getRecommendData(int dataType, Long placeId) {
