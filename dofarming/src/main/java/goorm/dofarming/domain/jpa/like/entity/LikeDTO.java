@@ -2,7 +2,7 @@ package goorm.dofarming.domain.jpa.like.entity;
 
 public record LikeDTO(
         Long id,
-        String type,
+        int dataType,
         String title,
         String addr,
         String tel,
