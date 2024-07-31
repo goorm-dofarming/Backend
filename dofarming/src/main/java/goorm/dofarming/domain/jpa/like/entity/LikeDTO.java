@@ -6,8 +6,8 @@ import goorm.dofarming.infra.tourapi.domain.*;
 import jakarta.persistence.DiscriminatorValue;
 
 public record LikeDTO(
-        Long id,
-        String type,
+        Long locationId,
+        int dataType,
         String title,
         String addr,
         String tel,
@@ -19,7 +19,7 @@ public record LikeDTO(
     public static LikeDTO of(Location location) {
         return new LikeDTO(
                 location.getLocationId(),
-                instanceofType(location),
+                Integer.parseInt(location.getTheme()),
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),
@@ -28,25 +28,6 @@ public record LikeDTO(
                 location.getMapY(),
                 getLikeCount(location)
         );
-    }
-
-    public static String instanceofType(Location location) {
-        switch (location.getTheme()) {
-            case "1":
-                return "Ocean";
-            case "2":
-                return "Mountain";
-            case "3":
-                return "Activity";
-            case "4":
-                return "Tour";
-            case "5":
-                return "Restaurant";
-            case "6":
-                return "Cafe";
-            default:
-                throw new IllegalArgumentException("Unknown type: " + location.getTheme());
-        }
     }
 
     public static int getLikeCount(Location location) {
