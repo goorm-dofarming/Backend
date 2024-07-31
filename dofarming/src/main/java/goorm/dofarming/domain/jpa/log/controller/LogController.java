@@ -1,6 +1,7 @@
 package goorm.dofarming.domain.jpa.log.controller;
 
 import goorm.dofarming.domain.jpa.log.entity.Log;
+import goorm.dofarming.domain.jpa.log.entity.LogDTO;
 import goorm.dofarming.domain.jpa.log.service.LogService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorCode;
@@ -75,7 +76,7 @@ public class LogController {
             }
     )
     @GetMapping("/getLogData")
-    public List<Object> getLogData(
+    public LogDTO getLogData(
             @Parameter(description = "로그 ID") Long logId
     ) {
         return logService.getLogData(logId);

@@ -45,22 +45,22 @@ public class LikeService {
                 // for 로 refactoring 가능
                 if (like.getCafe() != null) {
                     Cafe cafe = like.getCafe();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), "Cafe", cafe.getTitle(), cafe.getAddr(), cafe.getTel(), cafe.getImage(), cafe.getMapX(), cafe.getMapY(), cafe.getLikeCount()));
+                    likedLocations.add(new LikeDTO(like.getLikeId(), 6, cafe.getTitle(), cafe.getAddr(), cafe.getTel(), cafe.getImage(), cafe.getMapX(), cafe.getMapY(), cafe.getLikeCount()));
                 } else if (like.getOcean() != null) {
                     Ocean ocean = like.getOcean();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), "Ocean", ocean.getTitle(), ocean.getAddr(), ocean.getTel(), ocean.getImage(), ocean.getMapX(), ocean.getMapY(), ocean.getLikeCount()));
+                    likedLocations.add(new LikeDTO(like.getLikeId(), 1, ocean.getTitle(), ocean.getAddr(), ocean.getTel(), ocean.getImage(), ocean.getMapX(), ocean.getMapY(), ocean.getLikeCount()));
                 } else if (like.getMountain() != null) {
                     Mountain mountain = like.getMountain();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), "Mountain", mountain.getTitle(), mountain.getAddr(), mountain.getTel(), mountain.getImage(), mountain.getMapX(), mountain.getMapY(), mountain.getLikeCount()));
+                    likedLocations.add(new LikeDTO(like.getLikeId(), 2, mountain.getTitle(), mountain.getAddr(), mountain.getTel(), mountain.getImage(), mountain.getMapX(), mountain.getMapY(), mountain.getLikeCount()));
                 } else if (like.getActivity() != null) {
                     Activity activity = like.getActivity();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), "Activity", activity.getTitle(), activity.getAddr(), activity.getTel(), activity.getImage(), activity.getMapX(), activity.getMapY(), activity.getLikeCount()));
+                    likedLocations.add(new LikeDTO(like.getLikeId(), 3, activity.getTitle(), activity.getAddr(), activity.getTel(), activity.getImage(), activity.getMapX(), activity.getMapY(), activity.getLikeCount()));
                 } else if (like.getTour() != null) {
                     Tour tour = like.getTour();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), "Tour", tour.getTitle(), tour.getAddr(), tour.getTel(), tour.getImage(), tour.getMapX(), tour.getMapY(), tour.getLikeCount()));
+                    likedLocations.add(new LikeDTO(like.getLikeId(), 4, tour.getTitle(), tour.getAddr(), tour.getTel(), tour.getImage(), tour.getMapX(), tour.getMapY(), tour.getLikeCount()));
                 } else if (like.getRestaurant() != null) {
                     Restaurant restaurant = like.getRestaurant();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), "Restaurant", restaurant.getTitle(), restaurant.getAddr(), restaurant.getTel(), restaurant.getImage(), restaurant.getMapX(), restaurant.getMapY(), restaurant.getLikeCount()));
+                    likedLocations.add(new LikeDTO(like.getLikeId(), 5, restaurant.getTitle(), restaurant.getAddr(), restaurant.getTel(), restaurant.getImage(), restaurant.getMapX(), restaurant.getMapY(), restaurant.getLikeCount()));
                 }
             }
         }
