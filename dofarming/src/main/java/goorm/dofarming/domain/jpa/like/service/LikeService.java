@@ -30,38 +30,39 @@ public class LikeService {
     private final TourRepository tourRepository;
     private final RestaurantRepository restaurantRepository;
 
-    public List<Object> getLikeList(Long userId) {
+    public List<LikeDTO> getLikeList(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원이 존재하지 않습니다."));
 
         List<Like> likes = user.getLikes();
-        List<Object> likedLocations = new ArrayList<>();
+        List<LikeDTO> likedLocations = new ArrayList<>();
 
         for (Like like : likes) {
 
-            if(like.getStatus() == Status.DELETE) continue;
+            if (like.getStatus() == Status.DELETE) continue;
 
             if (like.getStatus() == Status.ACTIVE) {
-                // for 로 refactoring 가능
+                LikeDTO likeDTO = null;
                 if (like.getCafe() != null) {
                     Cafe cafe = like.getCafe();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), 6, cafe.getTitle(), cafe.getAddr(), cafe.getTel(), cafe.getImage(), cafe.getMapX(), cafe.getMapY(), cafe.getLikeCount()));
+                    likeDTO = new LikeDTO(like.getLikeId(), 6, cafe.getId(), cafe.getTitle(), cafe.getAddr(), cafe.getTel(), cafe.getImage(), cafe.getMapX(), cafe.getMapY(), cafe.getLikeCount(), checkIfAlreadyLiked(user, 6, cafe.getId()));
                 } else if (like.getOcean() != null) {
                     Ocean ocean = like.getOcean();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), 1, ocean.getTitle(), ocean.getAddr(), ocean.getTel(), ocean.getImage(), ocean.getMapX(), ocean.getMapY(), ocean.getLikeCount()));
+                    likeDTO = new LikeDTO(like.getLikeId(), 1, ocean.getId(), ocean.getTitle(), ocean.getAddr(), ocean.getTel(), ocean.getImage(), ocean.getMapX(), ocean.getMapY(), ocean.getLikeCount(), checkIfAlreadyLiked(user, 1, ocean.getId()));
                 } else if (like.getMountain() != null) {
                     Mountain mountain = like.getMountain();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), 2, mountain.getTitle(), mountain.getAddr(), mountain.getTel(), mountain.getImage(), mountain.getMapX(), mountain.getMapY(), mountain.getLikeCount()));
+                    likeDTO = new LikeDTO(like.getLikeId(), 2, mountain.getId(), mountain.getTitle(), mountain.getAddr(), mountain.getTel(), mountain.getImage(), mountain.getMapX(), mountain.getMapY(), mountain.getLikeCount(), checkIfAlreadyLiked(user, 2, mountain.getId()));
                 } else if (like.getActivity() != null) {
                     Activity activity = like.getActivity();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), 3, activity.getTitle(), activity.getAddr(), activity.getTel(), activity.getImage(), activity.getMapX(), activity.getMapY(), activity.getLikeCount()));
+                    likeDTO = new LikeDTO(like.getLikeId(), 3, activity.getId(), activity.getTitle(), activity.getAddr(), activity.getTel(), activity.getImage(), activity.getMapX(), activity.getMapY(), activity.getLikeCount(), checkIfAlreadyLiked(user, 3, activity.getId()));
                 } else if (like.getTour() != null) {
                     Tour tour = like.getTour();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), 4, tour.getTitle(), tour.getAddr(), tour.getTel(), tour.getImage(), tour.getMapX(), tour.getMapY(), tour.getLikeCount()));
+                    likeDTO = new LikeDTO(like.getLikeId(), 4, tour.getId(), tour.getTitle(), tour.getAddr(), tour.getTel(), tour.getImage(), tour.getMapX(), tour.getMapY(), tour.getLikeCount(), checkIfAlreadyLiked(user, 4, tour.getId()));
                 } else if (like.getRestaurant() != null) {
                     Restaurant restaurant = like.getRestaurant();
-                    likedLocations.add(new LikeDTO(like.getLikeId(), 5, restaurant.getTitle(), restaurant.getAddr(), restaurant.getTel(), restaurant.getImage(), restaurant.getMapX(), restaurant.getMapY(), restaurant.getLikeCount()));
+                    likeDTO = new LikeDTO(like.getLikeId(), 5, restaurant.getId(), restaurant.getTitle(), restaurant.getAddr(), restaurant.getTel(), restaurant.getImage(), restaurant.getMapX(), restaurant.getMapY(), restaurant.getLikeCount(), checkIfAlreadyLiked(user, 5, restaurant.getId()));
                 }
+                likedLocations.add(likeDTO);
             }
         }
         return likedLocations;
@@ -114,4 +115,41 @@ public class LikeService {
                 .anyMatch(like -> like.alreadyLike(dataType, placeId)); // 필터링된 항목 중 하나라도 조건을 만족하는지 체크
     }
 
+    // 구 버전
+    //    public List<Object> getLikeList(Long userId) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원이 존재하지 않습니다."));
+//
+//        List<Like> likes = user.getLikes();
+//        List<Object> likedLocations = new ArrayList<>();
+//
+//        for (Like like : likes) {
+//
+//            if(like.getStatus() == Status.DELETE) continue;
+//
+//            if (like.getStatus() == Status.ACTIVE) {
+//                // for 로 refactoring 가능
+//                if (like.getCafe() != null) {
+//                    Cafe cafe = like.getCafe();
+//                    likedLocations.add(new LikeDTO(like.getLikeId(), 6, cafe.getTitle(), cafe.getAddr(), cafe.getTel(), cafe.getImage(), cafe.getMapX(), cafe.getMapY(), cafe.getLikeCount()));
+//                } else if (like.getOcean() != null) {
+//                    Ocean ocean = like.getOcean();
+//                    likedLocations.add(new LikeDTO(like.getLikeId(), 1, ocean.getTitle(), ocean.getAddr(), ocean.getTel(), ocean.getImage(), ocean.getMapX(), ocean.getMapY(), ocean.getLikeCount()));
+//                } else if (like.getMountain() != null) {
+//                    Mountain mountain = like.getMountain();
+//                    likedLocations.add(new LikeDTO(like.getLikeId(), 2, mountain.getTitle(), mountain.getAddr(), mountain.getTel(), mountain.getImage(), mountain.getMapX(), mountain.getMapY(), mountain.getLikeCount()));
+//                } else if (like.getActivity() != null) {
+//                    Activity activity = like.getActivity();
+//                    likedLocations.add(new LikeDTO(like.getLikeId(), 3, activity.getTitle(), activity.getAddr(), activity.getTel(), activity.getImage(), activity.getMapX(), activity.getMapY(), activity.getLikeCount()));
+//                } else if (like.getTour() != null) {
+//                    Tour tour = like.getTour();
+//                    likedLocations.add(new LikeDTO(like.getLikeId(), 4, tour.getTitle(), tour.getAddr(), tour.getTel(), tour.getImage(), tour.getMapX(), tour.getMapY(), tour.getLikeCount()));
+//                } else if (like.getRestaurant() != null) {
+//                    Restaurant restaurant = like.getRestaurant();
+//                    likedLocations.add(new LikeDTO(like.getLikeId(), 5, restaurant.getTitle(), restaurant.getAddr(), restaurant.getTel(), restaurant.getImage(), restaurant.getMapX(), restaurant.getMapY(), restaurant.getLikeCount()));
+//                }
+//            }
+//        }
+//        return likedLocations;
+//    }
 }
