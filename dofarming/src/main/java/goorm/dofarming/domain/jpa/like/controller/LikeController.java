@@ -1,6 +1,7 @@
 package goorm.dofarming.domain.jpa.like.controller;
 
 import goorm.dofarming.domain.jpa.like.entity.Like;
+import goorm.dofarming.domain.jpa.like.entity.LikeDTO;
 import goorm.dofarming.domain.jpa.like.service.LikeService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorCode;
@@ -42,15 +43,14 @@ public class LikeController {
             }
     )
     @PostMapping("/like")
-    public Like like(
+    public void like(
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user,
-            @Parameter(description = "장소 ID") @RequestParam Long placeId,
-            @Parameter(description = "데이터 타입") @RequestParam int dataType
+            @Parameter(description = "장소 ID") @RequestParam Long locationId
     ) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
 
-        return likeService.like(userId, placeId, dataType);
+        likeService.like(userId, locationId);
     }
 
     @Operation(
@@ -80,7 +80,7 @@ public class LikeController {
             }
     )
     @GetMapping("/likeList")
-    private List<?> likeList(
+    private List<LikeDTO> likeList(
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user
     ) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
