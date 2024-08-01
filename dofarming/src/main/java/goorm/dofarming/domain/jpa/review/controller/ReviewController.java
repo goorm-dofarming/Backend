@@ -1,6 +1,5 @@
 package goorm.dofarming.domain.jpa.review.controller;
 
-import goorm.dofarming.domain.jpa.review.entity.Review;
 import goorm.dofarming.domain.jpa.review.entity.ReviewDTO;
 import goorm.dofarming.domain.jpa.review.service.ReviewService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
@@ -21,6 +20,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    // body에서 form-data 로 받아옴. score와 content는 text로 받음.
     @PostMapping("")
     public ResponseEntity<ReviewDTO> createReview(
             @RequestParam("score") Double score,
@@ -30,13 +30,13 @@ public class ReviewController {
     ) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
-        return ResponseEntity.ok().body(reviewService.saveReview(files, userId, score, content));
+        return ResponseEntity.ok().body(reviewService.createReview(files, userId, score, content));
     }
 
     @GetMapping("/images")
-    public List<String> getImages(
+    public ResponseEntity<List<String>> getImages(
             @RequestParam("reviewId") Long reviewId
     ) {
-        return reviewService.getImageUrls(reviewId);
+        return ResponseEntity.ok().body(reviewService.getImageUrls(reviewId));
     }
 }

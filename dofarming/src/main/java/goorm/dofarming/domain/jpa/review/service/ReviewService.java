@@ -12,11 +12,11 @@ import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,12 +27,14 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final ImageService imageService;
 
-    public ReviewDTO saveReview(List<MultipartFile> files, Long userId, Double score, String content) {
+    @Transactional
+    public ReviewDTO createReview(List<MultipartFile> files, Long userId, Double score, String content) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 회원입니다."));
 
         Review review = new Review();
+        review.setReviewId(review.getReviewId());
         review.setContent(content);
         review.setScore(score);
         review.setUser(user);
@@ -40,17 +42,21 @@ public class ReviewService {
         // Review 객체를 먼저 저장
         Review savedReview = reviewRepository.save(review);
 
+        List<String> images = new ArrayList<>();
+
         for (MultipartFile file : files) {
             String imageUrl = imageService.uploadFile(file);
+            images.add(imageUrl); // 반환할 이미지 리스트 저장
             Image image = new Image();
             image.setImageUrl(imageUrl);
             image.setReview(savedReview); // 연관관계 설정
             imageRepository.save(image);
         }
 
-        return buildReviewDTO(savedReview);
+        return buildReviewDTO(savedReview, images);
     }
 
+    // 한 리뷰에 대해 사진만 띄우는 기능
     public List<String> getImageUrls(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 리뷰입니다."));
@@ -62,12 +68,10 @@ public class ReviewService {
         return imageList;
     }
 
-    private ReviewDTO buildReviewDTO(Review review) {
-        List<String> imageUrls = review.getImages().stream()
-                .map(Image::getImageUrl)
-                .collect(Collectors.toList());
+    private ReviewDTO buildReviewDTO(Review review, List<String> imageUrls) {
 
         return new ReviewDTO(
+                review.getReviewId(),
                 review.getScore(),
                 review.getContent(),
                 imageUrls

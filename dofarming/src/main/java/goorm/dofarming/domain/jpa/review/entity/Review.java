@@ -3,6 +3,7 @@ package goorm.dofarming.domain.jpa.review.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import goorm.dofarming.domain.jpa.image.entity.Image;
 import goorm.dofarming.domain.jpa.user.entity.User;
+import goorm.dofarming.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,12 +11,13 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Setter
 @Getter
 @Entity
-public class Review {
+public class Review extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
@@ -25,7 +27,6 @@ public class Review {
     private String content; // 리뷰 내용
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<Image> images = new ArrayList<>();
 
     @ManyToOne(fetch = LAZY)
