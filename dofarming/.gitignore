@@ -38,5 +38,3 @@ out/
 
 ### applictaion-aws ###
 src/main/resources/application-aws.properties
-
-src/main/java/goorm/dofarming/infra/tourapi/config/WebClientConfig.java
