@@ -60,8 +60,6 @@ public class Log extends BaseEntity {
         return log;
     }
 
-
-
     //== 연관관계 메서드 ==//
     public void addUser(User user) {
         this.user = user;
