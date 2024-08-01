@@ -4,6 +4,8 @@ import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.log.entity.Log;
 import goorm.dofarming.global.common.entity.BaseEntity;
 import goorm.dofarming.global.common.entity.Status;
+import goorm.dofarming.global.common.error.ErrorCode;
+import goorm.dofarming.global.common.error.exception.CustomException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -63,7 +65,7 @@ public class Recommend extends BaseEntity {
     //== 중복 검증 메서드 ==//
     private static void recommendValidateDuplicate(Log log, Location location) {
         if (log.getRecommends().stream().anyMatch(recommend -> recommend.getLocation().equals(location))) {
-
+            throw new CustomException(ErrorCode.DUPLICATE_OBJECT, "추천 중복");
         }
     }
 }

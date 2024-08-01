@@ -1,21 +1,26 @@
 package goorm.dofarming.domain.jpa.recommend.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import goorm.dofarming.domain.jpa.location.dto.response.LocationResponse;
+import goorm.dofarming.domain.jpa.log.dto.response.LogResponse;
+import goorm.dofarming.domain.jpa.log.entity.Log;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-@Data
-public class RecommendDTO {
+public record RecommendDTO(
+        LogResponse logResponse,
+        List<LocationResponse> recommendations
+) {
+    public static RecommendDTO of(Log log, List<LocationResponse> recommendations) {
+        return new RecommendDTO(
+                LogResponse.of(log),
+                recommendations
+        );
+    }
 
-    private Long logId;
-    private String address;
-    private List<Object> recommendations;
-
-    public RecommendDTO(Long logId, String address, List<Object> recommendations) {
-        this.logId = logId;
-        this.address = address;
-        this.recommendations = recommendations;
+    public static RecommendDTO guest(String address, Double mapX, Double mapY, List<LocationResponse> recommendations) {
+        return new RecommendDTO(
+                LogResponse.guest(address, mapX, mapY),
+                recommendations
+        );
     }
 }
