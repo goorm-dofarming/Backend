@@ -1,8 +1,10 @@
 package goorm.dofarming.domain.jpa.log.controller;
 
+import goorm.dofarming.domain.jpa.location.dto.response.LocationResponse;
+import goorm.dofarming.domain.jpa.log.dto.response.LogResponse;
 import goorm.dofarming.domain.jpa.log.entity.Log;
-import goorm.dofarming.domain.jpa.log.entity.LogDTO;
 import goorm.dofarming.domain.jpa.log.service.LogService;
+import goorm.dofarming.domain.jpa.recommend.entity.RecommendDTO;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.ErrorResponse;
@@ -40,7 +42,7 @@ public class LogController {
             }
     )
     @GetMapping("/getLogs")
-    public List<Log> getLogsByUserId(
+    public List<LogResponse> getLogsByUserId(
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user
     ) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
@@ -76,7 +78,7 @@ public class LogController {
             }
     )
     @GetMapping("/getLogData")
-    public LogDTO getLogData(
+    public RecommendDTO getLogData(
             @Parameter(description = "로그 ID") Long logId
     ) {
         return logService.getLogData(logId);

@@ -17,9 +17,9 @@ public class WebClientConfig {
     // 소희님 키
 //    public final static String SERVICE_KEY = "hJujlDHVK0rhAoo%2BrMv1VwvhmIXXsttkEHOnOWGHJLACsJKSu%2F3ihAeq7Iqsdko7mN9t6p2M5tsVxanbAGWktA%3D%3D";
     // 근재님 키
-//    public final static String SERVICE_KEY = "H4AghKETJoCMBx3vYjxCKnw2Faksg8gUWlUBjlt73czwAuHT6va2rBNHt%2BKVvfdQ4pbwMWrAGciN6QlIIpaPdQ%3D%3D";
+    public final static String SERVICE_KEY = "H4AghKETJoCMBx3vYjxCKnw2Faksg8gUWlUBjlt73czwAuHT6va2rBNHt%2BKVvfdQ4pbwMWrAGciN6QlIIpaPdQ%3D%3D";
     // 호성님 키
-    public final static String SERVICE_KEY = "ocESuTmeyrKIfb1ow%2B6OrXfXHKNR%2BTBBbN7ilvuxAEAQXAxqo27UHuZ3YfPfeqcai5oeFsLyFOOV79V7JfnP6w%3D%3D";
+//    public final static String SERVICE_KEY = "ocESuTmeyrKIfb1ow%2B6OrXfXHKNR%2BTBBbN7ilvuxAEAQXAxqo27UHuZ3YfPfeqcai5oeFsLyFOOV79V7JfnP6w%3D%3D";
 
     @Bean
     public DefaultUriBuilderFactory builderFactory() {

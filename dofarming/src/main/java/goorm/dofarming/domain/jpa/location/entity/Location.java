@@ -4,6 +4,7 @@ import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.recommend.entity.Recommend;
 import goorm.dofarming.global.common.entity.BaseEntity;
 import goorm.dofarming.global.common.entity.Status;
+import goorm.dofarming.infra.tourapi.domain.Activity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,42 +14,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "theme")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Location extends BaseEntity {
+public abstract class Location extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "location_id")
     private Long locationId;
-    // placeId + dataType 으로 데이터 조회 가능
-    // 추천된 장소의 위도
-//    private String latitude;
-    // 추천된 장소의 경도
-//    private String longitude;
-
-    private Long placeId;
-
-    private int dataType;
+    private String title;
+    private String addr;
+    private String tel;
+    private String image;
+    private Double mapX;
+    private Double mapY;
+    @Column(insertable = false, updatable = false)
+    private String theme;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
-//    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
-//    private List<Like> likes = new ArrayList<>();
-
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
     private List<Recommend> recommends = new ArrayList<>();
 
-    //== 생성 메서드 ==//
-    public static Location location(Long placeId, Integer dataType) {
-        Location location = new Location();
-        location.dataType = dataType;
-        location.placeId = placeId;
-        location.status = Status.ACTIVE;
-//        location.latitude = latitude;
-//        location.longitude = longitude;
-        return location;
-    }
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    private List<Like> likes = new ArrayList<>();
 
+    public Location (String title, String addr, String tel, String image, double mapx, double mapy) {
+        this.title = title;
+        this.image = image;
+        this.addr = addr;
+        this.tel = tel;
+        this.mapX = mapx;
+        this.mapY = mapy;
+        this.status = Status.ACTIVE;
+    }
 }
