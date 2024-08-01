@@ -2,9 +2,6 @@ package goorm.dofarming.domain.jpa.like.entity;
 
 import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.global.common.entity.Status;
-import goorm.dofarming.infra.tourapi.domain.*;
-import jakarta.persistence.DiscriminatorValue;
-
 public record LikeDTO(
         Long locationId,
         int dataType,
@@ -29,7 +26,6 @@ public record LikeDTO(
                 getLikeCount(location)
         );
     }
-
     public static int getLikeCount(Location location) {
         return (int) location.getLikes().stream()
                 .filter(like -> like.getStatus().equals(Status.ACTIVE))

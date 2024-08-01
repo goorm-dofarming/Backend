@@ -125,7 +125,7 @@ public class RecommendService {
                 })
                 .collect(Collectors.toList());
 
-        return RecommendDTO.of(log.getLogId(), address, locations);
+        return RecommendDTO.of(log, locations);
     }
 
     // 완전 랜덤 추천 (테마 선택 X) - 유저 전용
@@ -187,7 +187,7 @@ public class RecommendService {
                 })
                 .collect(Collectors.toList());
 
-        return RecommendDTO.of(null, address, locations);
+        return RecommendDTO.guest(address, mapX, mapY, locations);
     }
 
     private RecommendDTO recommendLocation(double mapX, double mapY, List<Location> recommendList, List<Integer> themes, Log log, String address) {
@@ -210,7 +210,7 @@ public class RecommendService {
                 })
                 .collect(Collectors.toList());
 
-        return RecommendDTO.of(log.getLogId(), address, locations);
+        return RecommendDTO.of(log, locations);
     }
 
     // 현재 위치 기반해서 radius 범위 이하의 장소를 찾음.
