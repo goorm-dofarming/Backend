@@ -104,16 +104,16 @@ public class RecommendService {
 
         User user = getExistUser(userId);
 
-        Log log = logRepository.save(Log.log(mapX, mapY, "2", address, user)); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
+        Log log = logRepository.save(Log.log(mapX, mapY, String.valueOf(dataType), address, user)); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 //        Log log = saveLog(userId, mapX, mapY, dataType); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
         List<Location> recommendList = getLocationsWithinRadius(dataType, mapX, mapY, firstRadius);
 
         if (recommendList.size() < 8) {
-            List<? extends Location> themeLocations = getLocationsWithinRadius(dataType, mapX, mapY, secondRadius);
-            recommendList.addAll(randomSelect(themeLocations, 8));
+            List<Location> themeLocations = getLocationsWithinRadius(dataType, mapX, mapY, secondRadius);
+            recommendList = randomSelect(themeLocations, 8);
         } else {
-            recommendList.addAll(randomSelect(recommendList, 8));
+            recommendList = randomSelect(recommendList, 8);
         }
 
         createRecommend(recommendList, log);
@@ -137,7 +137,7 @@ public class RecommendService {
         ArrayList<Location> recommendList = new ArrayList<>();
         List<Integer> themes = new ArrayList<>(Arrays.asList(3, 4, 5, 6));
 
-        Log log = logRepository.save(Log.log(mapX, mapY, "2", address, user)); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
+        Log log = logRepository.save(Log.log(mapX, mapY, "0", address, user)); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 //        Log log = saveLog(userId, mapX, mapY, 0); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
         // 핑 근처에 바다가 있을 때, 테마 추가
@@ -239,7 +239,7 @@ public class RecommendService {
                 results = cafeRepository.findAllByDistance(mapX, mapY, radius);
                 break;
             default:
-                throw new IllegalArgumentException("Invalid theme type: " + theme);
+                throw new CustomException(ErrorCode.BAD_REQUEST, "존재하지 않는 타입입니다.");
         }
 
         return new ArrayList<>(results);
@@ -261,7 +261,7 @@ public class RecommendService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "Mountain Not Found"));
     }
 
-    private List<Location> randomSelect(List<? extends Location> themeLocations, int size) {
+    private List<Location> randomSelect(List<Location> themeLocations, int size) {
 
         List<Location> themes = new ArrayList<>(themeLocations);
 
@@ -269,10 +269,10 @@ public class RecommendService {
 
         Collections.shuffle(themes);
 
-        return new ArrayList<>(themes.subList(0, size));
+        return themes.subList(0, size);
     }
 
-    private void createRecommend(List<? extends Location> recommendList, Log log) {
+    private void createRecommend(List<Location> recommendList, Log log) {
         for (Location location : recommendList) {
             recommendRepository.save(Recommend.recommend(log, location));
         }
