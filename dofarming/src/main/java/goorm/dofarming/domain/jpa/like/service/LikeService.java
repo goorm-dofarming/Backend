@@ -1,8 +1,8 @@
 package goorm.dofarming.domain.jpa.like.service;
 
 import goorm.dofarming.domain.jpa.like.entity.Like;
-import goorm.dofarming.domain.jpa.like.entity.LikeDTO;
 import goorm.dofarming.domain.jpa.like.repository.LikeRepository;
+import goorm.dofarming.domain.jpa.location.dto.response.LocationResponse;
 import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.location.repository.LocationRepository;
 import goorm.dofarming.domain.jpa.user.entity.User;
@@ -10,8 +10,6 @@ import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
-import goorm.dofarming.infra.tourapi.domain.*;
-import goorm.dofarming.infra.tourapi.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,14 +26,14 @@ public class LikeService {
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
 
-    public List<LikeDTO> getLikeList(Long userId) {
+    public List<LocationResponse> getLikeList(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원이 존재하지 않습니다."));
 
         return likeRepository.findAllByUser_UserIdAndStatus(user.getUserId(), Status.ACTIVE)
                 .stream().map(like -> {
                     Location location = like.getLocation();
-                    return LikeDTO.of(location);
+                    return LocationResponse.of(true, location);
                 })
                 .collect(Collectors.toList());
     }

@@ -1,8 +1,8 @@
 package goorm.dofarming.domain.jpa.like.controller;
 
 import goorm.dofarming.domain.jpa.like.entity.Like;
-import goorm.dofarming.domain.jpa.like.entity.LikeDTO;
 import goorm.dofarming.domain.jpa.like.service.LikeService;
+import goorm.dofarming.domain.jpa.location.dto.response.LocationResponse;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.ErrorResponse;
@@ -80,7 +80,7 @@ public class LikeController {
             }
     )
     @GetMapping("/likeList")
-    private List<LikeDTO> likeList(
+    private List<LocationResponse> likeList(
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user
     ) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
