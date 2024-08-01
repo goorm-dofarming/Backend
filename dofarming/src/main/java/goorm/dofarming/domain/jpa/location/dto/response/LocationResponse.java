@@ -26,7 +26,7 @@ public record LocationResponse(
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),
-                location.getTel(),
+                location.getImage(),
                 location.getMapX(),
                 location.getMapY(),
                 Integer.parseInt(location.getTheme()),
