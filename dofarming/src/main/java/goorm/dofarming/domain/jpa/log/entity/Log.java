@@ -49,17 +49,6 @@ public class Log extends BaseEntity {
     private List<Recommend> recommends = new ArrayList<>();
 
     //== 생성 메서드 ==//
-    public static Log log(Double longitude, Double latitude, String theme, User user) {
-        Log log = new Log();
-        log.theme = theme;
-//        log.address = address;
-        log.latitude = latitude;
-        log.longitude = longitude;
-        log.status = Status.ACTIVE;
-        log.addUser(user);
-        return log;
-    }
-
     public static Log log(Double longitude, Double latitude, String theme, String address, User user) {
         Log log = new Log();
         log.theme = theme;
@@ -70,8 +59,6 @@ public class Log extends BaseEntity {
         log.addUser(user);
         return log;
     }
-
-
 
     //== 연관관계 메서드 ==//
     public void addUser(User user) {

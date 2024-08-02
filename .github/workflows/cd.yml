@@ -34,6 +34,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x dofarming/gradlew
 
+      - name: Create application.properties
+        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > dofarming/src/main/resources/application.properties
+
       - name: Build with gradle
         run: cd dofarming && ./gradlew clean build --no-daemon -x test
 
