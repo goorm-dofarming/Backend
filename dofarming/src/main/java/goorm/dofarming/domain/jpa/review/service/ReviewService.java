@@ -12,8 +12,6 @@ import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
-import goorm.dofarming.infra.tourapi.domain.Ocean;
-import goorm.dofarming.infra.tourapi.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,12 +30,6 @@ public class ReviewService {
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
-    private final OceanRepository oceanRepository;
-    private final MountainRepository mountainRepository;
-    private final ActivityRepository activityRepository;
-    private final TourRepository tourRepository;
-    private final RestaurantRepository restaurantRepository;
-    private final CafeRepository cafeRepository;
     private final ImageService imageService;
 
     @Transactional
@@ -73,7 +65,28 @@ public class ReviewService {
         return buildReviewDTO(savedReview, images);
     }
 
-    // 한 리뷰에 대해 사진만 띄우는 기능
+    public List<ReviewDTO> getReviews(Long locationId) {
+        List<ReviewDTO> result = new ArrayList<>();
+
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
+
+        List<Review> reviews = location.getReviews();
+
+
+        for (Review review : reviews) {
+            List<String> images = new ArrayList<>();
+            for (Image image : review.getImages()) {
+                images.add(image.getImageUrl());
+            }
+            ReviewDTO reviewDTO = buildReviewDTO(review, images);
+            result.add(reviewDTO);
+            System.out.println(result);
+        }
+        return result;
+    }
+
+    // 한 리뷰에 대해 사진만 띄우는 기능 - 네이버처럼
     public List<String> getImageUrls(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 리뷰입니다."));

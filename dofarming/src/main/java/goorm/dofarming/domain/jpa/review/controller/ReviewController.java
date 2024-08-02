@@ -1,5 +1,6 @@
 package goorm.dofarming.domain.jpa.review.controller;
 
+import goorm.dofarming.domain.jpa.review.entity.Review;
 import goorm.dofarming.domain.jpa.review.entity.ReviewDTO;
 import goorm.dofarming.domain.jpa.review.service.ReviewService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
@@ -32,6 +33,14 @@ public class ReviewController {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
         return ResponseEntity.ok().body(reviewService.createReview(files, userId, locationId, score, content));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<ReviewDTO>> getReviewList(
+            @RequestParam("locationId") Long locationId
+    ) {
+        return ResponseEntity.ok().body(reviewService.getReviews(locationId));
+//        return null;
     }
 
     @GetMapping("/images")
