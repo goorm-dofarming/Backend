@@ -2,6 +2,7 @@ package goorm.dofarming.domain.jpa.review.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import goorm.dofarming.domain.jpa.image.entity.Image;
+import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -34,6 +35,10 @@ public class Review extends BaseEntity {
     @JsonIgnore
     private User user;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "location_id")
+    private Location location;
+
     public void addImage(Image image) {
         images.add(image);
         image.setReview(this);
@@ -47,6 +52,11 @@ public class Review extends BaseEntity {
     public void addUser(User user) {
         this.user=user;
         user.getReviews().add(this);
+    }
+
+    public void addLocation(Location location) {
+        this.location = location;
+        location.getReviews().add(this);
     }
 
     public Review() {

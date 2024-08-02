@@ -25,12 +25,13 @@ public class ReviewController {
     public ResponseEntity<ReviewDTO> createReview(
             @RequestParam("score") Double score,
             @RequestParam("content") String content,
+            @RequestParam("locationId") Long locationId,
             @RequestParam("files") List<MultipartFile> files,
             @AuthenticationPrincipal DofarmingUserDetails user
     ) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
-        return ResponseEntity.ok().body(reviewService.createReview(files, userId, score, content));
+        return ResponseEntity.ok().body(reviewService.createReview(files, userId, locationId, score, content));
     }
 
     @GetMapping("/images")
