@@ -32,6 +32,7 @@ public abstract class Location extends BaseEntity {
     private Double mapY;
     @Column(insertable = false, updatable = false)
     private String theme;
+    private int likeCount = 0;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -50,5 +51,13 @@ public abstract class Location extends BaseEntity {
         this.mapX = mapx;
         this.mapY = mapy;
         this.status = Status.ACTIVE;
+    }
+
+    public void increaseLike() {
+        this.likeCount++;
+    }
+
+    public void decreaseLike() {
+        if (likeCount != 0) this.likeCount--;
     }
 }
