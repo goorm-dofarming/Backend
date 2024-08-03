@@ -40,7 +40,6 @@ public class ReviewController {
             @RequestParam("locationId") Long locationId
     ) {
         return ResponseEntity.ok().body(reviewService.getReviews(locationId));
-//        return null;
     }
 
     @GetMapping("/images")

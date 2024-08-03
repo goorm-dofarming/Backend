@@ -62,7 +62,9 @@ public class ReviewService {
             imageRepository.save(image);
         }
 
-        return buildReviewDTO(savedReview, images);
+        Double averageScore = calAverageScore(location);
+
+        return buildReviewDTO(savedReview, images, averageScore);
     }
 
     public List<ReviewDTO> getReviews(Long locationId) {
@@ -73,15 +75,15 @@ public class ReviewService {
 
         List<Review> reviews = location.getReviews();
 
+        Double averageScore = calAverageScore(location);
 
         for (Review review : reviews) {
             List<String> images = new ArrayList<>();
             for (Image image : review.getImages()) {
                 images.add(image.getImageUrl());
             }
-            ReviewDTO reviewDTO = buildReviewDTO(review, images);
+            ReviewDTO reviewDTO = buildReviewDTO(review, images, averageScore);
             result.add(reviewDTO);
-            System.out.println(result);
         }
         return result;
     }
@@ -98,11 +100,22 @@ public class ReviewService {
         return imageList;
     }
 
-    private ReviewDTO buildReviewDTO(Review review, List<String> imageUrls) {
+    public Double calAverageScore(Location location) {
+        Double averScore = 0.0;
+        if(location.getReviews().isEmpty()) return averScore;
+
+        for (Review review : location.getReviews()) {
+            averScore += review.getScore();
+        }
+        return averScore/location.getReviews().size();
+    }
+
+    private ReviewDTO buildReviewDTO(Review review, List<String> imageUrls, Double averScore) {
 
         return new ReviewDTO(
                 review.getReviewId(),
                 review.getScore(),
+                averScore,
                 review.getContent(),
                 imageUrls
         );
