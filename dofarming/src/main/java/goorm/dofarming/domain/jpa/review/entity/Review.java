@@ -5,6 +5,7 @@ import goorm.dofarming.domain.jpa.image.entity.Image;
 import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.global.common.entity.BaseEntity;
+import goorm.dofarming.global.common.entity.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +39,13 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "location_id")
     private Location location;
+
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE;
+
+    public void delete() {
+        this.status = Status.DELETE;
+    }
 
     public void addImage(Image image) {
         images.add(image);
