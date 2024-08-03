@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface LikeRepository extends JpaRepository<Like, Long> {
+public interface LikeRepository extends JpaRepository<Like, Long>, LikeRepositoryCustom {
     List<Like> findAllByUser_UserIdAndStatus(Long userId, Status status);
 
     Optional<Like> findByUser_UserIdAndLocation_LocationId(Long userId, Long locationId);

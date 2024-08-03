@@ -60,14 +60,17 @@ public class Like extends BaseEntity {
     public void addLocation(Location location) {
         this.location = location;
         location.getLikes().add(this);
+        location.increaseLike();
     }
 
     //== 비즈니스 로직 ==//
     public void delete() {
         this.status = Status.DELETE;
+        this.getLocation().decreaseLike();
     }
 
     public void active() {
         this.status = Status.ACTIVE;
+        this.getLocation().increaseLike();
     }
 }

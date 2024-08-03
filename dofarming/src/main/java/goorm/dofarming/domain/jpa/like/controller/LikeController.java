@@ -1,12 +1,15 @@
 package goorm.dofarming.domain.jpa.like.controller;
 
+import goorm.dofarming.domain.jpa.chatroom.entity.Region;
 import goorm.dofarming.domain.jpa.like.entity.Like;
+import goorm.dofarming.domain.jpa.like.entity.SortType;
 import goorm.dofarming.domain.jpa.like.service.LikeService;
 import goorm.dofarming.domain.jpa.location.dto.response.LocationResponse;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.ErrorResponse;
 import goorm.dofarming.global.common.error.exception.CustomException;
+import goorm.dofarming.infra.tourapi.domain.DataType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,12 +18,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "Like", description = "Like 관련 API")
@@ -81,11 +86,13 @@ public class LikeController {
     )
     @GetMapping("/likeList")
     private List<LocationResponse> likeList(
-            @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user
-    ) {
-        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
-        Long userId = user.getUserId();
-
-        return likeService.getLikeList(userId);
+            @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter(description = "로케이션 ID") @RequestParam(required = false) Long likeId,
+            @Parameter(description = "생성 일자") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime updatedAt,
+            @Parameter(description = "테마 종류") @RequestParam(required = false) List<String> themes,
+            @Parameter(description = "지역 이름") @RequestParam(required = false) List<Region> regions,
+            @Parameter(description = "정렬 순서") @RequestParam SortType sortType
+            ) {
+        return likeService.getLikeList(user.getUserId(), likeId, updatedAt, themes, regions, sortType);
     }
 }
