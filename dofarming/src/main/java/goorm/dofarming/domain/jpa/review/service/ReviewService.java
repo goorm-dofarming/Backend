@@ -64,9 +64,10 @@ public class ReviewService {
 
         Double averageScore = calAverageScore(location);
 
-        return buildReviewDTO(savedReview, images, averageScore);
+        return buildReviewDTO(user, savedReview, images, averageScore);
     }
 
+    // 모든 리뷰 받아오기 (처음 장소 클릭했을 때, 실행)
     public List<ReviewDTO> getReviews(Long locationId) {
         List<ReviewDTO> result = new ArrayList<>();
 
@@ -79,10 +80,11 @@ public class ReviewService {
 
         for (Review review : reviews) {
             List<String> images = new ArrayList<>();
+            User user = review.getUser();
             for (Image image : review.getImages()) {
                 images.add(image.getImageUrl());
             }
-            ReviewDTO reviewDTO = buildReviewDTO(review, images, averageScore);
+            ReviewDTO reviewDTO = buildReviewDTO(user, review, images, averageScore);
             result.add(reviewDTO);
         }
         return result;
@@ -110,13 +112,15 @@ public class ReviewService {
         return averScore/location.getReviews().size();
     }
 
-    private ReviewDTO buildReviewDTO(Review review, List<String> imageUrls, Double averScore) {
+    private ReviewDTO buildReviewDTO(User user, Review review, List<String> imageUrls, Double averScore) {
 
         return new ReviewDTO(
                 review.getReviewId(),
                 review.getScore(),
                 averScore,
                 review.getContent(),
+                user.getImageUrl(),
+                user.getNickname(),
                 imageUrls
         );
     }

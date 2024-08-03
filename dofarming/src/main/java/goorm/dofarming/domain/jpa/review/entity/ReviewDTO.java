@@ -7,6 +7,8 @@ public record ReviewDTO(
         Double score,
         Double averageScore,
         String content,
+        String userImageUrl,
+        String userNickname,
         List<String> imageUrls
 ) {
 }
