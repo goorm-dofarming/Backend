@@ -6,12 +6,12 @@ import goorm.dofarming.domain.jpa.location.entity.Location;
 import java.util.List;
 
 public record ReviewDTO(
-        LocationResponse locationResponse,
+        ReviewLocationResponse locationResponse,
         List<ReviewResponse> reviewResponses
 ) {
-    public static ReviewDTO of(Location location, List<ReviewResponse> reviewResponses, boolean liked) {
+    public static ReviewDTO of(Location location, List<ReviewResponse> reviewResponses, boolean liked, Double averageScore) {
         return new ReviewDTO(
-                LocationResponse.of(liked, location),
+                ReviewLocationResponse.of(liked, location, averageScore),
                 reviewResponses
         );
     }

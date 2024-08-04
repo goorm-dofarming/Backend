@@ -3,6 +3,7 @@ package goorm.dofarming.domain.jpa.review.service;
 import goorm.dofarming.domain.jpa.image.entity.Image;
 import goorm.dofarming.domain.jpa.image.repository.ImageRepository;
 import goorm.dofarming.domain.jpa.image.service.ImageService;
+import goorm.dofarming.domain.jpa.like.entity.SortType;
 import goorm.dofarming.domain.jpa.like.repository.LikeRepository;
 import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.location.repository.LocationRepository;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,13 +72,13 @@ public class ReviewService {
         }
         Double averageScore = calAverageScore(location);
 
-        return buildReviewResponse(user, savedReview, images, averageScore);
+        return buildReviewResponse(user, savedReview, images);
     }
 
     // 모든 리뷰 받아오기 (처음 장소 클릭했을 때, 실행)
     // 추가사항 : location에 등록된 사진이 없는 경우 -> 가장 최근에 등록된 사진 반환 -> 이마저도 없으면 null
     public ReviewDTO getReviews(Long locationId) {
-        List<ReviewResponse> result = new ArrayList<>();
+        List<ReviewResponse> reviewResponses = new ArrayList<>();
 
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
@@ -91,8 +93,8 @@ public class ReviewService {
             for (Image image : review.getImages()) {
                 images.add(image.getImageUrl());
             }
-            ReviewResponse reviewDTO = buildReviewResponse(user, review, images, averageScore);
-            result.add(reviewDTO);
+            ReviewResponse reviewDTO = buildReviewResponse(user, review, images);
+            reviewResponses.add(reviewDTO);
         }
 
         boolean liked = likeRepository.existsByLocation_LocationIdAndStatus(locationId, Status.ACTIVE);
@@ -109,7 +111,74 @@ public class ReviewService {
             }
         }
 
-        return ReviewDTO.of(location, result, liked);
+        return ReviewDTO.of(location, reviewResponses, liked, averageScore);
+    }
+
+    public ReviewDTO getReviewsTest(Long locationId, SortType sortType) {
+        List<ReviewResponse> reviewResponses = new ArrayList<>();
+
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
+
+        List<Review> reviews = location.getReviews();
+
+        Double averageScore = calAverageScore(location);
+
+        sortBySortType(sortType, reviews);
+
+
+        for (Review review : reviews) {
+            List<String> images = new ArrayList<>();
+            User user = review.getUser();
+            for (Image image : review.getImages()) {
+                images.add(image.getImageUrl());
+            }
+            ReviewResponse reviewDTO = buildReviewResponse(user, review, images);
+            reviewResponses.add(reviewDTO);
+        }
+
+        boolean liked = likeRepository.existsByLocation_LocationIdAndStatus(locationId, Status.ACTIVE);
+
+        // 대표이미지가 없고, 리뷰가 있는 경우
+        if (location.getImage().isEmpty() && !reviews.isEmpty()) {
+            int order = reviews.size() - 1;
+            for (int i = order; i >= 0; i--) {
+                Review review = reviews.get(i);
+                if (!review.getImages().isEmpty()) {
+                    location.setImage(review.getImages().get(0).getImageUrl());
+                    break;
+                }
+            }
+        }
+
+        return ReviewDTO.of(location, reviewResponses, liked, averageScore);
+    }
+
+    private static void sortBySortType(SortType sortType, List<Review> reviews) {
+        switch (sortType) {
+            case HighScore:
+                reviews.sort(Comparator.comparing(Review::getScore).reversed());
+                break;
+            case LowScore:
+                reviews.sort(Comparator.comparing(Review::getScore));
+                break;
+            case HighLike:
+//                reviews.sort(Comparator.comparing(Review::getLikes).reversed());
+                break;
+            case LowLike:
+//                reviews.sort(Comparator.comparing(Review::getLikes));
+                break;
+            case Latest:
+                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
+                break;
+            case Earliest:
+                reviews.sort(Comparator.comparing(Review::getCreatedAt));
+                break;
+            default:
+                // 기본은 최신순으로
+                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
+                break;
+        }
     }
 
     // 한 리뷰에 대해 사진만 띄우는 기능 - 네이버처럼
@@ -135,12 +204,11 @@ public class ReviewService {
         return averScore / location.getReviews().size();
     }
 
-    private ReviewResponse buildReviewResponse(User user, Review review, List<String> imageUrls, Double averScore) {
+    private ReviewResponse buildReviewResponse(User user, Review review, List<String> imageUrls) {
 
         return new ReviewResponse(
                 review.getReviewId(),
                 review.getScore(),
-                averScore,
                 review.getContent(),
                 user.getImageUrl(),
                 user.getNickname(),

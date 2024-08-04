@@ -1,5 +1,6 @@
 package goorm.dofarming.domain.jpa.review.controller;
 
+import goorm.dofarming.domain.jpa.like.entity.SortType;
 import goorm.dofarming.domain.jpa.review.dto.ReviewDTO;
 import goorm.dofarming.domain.jpa.review.dto.ReviewResponse;
 import goorm.dofarming.domain.jpa.review.service.ReviewService;
@@ -40,6 +41,14 @@ public class ReviewController {
             @RequestParam("locationId") Long locationId
     ) {
         return ResponseEntity.ok().body(reviewService.getReviews(locationId));
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<ReviewDTO> getReviewListTest(
+            @RequestParam("locationId") Long locationId,
+            @RequestParam("sortType") SortType sortType
+    ) {
+        return ResponseEntity.ok().body(reviewService.getReviewsTest(locationId, sortType));
     }
 
     @GetMapping("/images")
