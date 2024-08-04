@@ -36,17 +36,10 @@ public class ReviewController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ReviewResponse>> getReviewList(
+    public ResponseEntity<ReviewDTO> getReviewList(
             @RequestParam("locationId") Long locationId
     ) {
         return ResponseEntity.ok().body(reviewService.getReviews(locationId));
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<ReviewDTO> getReviewListTest(
-            @RequestParam("locationId") Long locationId
-    ) {
-        return ResponseEntity.ok().body(reviewService.getReviewsTest(locationId));
     }
 
     @GetMapping("/images")

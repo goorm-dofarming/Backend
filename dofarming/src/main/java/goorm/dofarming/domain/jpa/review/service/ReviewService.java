@@ -75,29 +75,7 @@ public class ReviewService {
 
     // 모든 리뷰 받아오기 (처음 장소 클릭했을 때, 실행)
     // 추가사항 : location에 등록된 사진이 없는 경우 -> 가장 최근에 등록된 사진 반환 -> 이마저도 없으면 null
-    public List<ReviewResponse> getReviews(Long locationId) {
-        List<ReviewResponse> result = new ArrayList<>();
-
-        Location location = locationRepository.findById(locationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
-
-        List<Review> reviews = location.getReviews();
-
-        Double averageScore = calAverageScore(location);
-
-        for (Review review : reviews) {
-            List<String> images = new ArrayList<>();
-            User user = review.getUser();
-            for (Image image : review.getImages()) {
-                images.add(image.getImageUrl());
-            }
-            ReviewResponse reviewDTO = buildReviewResponse(user, review, images, averageScore);
-            result.add(reviewDTO);
-        }
-        return result;
-    }
-
-    public ReviewDTO getReviewsTest(Long locationId) {
+    public ReviewDTO getReviews(Long locationId) {
         List<ReviewResponse> result = new ArrayList<>();
 
         Location location = locationRepository.findById(locationId)
@@ -169,5 +147,28 @@ public class ReviewService {
                 imageUrls
         );
     }
+
+    // 리뷰만 반환하던 버전
+//    public List<ReviewResponse> getReviews(Long locationId) {
+//        List<ReviewResponse> result = new ArrayList<>();
+//
+//        Location location = locationRepository.findById(locationId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
+//
+//        List<Review> reviews = location.getReviews();
+//
+//        Double averageScore = calAverageScore(location);
+//
+//        for (Review review : reviews) {
+//            List<String> images = new ArrayList<>();
+//            User user = review.getUser();
+//            for (Image image : review.getImages()) {
+//                images.add(image.getImageUrl());
+//            }
+//            ReviewResponse reviewDTO = buildReviewResponse(user, review, images, averageScore);
+//            result.add(reviewDTO);
+//        }
+//        return result;
+//    }
 }
 
