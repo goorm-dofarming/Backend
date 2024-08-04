@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +58,9 @@ public class ReviewService {
 
         List<String> images = new ArrayList<>();
 
+        // 만약 사진이 없이 빈 객체로 넘어왔으면 빈 객체도 넣지 않음.
         for (MultipartFile file : files) {
+            if (Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) continue;
             String imageUrl = imageService.uploadFile(file);
             images.add(imageUrl); // 반환할 이미지 리스트 저장
             Image image = new Image();
@@ -65,7 +68,6 @@ public class ReviewService {
             image.setReview(savedReview); // 연관관계 설정
             imageRepository.save(image);
         }
-
         Double averageScore = calAverageScore(location);
 
         return buildReviewResponse(user, savedReview, images, averageScore);
@@ -117,6 +119,18 @@ public class ReviewService {
 
         boolean liked = likeRepository.existsByLocation_LocationIdAndStatus(locationId, Status.ACTIVE);
 
+        // 대표이미지가 없고, 리뷰가 있는 경우
+        if (location.getImage().isEmpty() && !reviews.isEmpty()) {
+            int order = reviews.size() - 1;
+            for (int i = order; i >= 0; i--) {
+                Review review = reviews.get(i);
+                if (!review.getImages().isEmpty()) {
+                    location.setImage(review.getImages().get(0).getImageUrl());
+                    break;
+                }
+            }
+        }
+
         return ReviewDTO.of(location, result, liked);
     }
 
@@ -135,12 +149,12 @@ public class ReviewService {
     // 평균점수
     public Double calAverageScore(Location location) {
         Double averScore = 0.0;
-        if(location.getReviews().isEmpty()) return averScore;
+        if (location.getReviews().isEmpty()) return averScore;
 
         for (Review review : location.getReviews()) {
             averScore += review.getScore();
         }
-        return averScore/location.getReviews().size();
+        return averScore / location.getReviews().size();
     }
 
     private ReviewResponse buildReviewResponse(User user, Review review, List<String> imageUrls, Double averScore) {

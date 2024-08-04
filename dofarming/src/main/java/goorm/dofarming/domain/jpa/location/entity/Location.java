@@ -64,4 +64,8 @@ public abstract class Location extends BaseEntity {
     public void decreaseLike() {
         if (likeCount != 0) this.likeCount--;
     }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 }
