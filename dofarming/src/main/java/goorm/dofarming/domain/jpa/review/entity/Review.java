@@ -28,6 +28,8 @@ public class Review extends BaseEntity {
     private Double score; // 1 ~ 5 점, 0.5점 단위
     private String content; // 리뷰 내용
 
+//    private int likeCount = 0; // 리뷰 자체에 대한 좋아요??
+
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<Image> images = new ArrayList<>();
 
@@ -66,6 +68,14 @@ public class Review extends BaseEntity {
         this.location = location;
         location.getReviews().add(this);
     }
+
+//    public void increaseLike() {
+//        this.likeCount++;
+//    }
+//
+//    public void decreaseLike() {
+//        if (likeCount != 0) this.likeCount--;
+//    }
 
     public Review() {
     }

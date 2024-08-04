@@ -154,33 +154,6 @@ public class ReviewService {
         return ReviewDTO.of(location, reviewResponses, liked, averageScore);
     }
 
-    private static void sortBySortType(SortType sortType, List<Review> reviews) {
-        switch (sortType) {
-            case HighScore:
-                reviews.sort(Comparator.comparing(Review::getScore).reversed());
-                break;
-            case LowScore:
-                reviews.sort(Comparator.comparing(Review::getScore));
-                break;
-            case HighLike:
-//                reviews.sort(Comparator.comparing(Review::getLikes).reversed());
-                break;
-            case LowLike:
-//                reviews.sort(Comparator.comparing(Review::getLikes));
-                break;
-            case Latest:
-                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
-                break;
-            case Earliest:
-                reviews.sort(Comparator.comparing(Review::getCreatedAt));
-                break;
-            default:
-                // 기본은 최신순으로
-                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
-                break;
-        }
-    }
-
     // 한 리뷰에 대해 사진만 띄우는 기능 - 네이버처럼
     public List<String> getImageUrls(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
@@ -214,6 +187,33 @@ public class ReviewService {
                 user.getNickname(),
                 imageUrls
         );
+    }
+
+    private static void sortBySortType(SortType sortType, List<Review> reviews) {
+        switch (sortType) {
+            case HighScore:
+                reviews.sort(Comparator.comparing(Review::getScore).reversed());
+                break;
+            case LowScore:
+                reviews.sort(Comparator.comparing(Review::getScore));
+                break;
+            case HighLike:
+//                reviews.sort(Comparator.comparing(Review::getLikeCount).reversed());
+                break;
+            case LowLike:
+//                reviews.sort(Comparator.comparing(Review::getLikeCount));
+                break;
+            case Latest:
+                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
+                break;
+            case Earliest:
+                reviews.sort(Comparator.comparing(Review::getCreatedAt));
+                break;
+            default:
+                // 기본은 최신순으로
+                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
+                break;
+        }
     }
 
     // 리뷰만 반환하던 버전
