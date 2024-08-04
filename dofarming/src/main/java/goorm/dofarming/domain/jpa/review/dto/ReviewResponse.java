@@ -1,8 +1,8 @@
-package goorm.dofarming.domain.jpa.review.entity;
+package goorm.dofarming.domain.jpa.review.dto;
 
 import java.util.List;
 
-public record ReviewDTO(
+public record ReviewResponse(
         Long reviewId,
         Double score,
         Double averageScore,

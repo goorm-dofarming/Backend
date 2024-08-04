@@ -1,7 +1,7 @@
 package goorm.dofarming.domain.jpa.review.controller;
 
-import goorm.dofarming.domain.jpa.review.entity.Review;
-import goorm.dofarming.domain.jpa.review.entity.ReviewDTO;
+import goorm.dofarming.domain.jpa.review.dto.ReviewDTO;
+import goorm.dofarming.domain.jpa.review.dto.ReviewResponse;
 import goorm.dofarming.domain.jpa.review.service.ReviewService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorCode;
@@ -23,7 +23,7 @@ public class ReviewController {
 
     // body에서 form-data 로 받아옴. score와 content는 text로 받음.
     @PostMapping("")
-    public ResponseEntity<ReviewDTO> createReview(
+    public ResponseEntity<ReviewResponse> createReview(
             @RequestParam("score") Double score,
             @RequestParam("content") String content,
             @RequestParam("locationId") Long locationId,
@@ -36,10 +36,17 @@ public class ReviewController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ReviewDTO>> getReviewList(
+    public ResponseEntity<List<ReviewResponse>> getReviewList(
             @RequestParam("locationId") Long locationId
     ) {
         return ResponseEntity.ok().body(reviewService.getReviews(locationId));
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<ReviewDTO> getReviewListTest(
+            @RequestParam("locationId") Long locationId
+    ) {
+        return ResponseEntity.ok().body(reviewService.getReviewsTest(locationId));
     }
 
     @GetMapping("/images")
