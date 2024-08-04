@@ -8,6 +8,8 @@ public record ReviewResponse(
         String content,
         String userImageUrl,
         String userNickname,
+        int reviewCount,
+        Double averageReviewScore,
         List<String> imageUrls
 ) {
 }

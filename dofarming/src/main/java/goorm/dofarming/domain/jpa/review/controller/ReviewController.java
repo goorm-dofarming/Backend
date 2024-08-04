@@ -38,17 +38,10 @@ public class ReviewController {
 
     @GetMapping("")
     public ResponseEntity<ReviewDTO> getReviewList(
-            @RequestParam("locationId") Long locationId
-    ) {
-        return ResponseEntity.ok().body(reviewService.getReviews(locationId));
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<ReviewDTO> getReviewListTest(
             @RequestParam("locationId") Long locationId,
             @RequestParam("sortType") SortType sortType
     ) {
-        return ResponseEntity.ok().body(reviewService.getReviewsTest(locationId, sortType));
+        return ResponseEntity.ok().body(reviewService.getReviews(locationId, sortType));
     }
 
     @GetMapping("/images")
