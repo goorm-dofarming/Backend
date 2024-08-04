@@ -4,5 +4,7 @@ public enum SortType {
     Latest,
     Earliest,
     HighLike,
-    LowLike
+    LowLike,
+    HighScore,
+    LowScore
 }
