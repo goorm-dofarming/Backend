@@ -69,7 +69,7 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
     }
 
     private BooleanExpression titleContains(String title) {
-        return hasText(title) ? chatroom.title.containsIgnoreCase(title) : null;
+        return hasText(title) ? like.location.title.containsIgnoreCase(title) : null;
     }
 
     private BooleanExpression cursorCondition(Long likeId, LocalDateTime updatedAt) {
