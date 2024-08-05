@@ -15,4 +15,6 @@ public interface LikeRepository extends JpaRepository<Like, Long>, LikeRepositor
     Optional<Like> findByUser_UserIdAndLocation_LocationId(Long userId, Long locationId);
 
     boolean existsByLocation_LocationIdAndStatus(Long locationId, Status status);
+
+    boolean existsByLocation_LocationIdAndUser_UserIdAndStatus(Long locationId, Long userId, Status status);
 }

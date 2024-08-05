@@ -11,11 +11,13 @@ import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -35,13 +37,15 @@ public class ReviewController {
         return ResponseEntity.ok().body(reviewService.createReview(user.getUserId(), request, files));
     }
 
-//    @GetMapping("")
-//    public ResponseEntity<ReviewDTO> getReviewList(
-//            @RequestParam("locationId") Long locationId,
-//            @RequestParam("sortType") SortType sortType
-//    ) {
-//        return ResponseEntity.ok().body(reviewService.getReviews(locationId, sortType));
-//    }
+    @GetMapping("")
+    public ResponseEntity<List<ReviewResponse>> getReviewList(
+            @Parameter @RequestParam(required = false) Long locationId,
+            @Parameter @RequestParam(required = false) Long reviewId,
+            @Parameter @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime createdAt,
+            @Parameter @RequestParam SortType sortType
+    ) {
+        return ResponseEntity.ok().body(reviewService.getReviews(locationId, reviewId, createdAt, sortType));
+    }
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(

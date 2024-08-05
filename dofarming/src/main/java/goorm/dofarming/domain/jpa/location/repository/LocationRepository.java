@@ -1,6 +1,7 @@
 package goorm.dofarming.domain.jpa.location.repository;
 
 import goorm.dofarming.domain.jpa.location.entity.Location;
+import goorm.dofarming.global.common.entity.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,5 +14,5 @@ import java.util.Optional;
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
-//    Optional<Object> findByThemeAndLocationId(int theme, Long locationId);
+    Optional<Location> findByLocationIdAndStatus(Long locationId, Status status);
 }
