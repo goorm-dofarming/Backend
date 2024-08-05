@@ -3,7 +3,11 @@ package goorm.dofarming.domain.jpa.image.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import goorm.dofarming.domain.jpa.image.entity.Image;
 import goorm.dofarming.domain.jpa.image.repository.ImageRepository;
+import goorm.dofarming.global.common.entity.Status;
+import goorm.dofarming.global.common.error.ErrorCode;
+import goorm.dofarming.global.common.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageService {
 
+    private final ImageRepository imageRepository;
     private final AmazonS3 s3Client;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -35,6 +40,14 @@ public class ImageService {
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload file to S3", e);
         }
+    }
+
+    public void delete(Long imageId) {
+        Image image = imageRepository.findByImageIdAndStatus(imageId, Status.ACTIVE)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "이미지를 찾을 수 없습니다."));
+
+        image.delete();
+        deleteFile(image.getImageUrl());
     }
 
     public void deleteFile(String fileUrl) {

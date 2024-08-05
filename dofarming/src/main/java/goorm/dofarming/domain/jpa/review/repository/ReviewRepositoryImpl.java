@@ -8,6 +8,7 @@ import goorm.dofarming.domain.jpa.like.entity.SortType;
 import goorm.dofarming.domain.jpa.location.entity.QLocation;
 import goorm.dofarming.domain.jpa.review.entity.QReview;
 import goorm.dofarming.domain.jpa.review.entity.Review;
+import goorm.dofarming.domain.jpa.user.entity.QUser;
 import goorm.dofarming.global.common.entity.Status;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Sort;
@@ -21,6 +22,7 @@ import static goorm.dofarming.domain.jpa.location.entity.QLocation.*;
 import static goorm.dofarming.domain.jpa.message.entity.QMessage.message;
 import static goorm.dofarming.domain.jpa.review.entity.QReview.*;
 import static goorm.dofarming.domain.jpa.tag.entity.QTag.tag;
+import static goorm.dofarming.domain.jpa.user.entity.QUser.*;
 import static org.springframework.util.StringUtils.hasText;
 
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
@@ -52,7 +54,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         return queryFactory
                 .select(review)
                 .from(review)
-                .join(review.location, location).fetchJoin()
+                .join(review.user, user).fetchJoin()
                 .where(
                         review.reviewId.in(reviewIds)
                 )
