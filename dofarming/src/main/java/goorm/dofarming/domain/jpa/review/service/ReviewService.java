@@ -202,6 +202,7 @@ public class ReviewService {
                 review.getReviewId(),
                 review.getScore(),
                 review.getContent(),
+                review.getCreatedAt(),
                 user.getUserId(),
                 user.getImageUrl(),
                 user.getNickname(),
@@ -238,65 +239,5 @@ public class ReviewService {
         }
     }
 
-    // 리뷰만 반환하던 버전
-//    public List<ReviewResponse> getReviews(Long locationId) {
-//        List<ReviewResponse> result = new ArrayList<>();
-//
-//        Location location = locationRepository.findById(locationId)
-//                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
-//
-//        List<Review> reviews = location.getReviews();
-//
-//        Double averageScore = calAverageScore(location);
-//
-//        for (Review review : reviews) {
-//            List<String> images = new ArrayList<>();
-//            User user = review.getUser();
-//            for (Image image : review.getImages()) {
-//                images.add(image.getImageUrl());
-//            }
-//            ReviewResponse reviewDTO = buildReviewResponse(user, review, images, averageScore);
-//            result.add(reviewDTO);
-//        }
-//        return result;
-//    }
-
-    // reviewDTO 초기버전
-//    public ReviewDTO getReviews(Long locationId) {
-//        List<ReviewResponse> reviewResponses = new ArrayList<>();
-//
-//        Location location = locationRepository.findById(locationId)
-//                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
-//
-//        List<Review> reviews = location.getReviews();
-//
-//        Double averageScore = calAverageScore(location);
-//
-//        for (Review review : reviews) {
-//            List<String> images = new ArrayList<>();
-//            User user = review.getUser();
-//            for (Image image : review.getImages()) {
-//                images.add(image.getImageUrl());
-//            }
-//            ReviewResponse reviewDTO = buildReviewResponse(user, review, images);
-//            reviewResponses.add(reviewDTO);
-//        }
-//
-//        boolean liked = likeRepository.existsByLocation_LocationIdAndStatus(locationId, Status.ACTIVE);
-//
-//        // 대표이미지가 없고, 리뷰가 있는 경우
-//        if (location.getImage().isEmpty() && !reviews.isEmpty()) {
-//            int order = reviews.size() - 1;
-//            for (int i = order; i >= 0; i--) {
-//                Review review = reviews.get(i);
-//                if (!review.getImages().isEmpty()) {
-//                    location.setImage(review.getImages().get(0).getImageUrl());
-//                    break;
-//                }
-//            }
-//        }
-//
-//        return ReviewDTO.of(location, reviewResponses, liked, averageScore);
-//    }
 }
 
