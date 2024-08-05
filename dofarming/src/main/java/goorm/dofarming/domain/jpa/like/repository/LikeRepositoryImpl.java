@@ -9,6 +9,7 @@ import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.like.entity.SortType;
 import goorm.dofarming.global.common.entity.Status;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,7 +38,7 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
                 .join(like.location, location)
                 .where(
                         userIdEq(userId),
-                        cursorCondition(likeId, updatedAt),
+                        cursorCondition(likeId, updatedAt, sortType),
                         titleContains(title),
                         themesEq(themes),
                         orRegion(regions),
@@ -72,10 +73,16 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
         return hasText(title) ? like.location.title.containsIgnoreCase(title) : null;
     }
 
-    private BooleanExpression cursorCondition(Long likeId, LocalDateTime updatedAt) {
+    private BooleanExpression cursorCondition(Long likeId, LocalDateTime updatedAt, SortType sortType) {
         if (likeId == null || updatedAt == null) {
             return null;
         }
+
+        if (sortType.equals(SortType.Earliest)) {
+            return like.updatedAt.after(updatedAt)
+                    .or(like.updatedAt.eq(updatedAt)).and(like.likeId.gt(likeId));
+        }
+
         return like.updatedAt.before(updatedAt)
                 .or(like.updatedAt.eq(updatedAt).and(like.likeId.lt(likeId)));
     }

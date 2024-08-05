@@ -8,6 +8,8 @@ import goorm.dofarming.domain.jpa.like.repository.LikeRepository;
 import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.location.repository.LocationRepository;
 import goorm.dofarming.domain.jpa.review.dto.ReviewDTO;
+import goorm.dofarming.domain.jpa.review.dto.request.ReviewCreateRequest;
+import goorm.dofarming.domain.jpa.review.dto.request.ReviewModifyRequest;
 import goorm.dofarming.domain.jpa.review.entity.Review;
 import goorm.dofarming.domain.jpa.review.dto.ReviewResponse;
 import goorm.dofarming.domain.jpa.review.repository.ReviewRepository;
@@ -29,6 +31,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Slf4j
 public class ReviewService {
 
@@ -40,73 +43,53 @@ public class ReviewService {
     private final ImageService imageService;
 
     @Transactional
-    public ReviewResponse createReview(List<MultipartFile> files, Long userId, Long locationId, Double score, String content) {
+    public ReviewResponse createReview(Long userId, ReviewCreateRequest request, List<MultipartFile> files) {
 
         User user = userRepository.findByUserIdAndStatus(userId, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 회원입니다."));
 
-        Location location = locationRepository.findById(locationId)
+        Location location = locationRepository.findById(request.locationId())
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 장소입니다."));
 
-        Review review = new Review();
-        review.setReviewId(review.getReviewId());
-        review.setContent(content);
-        review.setScore(score);
-        review.addUser(user);
-        review.addLocation(location);
-
         // Review 객체를 먼저 저장
-        Review savedReview = reviewRepository.save(review);
-
-        List<String> images = new ArrayList<>();
+        Review savedReview = reviewRepository.save(Review.review(user, location, request));
 
         // 만약 사진이 없이 빈 객체로 넘어왔으면 빈 객체도 넣지 않음.
         for (MultipartFile file : files) {
             if (Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) continue;
             String imageUrl = imageService.uploadFile(file);
-            images.add(imageUrl); // 반환할 이미지 리스트 저장
-            Image image = new Image();
-            image.setImageUrl(imageUrl);
-            image.setReview(savedReview); // 연관관계 설정
-            imageRepository.save(image);
+            imageRepository.save(Image.image(savedReview, imageUrl));
         }
 
-        return buildReviewResponse(user, savedReview, images);
+        return ReviewResponse.of(savedReview);
     }
 
     @Transactional
-    public ReviewResponse updateReview(List<MultipartFile> files, Long reviewId, Double score, String content) {
+    public ReviewResponse updateReview(Long userId, List<MultipartFile> files, Long reviewId, ReviewModifyRequest request) {
+        User user = userRepository.findByUserIdAndStatus(userId, Status.ACTIVE)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 유저입니다."));
+
         Review review = reviewRepository.findReviewByReviewIdAndStatus(reviewId, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 리뷰입니다."));
 
-        review.setContent(content);
-        review.setScore(score);
-
-        List<Image> images = review.getImages();
-        for (Image image : images) {
-            image.delete();
+        if (!review.getUser().getUserId().equals(user.getUserId())) {
+            throw new CustomException(ErrorCode.FORBIDDEN, "이 리뷰를 수정할 권한이 없습니다.");
         }
-        imageRepository.saveAll(images);
-        review.getImages().clear();
 
-        List<String> updateImages = new ArrayList<>();
+        review.update(request);
+
         for (MultipartFile file : files) {
             System.out.println("??");
             if (Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) continue;
             System.out.println("!!");
             String imageUrl = imageService.uploadFile(file);
-            updateImages.add(imageUrl); // 반환할 이미지 리스트 저장
-            Image image = new Image();
-            image.setImageUrl(imageUrl);
-            image.setReview(review); // 연관관계 설정
-            imageRepository.save(image);
+            imageRepository.save(Image.image(review, imageUrl));
         }
 
-        reviewRepository.save(review);
-
-        return buildReviewResponse(review.getUser(), review, updateImages);
+        return ReviewResponse.of(review);
     }
 
+    @Transactional
     public void deleteReview(Long userId, Long reviewId) {
         Review review = reviewRepository.findReviewByReviewIdAndStatus(reviewId, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 리뷰입니다."));
@@ -115,169 +98,26 @@ public class ReviewService {
             throw new CustomException(ErrorCode.FORBIDDEN, "이 리뷰를 삭제할 권한이 없습니다.");
         }
 
-        List<Image> images = review.getImages();
-        for (Image image : images) {
-            image.delete();
-        }
-        imageRepository.saveAll(images);
-
         review.delete();
-        reviewRepository.save(review);
     }
 
-    public ReviewDTO getReviews(Long locationId, SortType sortType) {
-        List<ReviewResponse> reviewResponses = new ArrayList<>();
-
-        Location location = locationRepository.findById(locationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
-
-        List<Review> reviews = reviewRepository.findByLocation_LocationIdAndStatus(locationId, Status.ACTIVE);
-
-        Double averageScore = calAverageScore(location);
-
-        sortBySortType(sortType, reviews);
-
-        for (Review review : reviews) {
-            List<String> images = new ArrayList<>();
-            User user = review.getUser();
-            List<Image> imageList = imageRepository.findByReviewAndStatus(review, Status.ACTIVE);
-
-            for (Image image : imageList) {
-                images.add(image.getImageUrl());
-            }
-
-            ReviewResponse reviewDTO = buildReviewResponse(user, review, images);
-            reviewResponses.add(reviewDTO);
-        }
-
-        boolean liked = likeRepository.existsByLocation_LocationIdAndStatus(locationId, Status.ACTIVE);
-
-        // 대표이미지가 없고, 리뷰가 있는 경우
-        if (location.getImage().isEmpty() && !reviews.isEmpty()) {
-            int order = reviews.size() - 1;
-            for (int i = order; i >= 0; i--) {
-                Review review = reviews.get(i);
-                if (!review.getImages().isEmpty()) {
-                    location.setImage(review.getImages().get(0).getImageUrl());
-                    break;
-                }
-            }
-        }
-
-        return ReviewDTO.of(location, reviewResponses, liked, averageScore);
-    }
-
-    // 한 리뷰에 대해 사진만 띄우는 기능 - 네이버처럼
-    public List<String> getImageUrls(Long reviewId) {
-        Review review = reviewRepository.findReviewByReviewIdAndStatus(reviewId, Status.ACTIVE)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 리뷰입니다."));
-        List<String> imageList = new ArrayList<>();
-        for (Image image : review.getImages()) {
-            String imageUrl = image.getImageUrl();
-            imageList.add(imageUrl);
-        }
-        return imageList;
-    }
-
-    // 평균점수
-    public Double calAverageScore(Location location) {
-        Double averScore = 0.0;
-        if (location.getReviews().isEmpty()) return averScore;
-
-        for (Review review : location.getReviews()) {
-            averScore += review.getScore();
-        }
-        return averScore / location.getReviews().size();
-    }
-
-    private ReviewResponse buildReviewResponse(User user, Review review, List<String> imageUrls) {
-
-        Double userAverageScore = 0.0;
-        for (Review userReview : user.getReviews()) {
-            userAverageScore += userReview.getScore();
-        }
-        userAverageScore /= user.getReviews().size();
-
-        return new ReviewResponse(
-                review.getReviewId(),
-                review.getScore(),
-                review.getContent(),
-                user.getUserId(),
-                user.getImageUrl(),
-                user.getNickname(),
-                user.getReviews().size(),
-                userAverageScore,
-                imageUrls
-        );
-    }
-
-    private static void sortBySortType(SortType sortType, List<Review> reviews) {
-        switch (sortType) {
-            case HighScore:
-                reviews.sort(Comparator.comparing(Review::getScore).reversed());
-                break;
-            case LowScore:
-                reviews.sort(Comparator.comparing(Review::getScore));
-                break;
-            case HighLike:
-//                reviews.sort(Comparator.comparing(Review::getLikeCount).reversed());
-                break;
-            case LowLike:
-//                reviews.sort(Comparator.comparing(Review::getLikeCount));
-                break;
-            case Latest:
-                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
-                break;
-            case Earliest:
-                reviews.sort(Comparator.comparing(Review::getCreatedAt));
-                break;
-            default:
-                // 기본은 최신순으로
-                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
-                break;
-        }
-    }
-
-    // 리뷰만 반환하던 버전
-//    public List<ReviewResponse> getReviews(Long locationId) {
-//        List<ReviewResponse> result = new ArrayList<>();
-//
+//    public ReviewDTO getReviews(Long locationId, SortType sortType) {
 //        Location location = locationRepository.findById(locationId)
 //                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
 //
-//        List<Review> reviews = location.getReviews();
+//        List<Review> reviews = reviewRepository.findByLocation_LocationIdAndStatus(locationId, Status.ACTIVE);
 //
-//        Double averageScore = calAverageScore(location);
+//        sortBySortType(sortType, reviews);
 //
 //        for (Review review : reviews) {
 //            List<String> images = new ArrayList<>();
 //            User user = review.getUser();
-//            for (Image image : review.getImages()) {
+//            List<Image> imageList = imageRepository.findByReviewAndStatus(review, Status.ACTIVE);
+//
+//            for (Image image : imageList) {
 //                images.add(image.getImageUrl());
 //            }
-//            ReviewResponse reviewDTO = buildReviewResponse(user, review, images, averageScore);
-//            result.add(reviewDTO);
-//        }
-//        return result;
-//    }
-
-    // reviewDTO 초기버전
-//    public ReviewDTO getReviews(Long locationId) {
-//        List<ReviewResponse> reviewResponses = new ArrayList<>();
 //
-//        Location location = locationRepository.findById(locationId)
-//                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
-//
-//        List<Review> reviews = location.getReviews();
-//
-//        Double averageScore = calAverageScore(location);
-//
-//        for (Review review : reviews) {
-//            List<String> images = new ArrayList<>();
-//            User user = review.getUser();
-//            for (Image image : review.getImages()) {
-//                images.add(image.getImageUrl());
-//            }
 //            ReviewResponse reviewDTO = buildReviewResponse(user, review, images);
 //            reviewResponses.add(reviewDTO);
 //        }
@@ -297,6 +137,33 @@ public class ReviewService {
 //        }
 //
 //        return ReviewDTO.of(location, reviewResponses, liked, averageScore);
+//    }
+//
+//    private static void sortBySortType(SortType sortType, List<Review> reviews) {
+//        switch (sortType) {
+//            case HighScore:
+//                reviews.sort(Comparator.comparing(Review::getScore).reversed());
+//                break;
+//            case LowScore:
+//                reviews.sort(Comparator.comparing(Review::getScore));
+//                break;
+//            case HighLike:
+////                reviews.sort(Comparator.comparing(Review::getLikeCount).reversed());
+//                break;
+//            case LowLike:
+////                reviews.sort(Comparator.comparing(Review::getLikeCount));
+//                break;
+//            case Latest:
+//                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
+//                break;
+//            case Earliest:
+//                reviews.sort(Comparator.comparing(Review::getCreatedAt));
+//                break;
+//            default:
+//                // 기본은 최신순으로
+//                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
+//                break;
+//        }
 //    }
 }
 
