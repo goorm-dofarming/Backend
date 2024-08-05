@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,8 @@ public abstract class Location extends BaseEntity {
     @Column(insertable = false, updatable = false)
     private String theme;
     private int likeCount = 0;
+    private int reviewCount = 0;
+    private Double totalScore = 0.0;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -63,6 +66,26 @@ public abstract class Location extends BaseEntity {
 
     public void decreaseLike() {
         if (likeCount != 0) this.likeCount--;
+    }
+
+    public void increaseReview() {
+        this.reviewCount++;
+    }
+
+    public void decreaseReview() {
+        if (reviewCount != 0) this.reviewCount--;
+    }
+
+    public void addScore(Double score) {
+        this.totalScore += score;
+    }
+
+    public void subScore(Double score) {
+        this.totalScore -= score;
+    }
+
+    public String avgScore() {
+        return String.format("%.1f", this.totalScore / reviewCount);
     }
 
     public void setImage(String image) {

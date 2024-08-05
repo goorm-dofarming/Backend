@@ -6,12 +6,32 @@ import goorm.dofarming.domain.jpa.location.entity.Location;
 import java.util.List;
 
 public record ReviewDTO(
-        ReviewLocationResponse locationResponse,
+        Long locationId,
+        Double averageScore,
+        String title,
+        String addr,
+        String tel,
+        String image,
+        Double mapX,
+        Double mapY,
+        int dataType,
+        boolean liked,
+        int countLikes,
         List<ReviewResponse> reviewResponses
 ) {
-    public static ReviewDTO of(Location location, List<ReviewResponse> reviewResponses, boolean liked, Double averageScore) {
+    public static ReviewDTO of(Location location, List<ReviewResponse> reviewResponses, boolean liked) {
         return new ReviewDTO(
-                ReviewLocationResponse.of(liked, location, averageScore),
+                location.getLocationId(),
+                location.getTotalScore(),
+                location.getTitle(),
+                location.getAddr(),
+                location.getTel(),
+                location.getImage(),
+                location.getMapX(),
+                location.getMapY(),
+                Integer.parseInt(location.getTheme()),
+                liked,
+                location.getLikeCount(),
                 reviewResponses
         );
     }
