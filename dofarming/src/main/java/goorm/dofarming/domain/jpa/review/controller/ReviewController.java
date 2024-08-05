@@ -44,6 +44,26 @@ public class ReviewController {
         return ResponseEntity.ok().body(reviewService.getReviews(locationId, sortType));
     }
 
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<ReviewResponse> updateReview(
+            @RequestParam("score") Double score,
+            @RequestParam("content") String content,
+            @RequestParam("files") List<MultipartFile> files,
+            @PathVariable("reviewId") Long reviewId
+    ) {
+        return ResponseEntity.ok().body(reviewService.updateReview(files, reviewId, score, content));
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public void deleteReview(
+            @AuthenticationPrincipal DofarmingUserDetails user,
+            @PathVariable("reviewId") Long reviewId
+    ) {
+        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
+        Long userId = user.getUserId();
+        reviewService.deleteReview(userId, reviewId);
+    }
+
     @GetMapping("/images")
     public ResponseEntity<List<String>> getImages(
             @RequestParam("reviewId") Long reviewId

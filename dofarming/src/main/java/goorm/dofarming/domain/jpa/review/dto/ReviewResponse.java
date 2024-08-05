@@ -6,6 +6,7 @@ public record ReviewResponse(
         Long reviewId,
         Double score,
         String content,
+        Long userId,
         String userImageUrl,
         String userNickname,
         int reviewCount,

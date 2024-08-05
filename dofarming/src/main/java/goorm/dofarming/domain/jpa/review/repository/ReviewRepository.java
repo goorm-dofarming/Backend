@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    // Status 가 ALIVE 인 경우만 리뷰를 반환해야 할 수도 있음.
-    List<Review> findAllByStatus(Status status);
+    List<Review> findByLocation_LocationIdAndStatus(Long locationId, Status status);
+
+    Optional<Review> findReviewByReviewIdAndStatus(Long id, Status status);
 }
