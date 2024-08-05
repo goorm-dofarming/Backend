@@ -1,6 +1,7 @@
 package goorm.dofarming.domain.jpa.like.service;
 
 import goorm.dofarming.domain.jpa.chatroom.entity.Region;
+import goorm.dofarming.domain.jpa.like.dto.response.LikeResponse;
 import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.like.entity.SortType;
 import goorm.dofarming.domain.jpa.like.repository.LikeRepository;
@@ -30,15 +31,12 @@ public class LikeService {
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
 
-    public List<LocationResponse> getLikeList(Long userId, Long likeId, LocalDateTime updatedAt, List<String> themes, List<Region> regions, SortType sortType) {
+    public List<LikeResponse> getLikeList(Long userId, Long likeId, LocalDateTime updatedAt, String title, List<String> themes, List<Region> regions, SortType sortType) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원이 존재하지 않습니다."));
 
-        return likeRepository.search(user.getUserId(), likeId, updatedAt, themes, regions, sortType)
-                .stream().map(like -> {
-                    Location location = like.getLocation();
-                    return LocationResponse.of(true, location);
-                })
+        return likeRepository.search(user.getUserId(), likeId, updatedAt, title, themes, regions, sortType)
+                .stream().map(LikeResponse::of)
                 .collect(Collectors.toList());
     }
 
