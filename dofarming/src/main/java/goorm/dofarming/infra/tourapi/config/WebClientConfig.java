@@ -13,11 +13,11 @@ public class WebClientConfig {
     // 내 키
 //    public final static String SERVICE_KEY = "qR6tI%2BnsyPolriwrrMXbxu3BMliH02gg9FVLp%2F09CsteVUoKGJ5a5PUydtAlvVkSXaalt9mHaOIi51LGXB1iug%3D%3D";
     // 태우님 키
-//    public final static String SERVICE_KEY = "vpMRPaIIqaPZXFNvjQDR7x4N%2BKH7znrJvy0gSJeWXr33uRQ9TwIjiEdlowd%2FVANtxoj8m4U11rNi4QvRGfYkYA%3D%3D";
+    public final static String SERVICE_KEY = "vpMRPaIIqaPZXFNvjQDR7x4N%2BKH7znrJvy0gSJeWXr33uRQ9TwIjiEdlowd%2FVANtxoj8m4U11rNi4QvRGfYkYA%3D%3D";
     // 소희님 키
 //    public final static String SERVICE_KEY = "hJujlDHVK0rhAoo%2BrMv1VwvhmIXXsttkEHOnOWGHJLACsJKSu%2F3ihAeq7Iqsdko7mN9t6p2M5tsVxanbAGWktA%3D%3D";
     // 근재님 키
-    public final static String SERVICE_KEY = "H4AghKETJoCMBx3vYjxCKnw2Faksg8gUWlUBjlt73czwAuHT6va2rBNHt%2BKVvfdQ4pbwMWrAGciN6QlIIpaPdQ%3D%3D";
+//    public final static String SERVICE_KEY = "H4AghKETJoCMBx3vYjxCKnw2Faksg8gUWlUBjlt73czwAuHT6va2rBNHt%2BKVvfdQ4pbwMWrAGciN6QlIIpaPdQ%3D%3D";
     // 호성님 키
 //    public final static String SERVICE_KEY = "ocESuTmeyrKIfb1ow%2B6OrXfXHKNR%2BTBBbN7ilvuxAEAQXAxqo27UHuZ3YfPfeqcai5oeFsLyFOOV79V7JfnP6w%3D%3D";
 

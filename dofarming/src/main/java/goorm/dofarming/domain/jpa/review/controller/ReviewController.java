@@ -1,6 +1,8 @@
 package goorm.dofarming.domain.jpa.review.controller;
 
-import goorm.dofarming.domain.jpa.review.entity.ReviewDTO;
+import goorm.dofarming.domain.jpa.like.entity.SortType;
+import goorm.dofarming.domain.jpa.review.dto.ReviewDTO;
+import goorm.dofarming.domain.jpa.review.dto.ReviewResponse;
 import goorm.dofarming.domain.jpa.review.service.ReviewService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorCode;
@@ -22,15 +24,24 @@ public class ReviewController {
 
     // body에서 form-data 로 받아옴. score와 content는 text로 받음.
     @PostMapping("")
-    public ResponseEntity<ReviewDTO> createReview(
+    public ResponseEntity<ReviewResponse> createReview(
             @RequestParam("score") Double score,
             @RequestParam("content") String content,
+            @RequestParam("locationId") Long locationId,
             @RequestParam("files") List<MultipartFile> files,
             @AuthenticationPrincipal DofarmingUserDetails user
     ) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
-        return ResponseEntity.ok().body(reviewService.createReview(files, userId, score, content));
+        return ResponseEntity.ok().body(reviewService.createReview(files, userId, locationId, score, content));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<ReviewDTO> getReviewList(
+            @RequestParam("locationId") Long locationId,
+            @RequestParam("sortType") SortType sortType
+    ) {
+        return ResponseEntity.ok().body(reviewService.getReviews(locationId, sortType));
     }
 
     @GetMapping("/images")

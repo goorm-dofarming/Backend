@@ -31,13 +31,7 @@ public record LocationResponse(
                 location.getMapY(),
                 Integer.parseInt(location.getTheme()),
                 liked,
-                getLikeCount(location)
+                location.getLikeCount()
         );
-    }
-
-    public static int getLikeCount(Location location) {
-        return (int) location.getLikes().stream()
-                .filter(like -> like.getStatus().equals(Status.ACTIVE))
-                .count();
     }
 }
