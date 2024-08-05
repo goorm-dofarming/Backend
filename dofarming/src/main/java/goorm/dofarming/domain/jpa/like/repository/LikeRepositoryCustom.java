@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface LikeRepositoryCustom {
 
-    List<Like> search(Long userId, Long likeId, LocalDateTime updatedAt, List<String> themes, List<Region> regions, SortType sortType);
+    List<Like> search(Long userId, Long likeId, LocalDateTime updatedAt, String title, List<String> themes, List<Region> regions, SortType sortType);
 }

@@ -37,4 +37,15 @@ public class ImageService {
         }
     }
 
+    public void deleteFile(String fileUrl) {
+        // S3 URL에서 파일명 추출.
+        String fileName = extractFileNameFromUrl(fileUrl);
+        s3Client.deleteObject(bucketName, fileName);
+    }
+
+    private String extractFileNameFromUrl(String fileUrl) {
+        // 파일 URL로부터 파일명을 추출하는 로직
+        return fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+    }
+
 }
