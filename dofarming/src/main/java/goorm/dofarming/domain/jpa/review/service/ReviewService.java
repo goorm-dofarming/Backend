@@ -79,9 +79,7 @@ public class ReviewService {
         review.update(request);
 
         for (MultipartFile file : files) {
-            System.out.println("??");
             if (Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) continue;
-            System.out.println("!!");
             String imageUrl = imageService.uploadFile(file);
             imageRepository.save(Image.image(review, imageUrl));
         }
