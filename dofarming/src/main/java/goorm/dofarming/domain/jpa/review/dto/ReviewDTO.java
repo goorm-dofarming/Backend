@@ -8,6 +8,7 @@ import java.util.List;
 public record ReviewDTO(
         Long locationId,
         Double averageScore,
+        int totalReview,
         String title,
         String addr,
         String tel,
@@ -16,13 +17,13 @@ public record ReviewDTO(
         Double mapY,
         int dataType,
         boolean liked,
-        int countLikes,
-        List<ReviewResponse> reviewResponses
+        int countLikes
 ) {
-    public static ReviewDTO of(Location location, List<ReviewResponse> reviewResponses, boolean liked) {
+    public static ReviewDTO of(Location location, boolean liked) {
         return new ReviewDTO(
                 location.getLocationId(),
                 location.getTotalScore(),
+                location.getReviewCount(),
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),
@@ -31,8 +32,7 @@ public record ReviewDTO(
                 location.getMapY(),
                 Integer.parseInt(location.getTheme()),
                 liked,
-                location.getLikeCount(),
-                reviewResponses
+                location.getLikeCount()
         );
     }
 }

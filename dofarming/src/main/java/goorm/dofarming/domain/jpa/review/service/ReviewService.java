@@ -24,10 +24,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -99,69 +101,12 @@ public class ReviewService {
         review.delete();
     }
 
-//    public ReviewDTO getReviews(Long locationId, SortType sortType) {
-//        Location location = locationRepository.findById(locationId)
-//                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
-//
-//        List<Review> reviews = reviewRepository.findByLocation_LocationIdAndStatus(locationId, Status.ACTIVE);
-//
-//        sortBySortType(sortType, reviews);
-//
-//        for (Review review : reviews) {
-//            List<String> images = new ArrayList<>();
-//            User user = review.getUser();
-//            List<Image> imageList = imageRepository.findByReviewAndStatus(review, Status.ACTIVE);
-//
-//            for (Image image : imageList) {
-//                images.add(image.getImageUrl());
-//            }
-//
-//            ReviewResponse reviewDTO = buildReviewResponse(user, review, images);
-//            reviewResponses.add(reviewDTO);
-//        }
-//
-//        boolean liked = likeRepository.existsByLocation_LocationIdAndStatus(locationId, Status.ACTIVE);
-//
-//        // 대표이미지가 없고, 리뷰가 있는 경우
-//        if (location.getImage().isEmpty() && !reviews.isEmpty()) {
-//            int order = reviews.size() - 1;
-//            for (int i = order; i >= 0; i--) {
-//                Review review = reviews.get(i);
-//                if (!review.getImages().isEmpty()) {
-//                    location.setImage(review.getImages().get(0).getImageUrl());
-//                    break;
-//                }
-//            }
-//        }
-//
-//        return ReviewDTO.of(location, reviewResponses, liked, averageScore);
-//    }
-//
-//    private static void sortBySortType(SortType sortType, List<Review> reviews) {
-//        switch (sortType) {
-//            case HighScore:
-//                reviews.sort(Comparator.comparing(Review::getScore).reversed());
-//                break;
-//            case LowScore:
-//                reviews.sort(Comparator.comparing(Review::getScore));
-//                break;
-//            case HighLike:
-////                reviews.sort(Comparator.comparing(Review::getLikeCount).reversed());
-//                break;
-//            case LowLike:
-////                reviews.sort(Comparator.comparing(Review::getLikeCount));
-//                break;
-//            case Latest:
-//                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
-//                break;
-//            case Earliest:
-//                reviews.sort(Comparator.comparing(Review::getCreatedAt));
-//                break;
-//            default:
-//                // 기본은 최신순으로
-//                reviews.sort(Comparator.comparing(Review::getCreatedAt).reversed());
-//                break;
-//        }
-//    }
+    public List<ReviewResponse> getReviews(Long locationId, Long reviewId, LocalDateTime createdAt, SortType sortType) {
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
+
+        return reviewRepository.search(location.getLocationId(), reviewId, createdAt, sortType)
+                .stream().map(ReviewResponse::of).collect(Collectors.toList());
+    }
 }
 
