@@ -1,6 +1,7 @@
 package goorm.dofarming.domain.jpa.like.controller;
 
 import goorm.dofarming.domain.jpa.chatroom.entity.Region;
+import goorm.dofarming.domain.jpa.like.dto.response.LikeResponse;
 import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.like.entity.SortType;
 import goorm.dofarming.domain.jpa.like.service.LikeService;
@@ -85,14 +86,15 @@ public class LikeController {
             }
     )
     @GetMapping("/likeList")
-    private List<LocationResponse> likeList(
+    private List<LikeResponse> likeList(
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user,
-            @Parameter(description = "로케이션 ID") @RequestParam(required = false) Long likeId,
+            @Parameter(description = "like ID") @RequestParam(required = false) Long likeId,
             @Parameter(description = "생성 일자") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime updatedAt,
+            @Parameter(description = "제목 검색") @RequestParam(required = false) String title,
             @Parameter(description = "테마 종류") @RequestParam(required = false) List<String> themes,
             @Parameter(description = "지역 이름") @RequestParam(required = false) List<Region> regions,
             @Parameter(description = "정렬 순서") @RequestParam SortType sortType
             ) {
-        return likeService.getLikeList(user.getUserId(), likeId, updatedAt, themes, regions, sortType);
+        return likeService.getLikeList(user.getUserId(), likeId, updatedAt, title, themes, regions, sortType);
     }
 }
