@@ -16,10 +16,10 @@ public record ReviewLocationResponse(
         boolean liked,
         int countLikes
 ) {
-    public static ReviewLocationResponse of(boolean liked, Location location, Double averageScore) {
+    public static ReviewLocationResponse of(boolean liked, Location location) {
         return new ReviewLocationResponse(
                 location.getLocationId(),
-                averageScore,
+                location.getTotalScore(),
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),

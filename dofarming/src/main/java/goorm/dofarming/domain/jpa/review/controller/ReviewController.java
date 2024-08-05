@@ -3,10 +3,13 @@ package goorm.dofarming.domain.jpa.review.controller;
 import goorm.dofarming.domain.jpa.like.entity.SortType;
 import goorm.dofarming.domain.jpa.review.dto.ReviewDTO;
 import goorm.dofarming.domain.jpa.review.dto.ReviewResponse;
+import goorm.dofarming.domain.jpa.review.dto.request.ReviewCreateRequest;
+import goorm.dofarming.domain.jpa.review.dto.request.ReviewModifyRequest;
 import goorm.dofarming.domain.jpa.review.service.ReviewService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,49 +28,37 @@ public class ReviewController {
     // body에서 form-data 로 받아옴. score와 content는 text로 받음.
     @PostMapping("")
     public ResponseEntity<ReviewResponse> createReview(
-            @RequestParam("score") Double score,
-            @RequestParam("content") String content,
-            @RequestParam("locationId") Long locationId,
-            @RequestParam("files") List<MultipartFile> files,
-            @AuthenticationPrincipal DofarmingUserDetails user
+            @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter @RequestBody ReviewCreateRequest request,
+            @Parameter @RequestParam List<MultipartFile> files
     ) {
-        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
-        Long userId = user.getUserId();
-        return ResponseEntity.ok().body(reviewService.createReview(files, userId, locationId, score, content));
+        return ResponseEntity.ok().body(reviewService.createReview(user.getUserId(), request, files));
     }
 
-    @GetMapping("")
-    public ResponseEntity<ReviewDTO> getReviewList(
-            @RequestParam("locationId") Long locationId,
-            @RequestParam("sortType") SortType sortType
-    ) {
-        return ResponseEntity.ok().body(reviewService.getReviews(locationId, sortType));
-    }
+//    @GetMapping("")
+//    public ResponseEntity<ReviewDTO> getReviewList(
+//            @RequestParam("locationId") Long locationId,
+//            @RequestParam("sortType") SortType sortType
+//    ) {
+//        return ResponseEntity.ok().body(reviewService.getReviews(locationId, sortType));
+//    }
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(
-            @RequestParam("score") Double score,
-            @RequestParam("content") String content,
-            @RequestParam("files") List<MultipartFile> files,
-            @PathVariable("reviewId") Long reviewId
+            @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter @PathVariable("reviewId") Long reviewId,
+            @Parameter @RequestBody ReviewModifyRequest request,
+            @Parameter @RequestParam("files") List<MultipartFile> files
     ) {
-        return ResponseEntity.ok().body(reviewService.updateReview(files, reviewId, score, content));
+        return ResponseEntity.ok().body(reviewService.updateReview(user.getUserId(), files, reviewId, request));
     }
 
     @DeleteMapping("/{reviewId}")
-    public void deleteReview(
+    public ResponseEntity<Void> deleteReview(
             @AuthenticationPrincipal DofarmingUserDetails user,
-            @PathVariable("reviewId") Long reviewId
+            @Parameter @PathVariable("reviewId") Long reviewId
     ) {
-        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
-        Long userId = user.getUserId();
-        reviewService.deleteReview(userId, reviewId);
-    }
-
-    @GetMapping("/images")
-    public ResponseEntity<List<String>> getImages(
-            @RequestParam("reviewId") Long reviewId
-    ) {
-        return ResponseEntity.ok().body(reviewService.getImageUrls(reviewId));
+        reviewService.deleteReview(user.getUserId(), reviewId);
+        return ResponseEntity.noContent().build();
     }
 }

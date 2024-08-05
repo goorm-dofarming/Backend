@@ -1,5 +1,6 @@
 package goorm.dofarming.domain.jpa.user.dto.response;
 
+import goorm.dofarming.domain.jpa.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -19,4 +20,12 @@ public record UserResponse(
         @Schema(description = "사용자 닉네임", example = "usernickname")
         String nickname
 ) {
+        public static UserResponse of(User user) {
+                return new UserResponse(
+                        user.getUserId(),
+                        user.getEmail(),
+                        user.getImageUrl(),
+                        user.getNickname()
+                );
+        }
 }
