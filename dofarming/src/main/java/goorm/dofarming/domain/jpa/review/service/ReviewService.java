@@ -42,7 +42,7 @@ public class ReviewService {
     @Transactional
     public ReviewResponse createReview(List<MultipartFile> files, Long userId, Long locationId, Double score, String content) {
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByUserIdAndStatus(userId, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 회원입니다."));
 
         Location location = locationRepository.findById(locationId)
@@ -76,7 +76,7 @@ public class ReviewService {
 
     @Transactional
     public ReviewResponse updateReview(List<MultipartFile> files, Long reviewId, Double score, String content) {
-        Review review = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findReviewByReviewIdAndStatus(reviewId, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 리뷰입니다."));
 
         review.setContent(content);
@@ -104,7 +104,7 @@ public class ReviewService {
     }
 
     public void deleteReview(Long userId, Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findReviewByReviewIdAndStatus(reviewId, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 리뷰입니다."));
 
         if (!review.getUser().getUserId().equals(userId)) {
@@ -126,8 +126,6 @@ public class ReviewService {
 
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
-
-//        List<Review> reviews = location.getReviews();
 
         List<Review> reviews = reviewRepository.findByLocation_LocationIdAndStatus(locationId, Status.ACTIVE);
 
@@ -164,7 +162,7 @@ public class ReviewService {
 
     // 한 리뷰에 대해 사진만 띄우는 기능 - 네이버처럼
     public List<String> getImageUrls(Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findReviewByReviewIdAndStatus(reviewId, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 리뷰입니다."));
         List<String> imageList = new ArrayList<>();
         for (Image image : review.getImages()) {
