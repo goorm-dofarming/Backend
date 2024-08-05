@@ -5,6 +5,7 @@ import goorm.dofarming.domain.jpa.image.entity.Image;
 import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.review.dto.request.ReviewCreateRequest;
 import goorm.dofarming.domain.jpa.review.dto.request.ReviewModifyRequest;
+import goorm.dofarming.domain.jpa.review_like.entity.ReviewLike;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.global.common.entity.BaseEntity;
 import goorm.dofarming.global.common.entity.Status;
@@ -32,10 +33,13 @@ public class Review extends BaseEntity {
     private Double score; // 1 ~ 5 점, 0.5점 단위
     private String content; // 리뷰 내용
 
-//    private int likeCount = 0; // 리뷰 자체에 대한 좋아요??
+    private int reviewLikeCount = 0; // 리뷰 자체에 대한 좋아요??
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<Image> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    private List<ReviewLike> reviewLikes = new ArrayList<>();
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
@@ -73,17 +77,25 @@ public class Review extends BaseEntity {
     public void update(ReviewModifyRequest request) {
         this.content = request.content();
 
-        location.subScore(this.score);
+        this.getLocation().subScore(this.score);
         this.score = request.score();
-        location.addScore(request.score());
+        this.getLocation().addScore(request.score());
     }
     public void delete() {
         this.status = Status.DELETE;
-        location.decreaseReview();
-        location.subScore(this.score);
+        this.getLocation().decreaseReview();
+        this.getLocation().subScore(this.score);
 
         for (Image image : images) {
             image.delete();
         }
+    }
+
+    public void increaseReviewLike() {
+        this.reviewLikeCount++;
+    }
+
+    public void decreaseReviewLike() {
+        if (reviewLikeCount != 0) this.reviewLikeCount--;
     }
 }

@@ -87,8 +87,4 @@ public abstract class Location extends BaseEntity {
     public String avgScore() {
         return String.format("%.1f", this.totalScore / reviewCount);
     }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
 }
