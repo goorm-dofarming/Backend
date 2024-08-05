@@ -44,6 +44,16 @@ public class ReviewController {
         return ResponseEntity.ok().body(reviewService.getReviews(locationId, sortType));
     }
 
+    @PostMapping("/test")
+    public ResponseEntity<ReviewResponse> updateReview(
+            @RequestParam("score") Double score,
+            @RequestParam("content") String content,
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("reviewId") Long reviewId
+    ) {
+        return ResponseEntity.ok().body(reviewService.updateReview(files, reviewId, score, content));
+    }
+
     @GetMapping("/images")
     public ResponseEntity<List<String>> getImages(
             @RequestParam("reviewId") Long reviewId

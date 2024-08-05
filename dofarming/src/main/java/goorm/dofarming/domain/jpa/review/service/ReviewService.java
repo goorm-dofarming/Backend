@@ -70,9 +70,37 @@ public class ReviewService {
             image.setReview(savedReview); // 연관관계 설정
             imageRepository.save(image);
         }
-        Double averageScore = calAverageScore(location);
 
         return buildReviewResponse(user, savedReview, images);
+    }
+
+    @Transactional
+    public ReviewResponse updateReview(List<MultipartFile> files, Long reviewId, Double score, String content) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 리뷰입니다."));
+
+        review.setContent(content);
+        review.setScore(score);
+
+        imageRepository.deleteAll(review.getImages());
+
+        review.getImages().clear();
+        Review savedReview = reviewRepository.save(review);
+
+        List<String> updateImages = new ArrayList<>();
+        for (MultipartFile file : files) {
+            if (Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) continue;
+            String imageUrl = imageService.uploadFile(file);
+            updateImages.add(imageUrl); // 반환할 이미지 리스트 저장
+            Image image = new Image();
+            image.setImageUrl(imageUrl);
+            image.setReview(savedReview); // 연관관계 설정
+            imageRepository.save(image);
+        }
+
+        reviewRepository.save(review);
+
+        return buildReviewResponse(review.getUser(), review, updateImages);
     }
 
     public ReviewDTO getReviews(Long locationId, SortType sortType) {
