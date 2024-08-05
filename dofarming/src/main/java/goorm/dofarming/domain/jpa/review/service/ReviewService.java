@@ -103,18 +103,37 @@ public class ReviewService {
         return buildReviewResponse(review.getUser(), review, updateImages);
     }
 
+    public void deleteReview(Long userId, Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 리뷰입니다."));
+
+        if (!review.getUser().getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN, "이 리뷰를 삭제할 권한이 없습니다.");
+        }
+
+        List<Image> images = review.getImages();
+        for (Image image : images) {
+            image.delete();
+        }
+        imageRepository.saveAll(images);
+
+        review.delete();
+        reviewRepository.save(review);
+    }
+
     public ReviewDTO getReviews(Long locationId, SortType sortType) {
         List<ReviewResponse> reviewResponses = new ArrayList<>();
 
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
 
-        List<Review> reviews = location.getReviews();
+//        List<Review> reviews = location.getReviews();
+
+        List<Review> reviews = reviewRepository.findByLocation_LocationIdAndStatus(locationId, Status.ACTIVE);
 
         Double averageScore = calAverageScore(location);
 
         sortBySortType(sortType, reviews);
-
 
         for (Review review : reviews) {
             List<String> images = new ArrayList<>();
@@ -178,6 +197,7 @@ public class ReviewService {
                 review.getReviewId(),
                 review.getScore(),
                 review.getContent(),
+                user.getUserId(),
                 user.getImageUrl(),
                 user.getNickname(),
                 user.getReviews().size(),
