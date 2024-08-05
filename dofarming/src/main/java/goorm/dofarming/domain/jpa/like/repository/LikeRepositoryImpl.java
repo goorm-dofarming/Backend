@@ -9,10 +9,12 @@ import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.like.entity.SortType;
 import goorm.dofarming.global.common.entity.Status;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static goorm.dofarming.domain.jpa.chatroom.entity.QChatroom.chatroom;
 import static goorm.dofarming.domain.jpa.like.entity.QLike.*;
 import static goorm.dofarming.domain.jpa.location.entity.QLocation.*;
 import static goorm.dofarming.domain.jpa.user.entity.QUser.*;
@@ -27,7 +29,7 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
     }
 
     @Override
-    public List<Like> search(Long userId, Long likeId, LocalDateTime updatedAt, List<String> themes, List<Region> regions, SortType sortType) {
+    public List<Like> search(Long userId, Long likeId, LocalDateTime updatedAt, String title, List<String> themes, List<Region> regions, SortType sortType) {
 
         List<Long> likeIds = queryFactory
                 .select(like.likeId)
@@ -36,7 +38,8 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
                 .join(like.location, location)
                 .where(
                         userIdEq(userId),
-                        cursorCondition(likeId, updatedAt),
+                        cursorCondition(likeId, updatedAt, sortType),
+                        titleContains(title),
                         themesEq(themes),
                         orRegion(regions),
                         statusEq(Status.ACTIVE)
@@ -66,10 +69,20 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
         return userId != null ? like.user.userId.eq(userId) : null;
     }
 
-    private BooleanExpression cursorCondition(Long likeId, LocalDateTime updatedAt) {
+    private BooleanExpression titleContains(String title) {
+        return hasText(title) ? like.location.title.containsIgnoreCase(title) : null;
+    }
+
+    private BooleanExpression cursorCondition(Long likeId, LocalDateTime updatedAt, SortType sortType) {
         if (likeId == null || updatedAt == null) {
             return null;
         }
+
+        if (sortType.equals(SortType.Earliest)) {
+            return like.updatedAt.after(updatedAt)
+                    .or(like.updatedAt.eq(updatedAt)).and(like.likeId.gt(likeId));
+        }
+
         return like.updatedAt.before(updatedAt)
                 .or(like.updatedAt.eq(updatedAt).and(like.likeId.lt(likeId)));
     }
