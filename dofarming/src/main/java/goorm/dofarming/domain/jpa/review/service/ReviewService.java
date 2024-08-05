@@ -82,19 +82,23 @@ public class ReviewService {
         review.setContent(content);
         review.setScore(score);
 
-        imageRepository.deleteAll(review.getImages());
-
+        List<Image> images = review.getImages();
+        for (Image image : images) {
+            image.delete();
+        }
+        imageRepository.saveAll(images);
         review.getImages().clear();
-        Review savedReview = reviewRepository.save(review);
 
         List<String> updateImages = new ArrayList<>();
         for (MultipartFile file : files) {
+            System.out.println("??");
             if (Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) continue;
+            System.out.println("!!");
             String imageUrl = imageService.uploadFile(file);
             updateImages.add(imageUrl); // 반환할 이미지 리스트 저장
             Image image = new Image();
             image.setImageUrl(imageUrl);
-            image.setReview(savedReview); // 연관관계 설정
+            image.setReview(review); // 연관관계 설정
             imageRepository.save(image);
         }
 
@@ -136,9 +140,12 @@ public class ReviewService {
         for (Review review : reviews) {
             List<String> images = new ArrayList<>();
             User user = review.getUser();
-            for (Image image : review.getImages()) {
+            List<Image> imageList = imageRepository.findByReviewAndStatus(review, Status.ACTIVE);
+
+            for (Image image : imageList) {
                 images.add(image.getImageUrl());
             }
+
             ReviewResponse reviewDTO = buildReviewResponse(user, review, images);
             reviewResponses.add(reviewDTO);
         }
