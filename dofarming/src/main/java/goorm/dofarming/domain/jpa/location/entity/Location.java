@@ -2,6 +2,7 @@ package goorm.dofarming.domain.jpa.location.entity;
 
 import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.recommend.entity.Recommend;
+import goorm.dofarming.domain.jpa.review.entity.Review;
 import goorm.dofarming.global.common.entity.BaseEntity;
 import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.infra.tourapi.domain.Activity;
@@ -43,6 +44,9 @@ public abstract class Location extends BaseEntity {
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
     private List<Like> likes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    private List<Review> reviews = new ArrayList<>();
+
     public Location (String title, String addr, String tel, String image, double mapx, double mapy) {
         this.title = title;
         this.image = image;
@@ -59,5 +63,9 @@ public abstract class Location extends BaseEntity {
 
     public void decreaseLike() {
         if (likeCount != 0) this.likeCount--;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

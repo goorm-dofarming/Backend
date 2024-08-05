@@ -8,7 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
+
+//    Optional<Object> findByThemeAndLocationId(int theme, Long locationId);
 }
