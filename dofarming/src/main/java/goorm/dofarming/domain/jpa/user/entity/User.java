@@ -5,6 +5,7 @@ import goorm.dofarming.domain.jpa.join.entity.Join;
 import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.log.entity.Log;
 import goorm.dofarming.domain.jpa.review.entity.Review;
+import goorm.dofarming.domain.jpa.review_like.entity.ReviewLike;
 import goorm.dofarming.global.auth.GoogleOAuth2UserInfo;
 import goorm.dofarming.global.auth.KakaoOAuth2UserInfo;
 import goorm.dofarming.global.auth.NaverOAuth2UserInfo;
@@ -56,6 +57,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<ReviewLike> reviewLikes = new ArrayList<>();
 
     //== 생성 메서드 ==//
     public static User user(String email, String nickname, String password) {
