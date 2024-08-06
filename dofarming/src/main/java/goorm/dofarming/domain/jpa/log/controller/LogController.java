@@ -80,12 +80,16 @@ public class LogController {
     )
     @GetMapping("/getLogData")
     public RecommendDTO getLogData(
-            @Parameter(description = "유저 ID") @RequestParam(required = false) Long userId,
+            @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter(description = "로그 ID") @RequestParam Long logId
     ) {
-        if (userId == null) {
-            return logService.getGuestLogData(logId);
-        }
-        return logService.getUserLogData(userId, logId);
+        return logService.getUserLogData(user.getUserId(), logId);
+    }
+
+    @GetMapping("/getLogData/share")
+    public RecommendDTO getLogData(
+            @Parameter(description = "로그 ID") @RequestParam Long logId
+    ) {
+        return logService.getGuestLogData(logId);
     }
 }
