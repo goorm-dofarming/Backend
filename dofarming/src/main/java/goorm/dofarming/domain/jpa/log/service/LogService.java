@@ -1,5 +1,7 @@
 package goorm.dofarming.domain.jpa.log.service;
 
+import goorm.dofarming.domain.jpa.image.entity.Image;
+import goorm.dofarming.domain.jpa.image.repository.ImageRepository;
 import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.like.repository.LikeRepository;
 import goorm.dofarming.domain.jpa.like.service.LikeService;
@@ -28,6 +30,7 @@ public class LogService {
 
     private final LogRepository logRepository;
     private final UserRepository userRepository;
+    private final ImageRepository imageRepository;
     private final LikeRepository likeRepository;
 
     public RecommendDTO getUserLogData(Long userId, Long logId) {
@@ -39,8 +42,10 @@ public class LogService {
 
         List<LocationResponse> locations = log.getRecommends().stream()
                 .map(recommend -> {
+                    String imageUrl = imageRepository.findTopImageByReviewLike(recommend.getLocation().getLocationId())
+                            .map(Image::getImageUrl).orElse("");
                     boolean liked = likeRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(recommend.getLocation().getLocationId(), user.getUserId(), Status.ACTIVE);
-                    return LocationResponse.user(liked, recommend.getLocation());
+                    return LocationResponse.user(liked, imageUrl, recommend.getLocation());
                 })
                 .collect(Collectors.toList());
 
@@ -52,7 +57,11 @@ public class LogService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "로그가 존재하지 않습니다."));
 
         List<LocationResponse> locations = log.getRecommends().stream()
-                .map(recommend -> LocationResponse.guest(recommend.getLocation()))
+                .map(recommend ->{
+                        String imageUrl = imageRepository.findTopImageByReviewLike(recommend.getLocation().getLocationId())
+                                .map(Image::getImageUrl).orElse("");
+                        return LocationResponse.guest(imageUrl, recommend.getLocation());
+                })
                 .collect(Collectors.toList());
 
         return RecommendDTO.of(log, locations);

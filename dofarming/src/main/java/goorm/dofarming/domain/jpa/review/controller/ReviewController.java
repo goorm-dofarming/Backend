@@ -68,13 +68,20 @@ public class ReviewController {
     @GetMapping("")
     public ResponseEntity<List<ReviewResponse>> getReviewList(
             @AuthenticationPrincipal DofarmingUserDetails user,
-            @Parameter(description = "내 리뷰 여부") @RequestParam(required = false) Boolean myReview,
             @Parameter(description = "장소 ID") @RequestParam(required = false) Long locationId,
             @Parameter(description = "리뷰 ID") @RequestParam(required = false) Long reviewId,
             @Parameter(description = "리뷰 생성 날짜") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt,
             @Parameter(description = "정렬 타입") @RequestParam SortType sortType
     ) {
-        return ResponseEntity.ok().body(reviewService.getReviews(user.getUserId(), myReview, locationId, reviewId, createdAt, sortType));
+        return ResponseEntity.ok().body(reviewService.getReviews(user.getUserId(), locationId, reviewId, createdAt, sortType));
+    }
+
+    @GetMapping("/{locationId}")
+    public ResponseEntity<ReviewResponse> getMyReview(
+            @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter @PathVariable Long locationId
+    ) {
+        return ResponseEntity.ok().body(reviewService.getMyReview(user.getUserId(), locationId));
     }
 
     @Operation(

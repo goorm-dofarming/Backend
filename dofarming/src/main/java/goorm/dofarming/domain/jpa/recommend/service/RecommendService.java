@@ -1,5 +1,7 @@
 package goorm.dofarming.domain.jpa.recommend.service;
 
+import goorm.dofarming.domain.jpa.image.entity.Image;
+import goorm.dofarming.domain.jpa.image.repository.ImageRepository;
 import goorm.dofarming.domain.jpa.like.repository.LikeRepository;
 import goorm.dofarming.domain.jpa.like.service.LikeService;
 import goorm.dofarming.domain.jpa.location.dto.response.LocationResponse;
@@ -42,6 +44,7 @@ public class RecommendService {
     private final CafeRepository cafeRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final ImageRepository imageRepository;
     private final static double firstRadius = RecommendConfig.firstRadius;
     private final static double secondRadius = RecommendConfig.secondRadius;
 
@@ -120,8 +123,10 @@ public class RecommendService {
 
         List<LocationResponse> locations = recommendList.stream()
                 .map(location -> {
+                    String imageUrl = imageRepository.findTopImageByReviewLike(location.getLocationId())
+                            .map(Image::getImageUrl).orElse("");
                     boolean liked = likeRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), user.getUserId(), Status.ACTIVE);
-                    return LocationResponse.user(liked, location);
+                    return LocationResponse.user(liked, imageUrl, location);
                 })
                 .collect(Collectors.toList());
 
@@ -181,7 +186,11 @@ public class RecommendService {
         });
 
         List<LocationResponse> locations = recommendList.stream()
-                .map(LocationResponse::guest)
+                .map(location -> {
+                            Image image = imageRepository.findTopImageByReviewLike(location.getLocationId())
+                                    .orElse(null);
+                            return LocationResponse.guest(image.getImageUrl(), location);
+                })
                 .collect(Collectors.toList());
 
         return RecommendDTO.guest(address, mapX, mapY, locations);
@@ -202,8 +211,10 @@ public class RecommendService {
 
         List<LocationResponse> locations = recommendList.stream()
                 .map(location -> {
+                    String imageUrl = imageRepository.findTopImageByReviewLike(location.getLocationId())
+                            .map(Image::getImageUrl).orElse("");
                     boolean liked = likeRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), userId, Status.ACTIVE);
-                    return LocationResponse.user(liked, location);
+                    return LocationResponse.user(liked, imageUrl, location);
                 })
                 .collect(Collectors.toList());
 

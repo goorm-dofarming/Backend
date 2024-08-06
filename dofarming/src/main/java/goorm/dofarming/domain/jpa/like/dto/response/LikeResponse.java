@@ -15,11 +15,11 @@ public record LikeResponse(
         @Schema(description = "장소 응답 정보")
         LocationResponse locationResponse
 ) {
-    public static LikeResponse of(Like like) {
+    public static LikeResponse of(String reviewImageUrl, Like like) {
         return new LikeResponse(
                 like.getLikeId(),
                 like.getUpdatedAt(),
-                LocationResponse.user(true, like.getLocation())
+                LocationResponse.user(true, reviewImageUrl, like.getLocation())
         );
     }
 

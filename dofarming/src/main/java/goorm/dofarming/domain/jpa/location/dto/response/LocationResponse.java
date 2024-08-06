@@ -1,8 +1,16 @@
 package goorm.dofarming.domain.jpa.location.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import goorm.dofarming.domain.jpa.image.repository.ImageRepository;
 import goorm.dofarming.domain.jpa.location.entity.Location;
 import io.swagger.v3.oas.annotations.media.Schema;
+import goorm.dofarming.domain.jpa.log.entity.Log;
+import goorm.dofarming.global.common.entity.Status;
+import goorm.dofarming.infra.tourapi.domain.*;
+import jakarta.persistence.DiscriminatorValue;
+import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Schema(description = "장소 응답 정보를 담는 DTO")
 public record LocationResponse(
@@ -49,7 +57,7 @@ public record LocationResponse(
         @Schema(description = "좋아요 수", example = "100")
         int countLikes
 ) {
-    public static LocationResponse user(boolean liked, Location location) {
+    public static LocationResponse user(boolean liked, String reviewImageUrl, Location location) {
         return new LocationResponse(
                 location.getLocationId(),
                 null,
@@ -57,7 +65,7 @@ public record LocationResponse(
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),
-                location.getImage(),
+                getImage(reviewImageUrl, location),
                 location.getMapX(),
                 location.getMapY(),
                 Integer.parseInt(location.getTheme()),
@@ -67,7 +75,8 @@ public record LocationResponse(
         );
     }
 
-    public static LocationResponse guest(Location location) {
+
+    public static LocationResponse guest(String reviewImageUrl, Location location) {
         return new LocationResponse(
                 location.getLocationId(),
                 null,
@@ -75,7 +84,7 @@ public record LocationResponse(
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),
-                location.getImage(),
+                getImage(reviewImageUrl, location),
                 location.getMapX(),
                 location.getMapY(),
                 Integer.parseInt(location.getTheme()),
@@ -85,7 +94,7 @@ public record LocationResponse(
         );
     }
 
-    public static LocationResponse review(boolean liked, boolean isReviewed, Location location) {
+    public static LocationResponse review(boolean liked, boolean isReviewed, String reviewImageUrl, Location location) {
         return new LocationResponse(
                 location.getLocationId(),
                 location.avgScore(),
@@ -93,7 +102,7 @@ public record LocationResponse(
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),
-                location.getImage(),
+                getImage(reviewImageUrl, location),
                 location.getMapX(),
                 location.getMapY(),
                 Integer.parseInt(location.getTheme()),
@@ -101,5 +110,9 @@ public record LocationResponse(
                 isReviewed,
                 location.getLikeCount()
         );
+    }
+    private static String getImage(String reviewImageUrl, Location location) {
+        return (location.getImage() != null && !location.getImage().isEmpty()) ?
+                location.getImage() : reviewImageUrl;
     }
 }
