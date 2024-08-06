@@ -60,8 +60,8 @@ public record LocationResponse(
     public static LocationResponse user(boolean liked, String reviewImageUrl, Location location) {
         return new LocationResponse(
                 location.getLocationId(),
-                null,
-                null,
+                location.avgScore(),
+                location.getReviewCount(),
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),
@@ -79,8 +79,8 @@ public record LocationResponse(
     public static LocationResponse guest(String reviewImageUrl, Location location) {
         return new LocationResponse(
                 location.getLocationId(),
-                null,
-                null,
+                location.avgScore(),
+                location.getReviewCount(),
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),
