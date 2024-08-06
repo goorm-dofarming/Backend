@@ -31,7 +31,7 @@ public class ChatroomController {
     private final ChatroomService chatroomService;
 
     @Operation(
-            operationId = "ChatRoom",
+            operationId = "createChatroom",
             summary = "채팅방 생성 api 입니다.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "클라이언트의 요청을 서버가 정상적으로 처리했고 새로운 리소스가 생겼다.", content = {
@@ -41,7 +41,7 @@ public class ChatroomController {
     )
     @PostMapping("/chatroom")
     public ResponseEntity<Long> createChatroom(
-            @Parameter @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter(hidden = true) @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @Valid @RequestBody ChatroomCreateRequest chatroomCreateRequest
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(chatroomService.createRoom(user.getUserId(), chatroomCreateRequest));
@@ -49,7 +49,7 @@ public class ChatroomController {
 
 
     @Operation(
-            operationId = "ChatRoom",
+            operationId = "deleteChatroom",
             summary = "채팅방 삭제 api 입니다.",
             responses = {
                     @ApiResponse(responseCode = "204", description = "클라이언트의 요청은 정상적이다. 하지만 컨텐츠를 제공하지 않는다.", content = @Content),
@@ -60,7 +60,7 @@ public class ChatroomController {
     )
     @DeleteMapping("/chatroom/{roomId}")
     public ResponseEntity<Void> deleteChatroom(
-            @Parameter @Valid @PathVariable Long roomId
+            @Parameter(description = "채팅방 ID") @Valid @PathVariable Long roomId
     ) {
         chatroomService.deleteRoom(roomId);
         return ResponseEntity.noContent().build();
@@ -68,7 +68,7 @@ public class ChatroomController {
 
 
     @Operation(
-            operationId = "ChatRoom",
+            operationId = "joinChatroom",
             summary = "채팅방 입장 api 입니다.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "클라이언트의 요청을 서버가 정상적으로 처리했고 새로운 리소스가 생겼다.", content = {
@@ -81,8 +81,8 @@ public class ChatroomController {
     )
     @PostMapping("/chatroom/{roomId}/join")
     public ResponseEntity<Long> joinChatroom(
-            @Parameter @AuthenticationPrincipal DofarmingUserDetails user,
-            @Parameter @Valid @PathVariable Long roomId
+            @Parameter(hidden = true) @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter(description = "채팅방 ID") @Valid @PathVariable Long roomId
     ) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(chatroomService.joinRoom(user.getUserId(), roomId));
@@ -111,7 +111,7 @@ public class ChatroomController {
 
 
     @Operation(
-            operationId = "ChatRoom",
+            operationId = "searchChatroom",
             summary = "오픈 채팅방 검색 api 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "클라이언트의 요청을 서버가 정상적으로 처리했다.", content = {
@@ -121,10 +121,10 @@ public class ChatroomController {
     )
     @GetMapping("/chatroom")
     public ResponseEntity<List<OpenChatroomResponse>> getSearchChatroom(
-            @AuthenticationPrincipal DofarmingUserDetails user,
-            @Parameter @RequestParam(required = false) Long roomId,
-            @Parameter @RequestParam(required = false) String condition,
-            @Parameter @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
+            @Parameter(hidden = true) @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter(description = "채팅방 ID", required = false) @RequestParam(required = false) Long roomId,
+            @Parameter(description = "검색 조건", required = false) @RequestParam(required = false) String condition,
+            @Parameter(description = "생성 시간", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
     ) {
 
         return ResponseEntity.ok().body(chatroomService.searchRoomList(user.getUserId(), roomId, condition, createdAt));
@@ -132,7 +132,7 @@ public class ChatroomController {
 
 
     @Operation(
-            operationId = "ChatRoom",
+            operationId = "getMyChatroom",
             summary = "내 채팅방 리스트 api 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "클라이언트의 요청을 서버가 정상적으로 처리했다.", content = {
@@ -142,8 +142,8 @@ public class ChatroomController {
     )
     @GetMapping("/chatroom/my")
     public ResponseEntity<List<MyChatroomResponse>> getMyChatroom(
-            @Parameter @AuthenticationPrincipal DofarmingUserDetails user,
-            @Parameter @RequestParam(required = false) String condition
+            @Parameter(hidden = true) @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter(description = "검색 조건", required = false) @RequestParam(required = false) String condition
     ) {
         return ResponseEntity.ok().body(chatroomService.myRoomList(user.getUserId(), condition));
     }

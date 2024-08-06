@@ -5,12 +5,10 @@ import goorm.dofarming.domain.jpa.like.dto.response.LikeResponse;
 import goorm.dofarming.domain.jpa.like.entity.Like;
 import goorm.dofarming.domain.jpa.like.entity.SortType;
 import goorm.dofarming.domain.jpa.like.service.LikeService;
-import goorm.dofarming.domain.jpa.location.dto.response.LocationResponse;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.ErrorResponse;
 import goorm.dofarming.global.common.error.exception.CustomException;
-import goorm.dofarming.infra.tourapi.domain.DataType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -51,7 +49,7 @@ public class LikeController {
     @PostMapping("/like")
     public void like(
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user,
-            @Parameter(description = "장소 ID") @RequestParam Long locationId
+            @Parameter(description = "장소 ID", required = true) @RequestParam Long locationId
     ) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
@@ -68,15 +66,19 @@ public class LikeController {
                                     examples = @ExampleObject(
                                             value = "[\n" +
                                                     "  {\n" +
-                                                    "    \"id\": 1,\n" +
-                                                    "    \"type\": \"Restaurant\",\n" +
-                                                    "    \"title\": \"용용 선생\",\n" +
-                                                    "    \"addr\": \"서울시 강남구\",\n" +
-                                                    "    \"tel\": \"010-1234-5678\",\n" +
-                                                    "    \"image\": \"http://example.com/image.jpg\",\n" +
-                                                    "    \"mapX\": 127.123456,\n" +
-                                                    "    \"mapY\": 37.123456,\n" +
-                                                    "    \"likeCount\": 7\n" +
+                                                    "    \"likeId\": 1,\n" +
+                                                    "    \"updatedAt\": \"2023-07-21T12:34:56\",\n" +
+                                                    "    \"locationResponse\": {\n" +
+                                                    "      \"id\": 1,\n" +
+                                                    "      \"type\": \"Restaurant\",\n" +
+                                                    "      \"title\": \"용용 선생\",\n" +
+                                                    "      \"addr\": \"서울시 강남구\",\n" +
+                                                    "      \"tel\": \"010-1234-5678\",\n" +
+                                                    "      \"image\": \"http://example.com/image.jpg\",\n" +
+                                                    "      \"mapX\": 127.123456,\n" +
+                                                    "      \"mapY\": 37.123456,\n" +
+                                                    "      \"likeCount\": 7\n" +
+                                                    "    }\n" +
                                                     "  }\n" + "]")
                             )
                     }),
@@ -94,7 +96,7 @@ public class LikeController {
             @Parameter(description = "테마 종류") @RequestParam(required = false) List<String> themes,
             @Parameter(description = "지역 이름") @RequestParam(required = false) List<Region> regions,
             @Parameter(description = "정렬 순서") @RequestParam SortType sortType
-            ) {
+    ) {
         return likeService.getLikeList(user.getUserId(), likeId, updatedAt, title, themes, regions, sortType);
     }
 }

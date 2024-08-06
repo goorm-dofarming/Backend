@@ -2,35 +2,35 @@ package goorm.dofarming.domain.jpa.message.entity;
 
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
 import goorm.dofarming.domain.jpa.join.entity.Join;
-import goorm.dofarming.domain.jpa.message.dto.MessageDto;
-import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.global.common.entity.BaseEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.FetchType.LAZY;
 
 @Getter
 @Entity
 @Table(name = "messages")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Schema(description = "메시지 엔티티")
 public class Message extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "메시지 ID", example = "1")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "message_id")
     private Long messageId;
 
+    @Schema(description = "닉네임", example = "usernickname")
     private String nickname;
 
+    @Schema(description = "메시지 타입", example = "SEND")
     private MessageType messageType;
 
+    @Schema(description = "메시지 내용", example = "Hello!")
     private String content;
 
     @ManyToOne(fetch = LAZY)

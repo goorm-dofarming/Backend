@@ -1,6 +1,5 @@
 package goorm.dofarming.domain.jpa.email.controller;
 
-import goorm.dofarming.domain.jpa.auth.dto.request.SignInRequest;
 import goorm.dofarming.domain.jpa.email.dto.request.EmailCheckRequest;
 import goorm.dofarming.domain.jpa.email.dto.request.EmailRequest;
 import goorm.dofarming.domain.jpa.email.service.EmailService;
@@ -28,7 +27,7 @@ public class EmailController {
     private final EmailService emailService;
 
     @Operation(
-            operationId = "Email",
+            operationId = "sendEmail",
             summary = "인증번호 전송 api 입니다.",
             responses = {
                     @ApiResponse(responseCode = "204", description = "클라이언트의 요청은 정상적이다. 하지만 컨텐츠를 제공하지 않는다.", content = @Content),
@@ -37,7 +36,7 @@ public class EmailController {
     @PostMapping("/email/send")
     public ResponseEntity<String> mailSend(
             @Valid
-            @Parameter
+            @Parameter(description = "이메일 전송 요청 데이터")
             @RequestBody EmailRequest emailRequest
     ) {
         emailService.joinEmail(emailRequest.email());
@@ -46,7 +45,7 @@ public class EmailController {
 
 
     @Operation(
-            operationId = "Email",
+            operationId = "checkEmail",
             summary = "인증번호 확인 api 입니다.",
             responses = {
                     @ApiResponse(responseCode = "204", description = "클라이언트의 요청은 정상적이다. 하지만 컨텐츠를 제공하지 않는다.", content = @Content),
@@ -55,7 +54,7 @@ public class EmailController {
     @PostMapping("/email/check")
     public ResponseEntity<String> mailCheck(
             @Valid
-            @Parameter
+            @Parameter(description = "이메일 인증번호 확인 요청 데이터")
             @RequestBody EmailCheckRequest emailCheckRequest
             ) {
         boolean isCheck = emailService.checkEmailNumber(emailCheckRequest.email(), emailCheckRequest.emailNumber());
