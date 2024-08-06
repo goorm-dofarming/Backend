@@ -61,10 +61,8 @@ public class ImageService {
 
     public void deleteFile(String fileUrl) {
         // S3 URL에서 파일명 추출.
-        log.info("fileUrl={}", fileUrl);
         try {
             String fileName = URLDecoder.decode(extractFileNameFromUrl(fileUrl), "UTF-8");
-            log.info("fileUrl={}", fileName);
             s3Client.deleteObject(bucketName, fileName);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
