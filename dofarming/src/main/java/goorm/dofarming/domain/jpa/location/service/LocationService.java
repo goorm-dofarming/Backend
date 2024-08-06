@@ -1,5 +1,8 @@
 package goorm.dofarming.domain.jpa.location.service;
 
+import goorm.dofarming.domain.jpa.image.entity.Image;
+import goorm.dofarming.domain.jpa.image.repository.ImageRepository;
+import goorm.dofarming.domain.jpa.like.dto.response.LikeResponse;
 import goorm.dofarming.domain.jpa.like.repository.LikeRepository;
 import goorm.dofarming.domain.jpa.location.dto.response.LocationResponse;
 import goorm.dofarming.domain.jpa.location.entity.Location;
@@ -22,6 +25,7 @@ public class LocationService {
     private final LikeRepository likeRepository;
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
+    private final ImageRepository imageRepository;
 
     public LocationResponse getLocation(Long userId, Long locationId) {
         User user = userRepository.findByUserIdAndStatus(userId, Status.ACTIVE)
@@ -32,6 +36,8 @@ public class LocationService {
 
         boolean liked = likeRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), user.getUserId(), Status.ACTIVE);
         boolean isReviewed = reviewRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), user.getUserId(), Status.ACTIVE);
-        return LocationResponse.review(liked, isReviewed, location);
+        Image image = imageRepository.findTopImageByReviewLike(location.getLocationId())
+                .orElse(null);
+        return LocationResponse.review(liked, isReviewed, image.getImageUrl(), location);
     }
 }
