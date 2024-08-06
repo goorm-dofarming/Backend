@@ -66,7 +66,7 @@ public class RecommendService {
 //        Log log = saveLog(userId, mapX, mapY, 1); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
         // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
-        return recommendLocation(mapX, mapY, recommendList, themes, log, address);
+        return recommendLocation(mapX, mapY, recommendList, themes, log, user.getUserId());
     }
 
     // 산 테마 선택, 산 테마의 종류는 636가지
@@ -91,7 +91,7 @@ public class RecommendService {
 //        Log log = saveLog(userId, mapX, mapY, 2); // 로그에 오류가 생겨도 로그는 그대로 남아야함.
 
         // 해당 핑에서 테마가 겹치고 거리 안에 있으면 받아와서 랜덤으로 2가지 뽑고 추천!!
-        return recommendLocation(mapX, mapY, recommendList, themes, log, address);
+        return recommendLocation(mapX, mapY, recommendList, themes, log, user.getUserId());
     }
 
     private User getExistUser(Long userId) {
@@ -120,8 +120,8 @@ public class RecommendService {
 
         List<LocationResponse> locations = recommendList.stream()
                 .map(location -> {
-                    boolean liked = likeRepository.existsByLocation_LocationIdAndStatus(location.getLocationId(), Status.ACTIVE);
-                    return LocationResponse.of(liked, location);
+                    boolean liked = likeRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), user.getUserId(), Status.ACTIVE);
+                    return LocationResponse.user(liked, location);
                 })
                 .collect(Collectors.toList());
 
@@ -149,7 +149,7 @@ public class RecommendService {
             themes.add(2);
         }
 
-        return recommendLocation(mapX, mapY, recommendList, themes, log, address);
+        return recommendLocation(mapX, mapY, recommendList, themes, log, user.getUserId());
     }
 
     // 완전 랜덤 추천 - 게스트 전용
@@ -181,16 +181,13 @@ public class RecommendService {
         });
 
         List<LocationResponse> locations = recommendList.stream()
-                .map(location -> {
-                    boolean liked = likeRepository.existsByLocation_LocationIdAndStatus(location.getLocationId(), Status.ACTIVE);
-                    return LocationResponse.of(liked, location);
-                })
+                .map(LocationResponse::guest)
                 .collect(Collectors.toList());
 
         return RecommendDTO.guest(address, mapX, mapY, locations);
     }
 
-    private RecommendDTO recommendLocation(double mapX, double mapY, List<Location> recommendList, List<Integer> themes, Log log, String address) {
+    private RecommendDTO recommendLocation(double mapX, double mapY, List<Location> recommendList, List<Integer> themes, Log log, Long userId) {
         themes.forEach(theme -> {
             List<Location> firstLocations = getLocationsWithinRadius(theme, mapX, mapY, firstRadius);
             if (firstLocations.size() < 2) {
@@ -205,8 +202,8 @@ public class RecommendService {
 
         List<LocationResponse> locations = recommendList.stream()
                 .map(location -> {
-                    boolean liked = likeRepository.existsByLocation_LocationIdAndStatus(location.getLocationId(), Status.ACTIVE);
-                    return LocationResponse.of(liked, location);
+                    boolean liked = likeRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), userId, Status.ACTIVE);
+                    return LocationResponse.user(liked, location);
                 })
                 .collect(Collectors.toList());
 

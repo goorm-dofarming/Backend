@@ -77,14 +77,23 @@ public abstract class Location extends BaseEntity {
     }
 
     public void addScore(Double score) {
+        if (this.totalScore == null) {
+            this.totalScore = 0.0;
+        }
         this.totalScore += score;
     }
 
     public void subScore(Double score) {
+        if (this.totalScore == null) {
+            this.totalScore = 0.0;
+        }
         this.totalScore -= score;
     }
 
     public String avgScore() {
+        if (this.totalScore == null) {
+            return "0.0";
+        }
         return String.format("%.1f", this.totalScore / reviewCount);
     }
 }

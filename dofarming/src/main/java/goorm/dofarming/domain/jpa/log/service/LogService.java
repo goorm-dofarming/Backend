@@ -9,15 +9,12 @@ import goorm.dofarming.domain.jpa.location.repository.LocationRepository;
 import goorm.dofarming.domain.jpa.log.dto.response.LogResponse;
 import goorm.dofarming.domain.jpa.log.entity.Log;
 import goorm.dofarming.domain.jpa.log.repository.LogRepository;
-import goorm.dofarming.domain.jpa.recommend.entity.Recommend;
 import goorm.dofarming.domain.jpa.recommend.entity.RecommendDTO;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
-import goorm.dofarming.infra.tourapi.domain.*;
-import goorm.dofarming.infra.tourapi.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,18 +27,32 @@ import java.util.stream.Collectors;
 public class LogService {
 
     private final LogRepository logRepository;
+    private final UserRepository userRepository;
     private final LikeRepository likeRepository;
 
-    public RecommendDTO getLogData(Long logId) {
+    public RecommendDTO getUserLogData(Long userId, Long logId) {
+        User user = userRepository.findByUserIdAndStatus(userId, Status.ACTIVE)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 유저입니다."));
 
         Log log = logRepository.findById(logId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "로그가 존재하지 않습니다."));
 
         List<LocationResponse> locations = log.getRecommends().stream()
                 .map(recommend -> {
-                    boolean liked = likeRepository.existsByLocation_LocationIdAndStatus(recommend.getLocation().getLocationId(), Status.ACTIVE);
-                    return LocationResponse.of(liked, recommend.getLocation());
+                    boolean liked = likeRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(recommend.getLocation().getLocationId(), user.getUserId(), Status.ACTIVE);
+                    return LocationResponse.user(liked, recommend.getLocation());
                 })
+                .collect(Collectors.toList());
+
+        return RecommendDTO.of(log, locations);
+    }
+
+    public RecommendDTO getGuestLogData(Long logId) {
+        Log log = logRepository.findById(logId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "로그가 존재하지 않습니다."));
+
+        List<LocationResponse> locations = log.getRecommends().stream()
+                .map(recommend -> LocationResponse.guest(recommend.getLocation()))
                 .collect(Collectors.toList());
 
         return RecommendDTO.of(log, locations);
