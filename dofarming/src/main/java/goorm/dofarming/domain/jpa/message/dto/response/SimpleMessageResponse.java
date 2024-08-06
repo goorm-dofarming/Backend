@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "메시지 응답 정보를 담는 DTO")
+@Schema(description = "간단한 메시지 응답 정보를 담는 DTO")
 public record SimpleMessageResponse(
-        @Schema(description = "메시지 ID", example = "1sdfxc9lskji1")
+        @Schema(description = "메시지 ID", example = "1")
         Long messageId,
 
         @Schema(description = "사용자 ID", example = "1")

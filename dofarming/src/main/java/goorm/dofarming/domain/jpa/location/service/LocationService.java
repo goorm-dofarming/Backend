@@ -36,8 +36,8 @@ public class LocationService {
 
         boolean liked = likeRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), user.getUserId(), Status.ACTIVE);
         boolean isReviewed = reviewRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), user.getUserId(), Status.ACTIVE);
-        Image image = imageRepository.findTopImageByReviewLike(location.getLocationId())
-                .orElse(null);
-        return LocationResponse.review(liked, isReviewed, image.getImageUrl(), location);
+        String imageUrl = imageRepository.findTopImageByReviewLike(location.getLocationId())
+                .map(Image::getImageUrl).orElse("");
+        return LocationResponse.review(liked, isReviewed, imageUrl, location);
     }
 }

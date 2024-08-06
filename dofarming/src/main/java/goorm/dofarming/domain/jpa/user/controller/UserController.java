@@ -28,10 +28,10 @@ public class UserController {
     private final UserService userService;
 
     @Operation(
-            operationId = "User",
-            summary = "회원 가입 api 입니다.",
+            operationId = "signUp",
+            summary = "회원 가입 API",
             responses = {
-                    @ApiResponse(responseCode = "201", description = "클라이언트의 요청을 서버가 정상적으로 처리했고 새로운 리소스가 생겼다.", content = {
+                    @ApiResponse(responseCode = "201", description = "회원 가입 성공", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class))
                     }),
                     @ApiResponse(responseCode = "409", description = "이미 존재하는 이메일입니다.", content = {
@@ -46,12 +46,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(signUpRequest));
     }
 
-
     @Operation(
-            operationId = "User",
-            summary = "회원 수정 api 입니다.",
+            operationId = "modifyUser",
+            summary = "회원 수정 API",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "클라이언트의 요청을 서버가 정상적으로 처리했다.", content = {
+                    @ApiResponse(responseCode = "200", description = "회원 수정 성공", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))
                     }),
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다.", content = {
@@ -68,12 +67,11 @@ public class UserController {
         return ResponseEntity.ok().body(userService.updateUser(user.getUserId(), multipartFile, userModifyRequest));
     }
 
-
     @Operation(
-            operationId = "User",
-            summary = "회원 삭제 api 입니다.",
+            operationId = "deleteUser",
+            summary = "회원 삭제 API",
             responses = {
-                    @ApiResponse(responseCode = "204", description = "클라이언트의 요청은 정상적이다. 하지만 컨텐츠를 제공하지 않는다.", content = @Content),
+                    @ApiResponse(responseCode = "204", description = "회원 삭제 성공", content = @Content),
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다.", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
                     })
@@ -87,12 +85,11 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-
     @Operation(
-            operationId = "User",
-            summary = "회원 조회 api 입니다.",
+            operationId = "getUser",
+            summary = "회원 조회 API",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "클라이언트의 요청을 서버가 정상적으로 처리했다.", content = {
+                    @ApiResponse(responseCode = "200", description = "회원 조회 성공", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))
                     }),
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다.", content = {

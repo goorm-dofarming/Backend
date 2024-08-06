@@ -5,6 +5,7 @@ import goorm.dofarming.domain.jpa.recommend.entity.Recommend;
 import goorm.dofarming.domain.jpa.user.entity.User;
 import goorm.dofarming.global.common.entity.BaseEntity;
 import goorm.dofarming.global.common.entity.Status;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,26 +17,32 @@ import java.util.List;
 
 import static jakarta.persistence.FetchType.*;
 
+@Schema(description = "로그 엔티티")
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Log extends BaseEntity {
 
+    @Schema(description = "로그 ID", example = "1")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "log_id")
     private Long logId;
 
+    @Schema(description = "테마", example = "ACTIVITY")
     private String theme;
 
-    // 일단 좌표만 보내는 걸로...
+    @Schema(description = "주소", example = "서울시 강남구")
     private String address;
-    // 추천된 위치의 위도
+
+    @Schema(description = "위도", example = "37.123456")
     private Double latitude;
-    // 추천된 위치의 경도
+
+    @Schema(description = "경도", example = "127.123456")
     private Double longitude;
 
+    @Schema(description = "상태", example = "ACTIVE")
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -69,6 +76,6 @@ public class Log extends BaseEntity {
     //== 비즈니스 로직 ==//
     public void delete() {
         this.status = Status.DELETE;
-        this.recommends.stream().forEach(Recommend::delete);
+        this.recommends.forEach(Recommend::delete);
     }
 }

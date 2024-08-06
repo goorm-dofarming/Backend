@@ -154,10 +154,10 @@ public class RecommendController {
     @GetMapping("/theme")
     public RecommendDTO recommendTheme(
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user,
-            @RequestParam("theme") int dataType,
-            @RequestParam("mapX") double mapX,
-            @RequestParam("mapY") double mapY,
-            @RequestParam("address") String address
+            @Parameter(description = "테마 유형") @RequestParam("theme") int dataType,
+            @Parameter(description = "위도") @RequestParam("mapX") double mapX,
+            @Parameter(description = "경도") @RequestParam("mapY") double mapY,
+            @Parameter(description = "주소") @RequestParam("address") String address
     ) {
         if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
         Long userId = user.getUserId();
@@ -197,16 +197,15 @@ public class RecommendController {
     )
     @GetMapping("/random")
     public RecommendDTO recommendRandom(
-            @RequestParam("mapX") double mapX,
-            @RequestParam("mapY") double mapY,
-            @RequestParam("address") String address,
+            @Parameter(description = "위도") @RequestParam("mapX") double mapX,
+            @Parameter(description = "경도") @RequestParam("mapY") double mapY,
+            @Parameter(description = "주소") @RequestParam("address") String address,
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user
     ) {
-        if(user != null){
+        if (user != null) {
             Long userId = user.getUserId();
             return recommendService.recommendRandomForUser(mapX, mapY, userId, address);
-        }
-        else {
+        } else {
             return recommendService.recommendRandomForGuest(mapX, mapY, address);
         }
     }

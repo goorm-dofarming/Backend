@@ -123,10 +123,10 @@ public class RecommendService {
 
         List<LocationResponse> locations = recommendList.stream()
                 .map(location -> {
-                    Image image = imageRepository.findTopImageByReviewLike(location.getLocationId())
-                            .orElse(null);
+                    String imageUrl = imageRepository.findTopImageByReviewLike(location.getLocationId())
+                            .map(Image::getImageUrl).orElse("");
                     boolean liked = likeRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), user.getUserId(), Status.ACTIVE);
-                    return LocationResponse.user(liked, image.getImageUrl(), location);
+                    return LocationResponse.user(liked, imageUrl, location);
                 })
                 .collect(Collectors.toList());
 
@@ -211,10 +211,10 @@ public class RecommendService {
 
         List<LocationResponse> locations = recommendList.stream()
                 .map(location -> {
-                    Image image = imageRepository.findTopImageByReviewLike(location.getLocationId())
-                            .orElse(null);
+                    String imageUrl = imageRepository.findTopImageByReviewLike(location.getLocationId())
+                            .map(Image::getImageUrl).orElse("");
                     boolean liked = likeRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), userId, Status.ACTIVE);
-                    return LocationResponse.user(liked, image.getImageUrl(), location);
+                    return LocationResponse.user(liked, imageUrl, location);
                 })
                 .collect(Collectors.toList());
 
