@@ -22,32 +22,17 @@ public class ImageRepositoryImpl implements ImageRepositoryCustom {
 
     @Override
     public Optional<Image> findTopImageByReviewLike(Long locationId) {
-        Optional<Long> reviewId = Optional.ofNullable(
-                queryFactory
-                    .select(review.reviewId)
-                    .from(review)
-                    .where(
-                            review.location.locationId.eq(locationId),
-                            review.status.eq(Status.ACTIVE)
-                    )
-                    .orderBy(
-                            review.reviewLikeCount.desc(),
-                            review.createdAt.desc()
-                    )
-                    .fetchFirst()
-        );
-
-        if (!reviewId.isPresent()) return Optional.empty();
-
         Image getTopImage = queryFactory
                 .select(image)
                 .from(image)
                 .join(image.review, review).fetchJoin()
                 .where(
-                        image.review.reviewId.eq(reviewId.get()),
-                        image.status.eq(Status.ACTIVE)
+                        review.location.locationId.eq(locationId),
+                        image.status.eq(Status.ACTIVE),
+                        review.status.eq(Status.ACTIVE)
                 )
                 .orderBy(
+                        review.reviewLikeCount.desc(),
                         image.createdAt.desc()
                 )
                 .fetchFirst();
