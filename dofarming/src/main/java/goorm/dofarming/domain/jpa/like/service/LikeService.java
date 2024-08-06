@@ -40,9 +40,9 @@ public class LikeService {
 
         return likeRepository.search(user.getUserId(), likeId, updatedAt, title, themes, regions, sortType)
                 .stream().map(like -> {
-                    Image image = imageRepository.findTopImageByReviewLike(like.getLocation().getLocationId())
-                            .orElse(null);
-                    return LikeResponse.of(image.getImageUrl(), like);
+                    String imageUrl = imageRepository.findTopImageByReviewLike(like.getLocation().getLocationId())
+                            .map(Image::getImageUrl).orElse("");
+                    return LikeResponse.of(imageUrl, like);
                 })
                 .collect(Collectors.toList());
     }

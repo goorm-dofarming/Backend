@@ -67,7 +67,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     }
 
     private BooleanExpression userIdNotEq(Long userId) {
-        return userId != null ? review.user.userId.eq(userId) : null;
+        return userId != null ? review.user.userId.ne(userId) : null;
     }
 
     private BooleanExpression locationIdEq(Long locationId) {

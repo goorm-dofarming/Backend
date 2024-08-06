@@ -42,10 +42,10 @@ public class LogService {
 
         List<LocationResponse> locations = log.getRecommends().stream()
                 .map(recommend -> {
-                    Image image = imageRepository.findTopImageByReviewLike(recommend.getLocation().getLocationId())
-                            .orElse(null);
+                    String imageUrl = imageRepository.findTopImageByReviewLike(recommend.getLocation().getLocationId())
+                            .map(Image::getImageUrl).orElse("");
                     boolean liked = likeRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(recommend.getLocation().getLocationId(), user.getUserId(), Status.ACTIVE);
-                    return LocationResponse.user(liked, image.getImageUrl(), recommend.getLocation());
+                    return LocationResponse.user(liked, imageUrl, recommend.getLocation());
                 })
                 .collect(Collectors.toList());
 
@@ -58,9 +58,9 @@ public class LogService {
 
         List<LocationResponse> locations = log.getRecommends().stream()
                 .map(recommend ->{
-                        Image image = imageRepository.findTopImageByReviewLike(recommend.getLocation().getLocationId())
-                                .orElse(null);
-                        return LocationResponse.guest(image.getImageUrl(), recommend.getLocation());
+                        String imageUrl = imageRepository.findTopImageByReviewLike(recommend.getLocation().getLocationId())
+                                .map(Image::getImageUrl).orElse("");
+                        return LocationResponse.guest(imageUrl, recommend.getLocation());
                 })
                 .collect(Collectors.toList());
 

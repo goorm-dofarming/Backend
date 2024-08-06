@@ -85,6 +85,7 @@ public record LocationResponse(
         );
     }
     private static String getImage(String reviewImageUrl, Location location) {
-        return (location.getImage() != null && !location.getImage().isEmpty()) ? location.getImage() : reviewImageUrl;
+        return (location.getImage() != null && !location.getImage().isEmpty()) ?
+                location.getImage() : reviewImageUrl;
     }
 }
