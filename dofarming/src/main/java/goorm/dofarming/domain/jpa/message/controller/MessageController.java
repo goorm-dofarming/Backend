@@ -1,6 +1,5 @@
 package goorm.dofarming.domain.jpa.message.controller;
 
-import goorm.dofarming.domain.jpa.chatroom.dto.request.ChatroomCreateRequest;
 import goorm.dofarming.domain.jpa.message.dto.response.MessageResponse;
 import goorm.dofarming.domain.jpa.message.service.MessageService;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
@@ -16,7 +15,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,11 +28,9 @@ public class MessageController {
 
     private final MessageService messageService;
 
-
-
     @Operation(
             operationId = "Message",
-            summary = "메시지 검색 api 입니다.",
+            summary = "메시지 검색 API",
             responses = {
                     @ApiResponse(responseCode = "200", description = "클라이언트의 요청을 서버가 정상적으로 처리했다.", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))

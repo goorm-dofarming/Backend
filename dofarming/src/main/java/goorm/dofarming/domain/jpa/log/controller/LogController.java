@@ -35,7 +35,7 @@ public class LogController {
             summary = "사용자의 로그를 조회하는 API",
             responses = {
                     @ApiResponse(responseCode = "200", description = "요청이 성공적으로 처리됨", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = Log.class))
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = LogResponse.class))
                     }),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
@@ -56,21 +56,29 @@ public class LogController {
             summary = "특정 로그의 데이터를 조회하는 API",
             responses = {
                     @ApiResponse(responseCode = "200", description = "요청이 성공적으로 처리됨", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = Object.class),
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = RecommendDTO.class),
                                     examples = @ExampleObject(
-                                            value = "[\n" +
-                                                    "  {\n" +
-                                                    "    \"id\": 73,\n" +
-                                                    "    \"title\": \"남해 가천 해변과 암수바위\",\n" +
-                                                    "    \"addr\": \"경상남도 남해군 남면\",\n" +
-                                                    "    \"tel\": \"\",\n" +
-                                                    "    \"image\": \"\",\n" +
-                                                    "    \"mapX\": 127.8940102692,\n" +
-                                                    "    \"mapY\": 34.72648889,\n" +
-                                                    "    \"dataType\": 1,\n" +
-                                                    "    \"liked\": true,\n" +
-                                                    "    \"countLikes\": 1\n" +
-                                                    "  }\n" + "]")
+                                            value = "{\n" +
+                                                    "  \"theme\": \"Ocean\",\n" +
+                                                    "  \"address\": \"경상남도 남해군 남면\",\n" +
+                                                    "  \"longitude\": 127.8940102692,\n" +
+                                                    "  \"latitude\": 34.72648889,\n" +
+                                                    "  \"logData\": [\n" +
+                                                    "    {\n" +
+                                                    "      \"locationId\": 73,\n" +
+                                                    "      \"title\": \"남해 가천 해변과 암수바위\",\n" +
+                                                    "      \"addr\": \"경상남도 남해군 남면\",\n" +
+                                                    "      \"tel\": \"\",\n" +
+                                                    "      \"image\": \"\",\n" +
+                                                    "      \"mapX\": 127.8940102692,\n" +
+                                                    "      \"mapY\": 34.72648889,\n" +
+                                                    "      \"dataType\": 1,\n" +
+                                                    "      \"liked\": true,\n" +
+                                                    "      \"countLikes\": 1\n" +
+                                                    "    }\n" +
+                                                    "  ]\n" +
+                                                    "}"
+                                    )
                             )
                     }),
                     @ApiResponse(responseCode = "404", description = "로그를 찾을 수 없음", content = {
@@ -81,7 +89,7 @@ public class LogController {
     @GetMapping("/getLogData")
     public RecommendDTO getLogData(
             @Parameter(description = "유저 ID") @RequestParam(required = false) Long userId,
-            @Parameter(description = "로그 ID") @RequestParam Long logId
+            @Parameter(description = "로그 ID", required = true) @RequestParam Long logId
     ) {
         if (userId == null) {
             return logService.getGuestLogData(logId);

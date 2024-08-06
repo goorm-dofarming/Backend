@@ -1,8 +1,6 @@
 package goorm.dofarming.domain.jpa.chatroom.dto.response;
 
-import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
 import goorm.dofarming.domain.jpa.join.entity.Join;
-import goorm.dofarming.domain.jpa.message.dto.response.MessageResponse;
 import goorm.dofarming.domain.jpa.message.dto.response.SimpleMessageResponse;
 import goorm.dofarming.domain.jpa.tag.dto.response.TagResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,6 +8,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+@Schema(description = "내 채팅방 응답 정보를 담는 DTO")
 
 public record MyChatroomResponse(
 
