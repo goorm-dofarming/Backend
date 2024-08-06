@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public record LocationResponse(
         Long locationId,
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        Double averageScore,
+        String averageScore,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         Integer totalReview,
         String title,
@@ -22,10 +22,13 @@ public record LocationResponse(
         Double mapX,
         Double mapY,
         int dataType,
-        boolean liked,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        Boolean liked,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        Boolean isReviewed,
         int countLikes
 ) {
-    public static LocationResponse of(boolean liked, Location location) {
+    public static LocationResponse user(boolean liked, Location location) {
         return new LocationResponse(
                 location.getLocationId(),
                 null,
@@ -38,14 +41,33 @@ public record LocationResponse(
                 location.getMapY(),
                 Integer.parseInt(location.getTheme()),
                 liked,
+                null,
                 location.getLikeCount()
         );
     }
 
-    public static LocationResponse review(boolean liked, Location location) {
+    public static LocationResponse guest(Location location) {
         return new LocationResponse(
                 location.getLocationId(),
-                location.getTotalScore(),
+                null,
+                null,
+                location.getTitle(),
+                location.getAddr(),
+                location.getTel(),
+                location.getImage(),
+                location.getMapX(),
+                location.getMapY(),
+                Integer.parseInt(location.getTheme()),
+                null,
+                null,
+                location.getLikeCount()
+        );
+    }
+
+    public static LocationResponse review(boolean liked, boolean isReviewed, Location location) {
+        return new LocationResponse(
+                location.getLocationId(),
+                location.avgScore(),
                 location.getReviewCount(),
                 location.getTitle(),
                 location.getAddr(),
@@ -55,6 +77,7 @@ public record LocationResponse(
                 location.getMapY(),
                 Integer.parseInt(location.getTheme()),
                 liked,
+                isReviewed,
                 location.getLikeCount()
         );
     }

@@ -34,12 +34,13 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     }
 
     @Override
-    public List<Review> search(Long locationId, Long reviewId, LocalDateTime createdAt, SortType sortType) {
+    public List<Review> search(Long userId, Boolean myReview, Long locationId, Long reviewId, LocalDateTime createdAt, SortType sortType) {
         List<Long> reviewIds = queryFactory
                 .select(review.reviewId)
                 .from(review)
                 .join(review.location, location)
                 .where(
+                        userIdEq(myReview, userId),
                         locationIdEq(locationId),
                         cursorCondition(reviewId, createdAt, sortType),
                         statusEq(Status.ACTIVE)
@@ -65,6 +66,10 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .fetch();
     }
 
+    private BooleanExpression userIdEq(Boolean myReview, Long userId) {
+        return myReview == true ? review.user.userId.eq(userId) : null;
+    }
+
     private BooleanExpression locationIdEq(Long locationId) {
         return locationId != null ? review.location.locationId.eq(locationId) : null;
     }
@@ -88,10 +93,10 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         switch (sortType) {
             case Earliest:
                 return review.createdAt.asc();
-//            case HighLike:
-//                return review.likeCount.desc();
-//            case LowLike:
-//                return like.likeCount.asc();
+            case HighLike:
+                return review.reviewLikeCount.desc();
+            case LowLike:
+                return review.reviewLikeCount.asc();
             default:
                 return review.createdAt.desc(); // 기본 정렬
         }
