@@ -1,6 +1,5 @@
 package goorm.dofarming.domain.jpa.review.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import goorm.dofarming.domain.jpa.image.entity.Image;
 import goorm.dofarming.domain.jpa.location.entity.Location;
 import goorm.dofarming.domain.jpa.review.dto.request.ReviewCreateRequest;
@@ -13,12 +12,10 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Getter

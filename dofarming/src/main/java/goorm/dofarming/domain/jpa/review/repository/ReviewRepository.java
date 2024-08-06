@@ -14,4 +14,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
     List<Review> findByLocation_LocationIdAndStatus(Long locationId, Status status);
 
     Optional<Review> findReviewByReviewIdAndStatus(Long id, Status status);
+
+    Boolean existsByLocation_LocationIdAndUser_UserIdAndStatus(Long locationId, Long userId, Status status);
 }

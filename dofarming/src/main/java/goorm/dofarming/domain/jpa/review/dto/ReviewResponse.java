@@ -1,6 +1,5 @@
 package goorm.dofarming.domain.jpa.review.dto;
 
-
 import goorm.dofarming.domain.jpa.image.dto.response.ImageResponse;
 import goorm.dofarming.domain.jpa.image.entity.Image;
 import goorm.dofarming.domain.jpa.review.entity.Review;
@@ -19,9 +18,10 @@ public record ReviewResponse(
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         String content,
-        List<ImageResponse> images
+        List<ImageResponse> images,
+        boolean liked
 ) {
-    public static ReviewResponse of(Review review) {
+    public static ReviewResponse of(boolean liked, Review review) {
         return new ReviewResponse(
                 UserResponse.of(review.getUser()),
                 review.getReviewId(),
@@ -30,7 +30,8 @@ public record ReviewResponse(
                 review.getCreatedAt(),
                 review.getUpdatedAt(),
                 review.getContent(),
-                review.getImages().stream().filter(image -> image.getStatus().equals(Status.ACTIVE)).map(ImageResponse::of).collect(Collectors.toList())
+                review.getImages().stream().filter(image -> image.getStatus().equals(Status.ACTIVE)).map(ImageResponse::of).collect(Collectors.toList()),
+                liked
         );
     }
 }

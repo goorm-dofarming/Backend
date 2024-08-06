@@ -31,20 +31,22 @@ public class ReviewController {
     @PostMapping("")
     public ResponseEntity<ReviewResponse> createReview(
             @AuthenticationPrincipal DofarmingUserDetails user,
-            @Parameter @RequestBody ReviewCreateRequest request,
-            @Parameter @RequestParam List<MultipartFile> files
+            @Parameter @RequestPart ReviewCreateRequest reviewCreateRequest,
+            @Parameter @RequestPart(required = false) List<MultipartFile> files
     ) {
-        return ResponseEntity.ok().body(reviewService.createReview(user.getUserId(), request, files));
+        return ResponseEntity.ok().body(reviewService.createReview(user.getUserId(), reviewCreateRequest, files));
     }
 
     @GetMapping("")
     public ResponseEntity<List<ReviewResponse>> getReviewList(
+            @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter @RequestParam(required = false) Boolean myReview,
             @Parameter @RequestParam(required = false) Long locationId,
             @Parameter @RequestParam(required = false) Long reviewId,
             @Parameter @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime createdAt,
             @Parameter @RequestParam SortType sortType
     ) {
-        return ResponseEntity.ok().body(reviewService.getReviews(locationId, reviewId, createdAt, sortType));
+        return ResponseEntity.ok().body(reviewService.getReviews(user.getUserId(), myReview, locationId, reviewId, createdAt, sortType));
     }
 
     @PutMapping("/{reviewId}")

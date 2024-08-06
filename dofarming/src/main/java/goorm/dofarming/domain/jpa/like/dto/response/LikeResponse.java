@@ -14,7 +14,7 @@ public record LikeResponse(
         return new LikeResponse(
                 like.getLikeId(),
                 like.getUpdatedAt(),
-                LocationResponse.of(true, like.getLocation())
+                LocationResponse.user(true, like.getLocation())
         );
     }
 
