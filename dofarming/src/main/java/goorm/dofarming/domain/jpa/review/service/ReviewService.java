@@ -57,14 +57,14 @@ public class ReviewService {
         // Review 객체를 먼저 저장
         Review savedReview = reviewRepository.save(Review.review(user, location, request));
 
+        boolean liked = reviewLikeRepository.existsByReview_ReviewIdAndUser_UserIdAndStatus(savedReview.getReviewId(), user.getUserId(), Status.ACTIVE);
         // 만약 사진이 없이 빈 객체로 넘어왔으면 빈 객체도 넣지 않음.
+        if (files == null || files.isEmpty()) return ReviewResponse.of(liked, savedReview);
+
         for (MultipartFile file : files) {
-            if (Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) continue;
             String imageUrl = imageService.uploadFile(file);
             imageRepository.save(Image.image(savedReview, imageUrl));
         }
-
-        boolean liked = reviewLikeRepository.existsByReview_ReviewIdAndUser_UserIdAndStatus(savedReview.getReviewId(), user.getUserId(), Status.ACTIVE);
 
         return ReviewResponse.of(liked, savedReview);
     }
@@ -83,13 +83,14 @@ public class ReviewService {
 
         review.update(request);
 
+        boolean liked = reviewLikeRepository.existsByReview_ReviewIdAndUser_UserIdAndStatus(review.getReviewId(), user.getUserId(), Status.ACTIVE);
+
+        if (files == null || files.isEmpty()) return ReviewResponse.of(liked, review);
+
         for (MultipartFile file : files) {
-            if (Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) continue;
             String imageUrl = imageService.uploadFile(file);
             imageRepository.save(Image.image(review, imageUrl));
         }
-
-        boolean liked = reviewLikeRepository.existsByReview_ReviewIdAndUser_UserIdAndStatus(review.getReviewId(), user.getUserId(), Status.ACTIVE);
 
         return ReviewResponse.of(liked, review);
     }
