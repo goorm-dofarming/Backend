@@ -34,7 +34,6 @@ public class ImageController {
                     })
             }
     )
-
     @DeleteMapping("/image/{imageId}")
     public ResponseEntity<Void> deleteImage(
             @Parameter(description = "삭제할 이미지의 ID", required = true) @PathVariable Long imageId
