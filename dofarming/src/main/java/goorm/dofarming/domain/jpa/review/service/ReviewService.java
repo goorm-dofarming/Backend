@@ -106,18 +106,33 @@ public class ReviewService {
         review.delete();
     }
 
-    public List<ReviewResponse> getReviews(Long userId, Boolean myReview, Long locationId, Long reviewId, LocalDateTime createdAt, SortType sortType) {
+    public List<ReviewResponse> getReviews(Long userId, Long locationId, Long reviewId, LocalDateTime createdAt, SortType sortType) {
         User user = userRepository.findByUserIdAndStatus(userId, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 유저입니다."));
 
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
 
-        return reviewRepository.search(user.getUserId(), myReview, location.getLocationId(), reviewId, createdAt, sortType)
+        return reviewRepository.search(user.getUserId(), location.getLocationId(), reviewId, createdAt, sortType)
                 .stream().map(review -> {
                     boolean liked = reviewLikeRepository.existsByReview_ReviewIdAndUser_UserIdAndStatus(review.getReviewId(), user.getUserId(), Status.ACTIVE);
                     return ReviewResponse.of(liked, review);
                 }).collect(Collectors.toList());
+    }
+
+    public ReviewResponse getMyReview(Long userId, Long locationId) {
+        User user = userRepository.findByUserIdAndStatus(userId, Status.ACTIVE)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 유저입니다."));
+
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
+
+        Review review = reviewRepository.findByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), user.getUserId(), Status.ACTIVE)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 유저의 리뷰가 존재하지 않습니다."));
+
+        boolean liked = reviewLikeRepository.existsByReview_ReviewIdAndUser_UserIdAndStatus(review.getReviewId(), user.getUserId(), Status.ACTIVE);
+
+        return ReviewResponse.of(liked, review);
     }
 }
 

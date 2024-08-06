@@ -34,5 +34,4 @@ public class LocationService {
         boolean isReviewed = reviewRepository.existsByLocation_LocationIdAndUser_UserIdAndStatus(location.getLocationId(), user.getUserId(), Status.ACTIVE);
         return LocationResponse.review(liked, isReviewed, location);
     }
-
 }
