@@ -10,11 +10,11 @@ public record LikeResponse(
         LocalDateTime updatedAt,
         LocationResponse locationResponse
 ) {
-    public static LikeResponse of(Like like) {
+    public static LikeResponse of(String reviewImageUrl, Like like) {
         return new LikeResponse(
                 like.getLikeId(),
                 like.getUpdatedAt(),
-                LocationResponse.user(true, like.getLocation())
+                LocationResponse.user(true, reviewImageUrl, like.getLocation())
         );
     }
 
