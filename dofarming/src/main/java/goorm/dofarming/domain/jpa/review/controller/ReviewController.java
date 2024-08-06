@@ -53,10 +53,10 @@ public class ReviewController {
     public ResponseEntity<ReviewResponse> updateReview(
             @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter @PathVariable("reviewId") Long reviewId,
-            @Parameter @RequestBody ReviewModifyRequest request,
-            @Parameter @RequestParam("files") List<MultipartFile> files
+            @Parameter @RequestPart ReviewModifyRequest reviewModifyRequest,
+            @Parameter @RequestPart(required = false) List<MultipartFile> files
     ) {
-        return ResponseEntity.ok().body(reviewService.updateReview(user.getUserId(), files, reviewId, request));
+        return ResponseEntity.ok().body(reviewService.updateReview(user.getUserId(), files, reviewId, reviewModifyRequest));
     }
 
     @DeleteMapping("/{reviewId}")
