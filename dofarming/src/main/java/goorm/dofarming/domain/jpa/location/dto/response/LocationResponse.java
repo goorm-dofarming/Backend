@@ -38,7 +38,7 @@ public record LocationResponse(
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),
-                location.getImage() != null ? location.getImage() : reviewImageUrl,
+                getImage(reviewImageUrl, location),
                 location.getMapX(),
                 location.getMapY(),
                 Integer.parseInt(location.getTheme()),
@@ -48,6 +48,7 @@ public record LocationResponse(
         );
     }
 
+
     public static LocationResponse guest(String reviewImageUrl, Location location) {
         return new LocationResponse(
                 location.getLocationId(),
@@ -56,7 +57,7 @@ public record LocationResponse(
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),
-                location.getImage() != null ? location.getImage() : reviewImageUrl,
+                getImage(reviewImageUrl, location),
                 location.getMapX(),
                 location.getMapY(),
                 Integer.parseInt(location.getTheme()),
@@ -74,7 +75,7 @@ public record LocationResponse(
                 location.getTitle(),
                 location.getAddr(),
                 location.getTel(),
-                location.getImage() != null ? location.getImage() : reviewImageUrl,
+                getImage(reviewImageUrl, location),
                 location.getMapX(),
                 location.getMapY(),
                 Integer.parseInt(location.getTheme()),
@@ -83,6 +84,7 @@ public record LocationResponse(
                 location.getLikeCount()
         );
     }
-
-
+    private static String getImage(String reviewImageUrl, Location location) {
+        return (location.getImage() != null && !location.getImage().isEmpty()) ? location.getImage() : reviewImageUrl;
+    }
 }
