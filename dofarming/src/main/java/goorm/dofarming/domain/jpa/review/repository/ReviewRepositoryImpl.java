@@ -49,7 +49,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                         sortOrder(sortType),
                         review.reviewId.desc()
                 )
-                .limit(5)
+                .limit(10)
                 .fetch();
 
         return queryFactory
