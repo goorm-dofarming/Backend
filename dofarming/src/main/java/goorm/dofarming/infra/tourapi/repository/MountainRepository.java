@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MountainRepository extends JpaRepository<Mountain, Long> {
@@ -21,4 +22,7 @@ public interface MountainRepository extends JpaRepository<Mountain, Long> {
             @Param("mapY") double mapY,
             @Param("radius") double radius
     );
+
+    @Query(value = "SELECT * FROM location WHERE theme = '2' ORDER BY RAND() LIMIT 1", nativeQuery = true)
+    Optional<Mountain> findRandomMountain();
 }
