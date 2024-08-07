@@ -187,9 +187,9 @@ public class RecommendService {
 
         List<LocationResponse> locations = recommendList.stream()
                 .map(location -> {
-                            Image image = imageRepository.findTopImageByReviewLike(location.getLocationId())
-                                    .orElse(null);
-                            return LocationResponse.guest(image.getImageUrl(), location);
+                            String imageUrl = imageRepository.findTopImageByReviewLike(location.getLocationId())
+                                    .map(Image::getImageUrl).orElse("");
+                            return LocationResponse.guest(imageUrl, location);
                 })
                 .collect(Collectors.toList());
 
