@@ -200,6 +200,10 @@ public class RecommendController {
             @Parameter(description = "주소") @RequestParam("address") String address,
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user
     ) {
+        if (user == null) {
+            return recommendService.recommendRandomForGuest(mapX, mapY, address);
+        }
+
         return userRepository.findByUserIdAndStatus(user.getUserId(), Status.ACTIVE)
                 .map(findUser -> recommendService.recommendRandomForUser(mapX, mapY, findUser.getUserId(), address))
                 .orElseGet(() -> recommendService.recommendRandomForGuest(mapX, mapY, address));
