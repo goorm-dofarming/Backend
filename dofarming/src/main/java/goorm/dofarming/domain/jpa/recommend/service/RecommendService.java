@@ -255,18 +255,12 @@ public class RecommendService {
     }
 
     private Ocean randomOcean() {
-        Random random = new Random();
-        Long randomOceanId = random.nextLong(421) + 22702; // 1 ~ 421
-
-        return oceanRepository.findById(randomOceanId)
+        return oceanRepository.findRandomOcean()
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "Ocean Not Found"));
     }
 
     private Mountain randomMountain() {
-        Random random = new Random();
-        Long randomMountainId = random.nextLong(636) + 23123; // 1 ~ 636
-
-        return mountainRepository.findById(randomMountainId)
+        return mountainRepository.findRandomMountain()
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "Mountain Not Found"));
     }
 

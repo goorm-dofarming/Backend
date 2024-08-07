@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OceanRepository extends JpaRepository<Ocean, Long> {
@@ -20,4 +21,7 @@ public interface OceanRepository extends JpaRepository<Ocean, Long> {
             @Param("mapY") double mapY,
             @Param("radius") double radius
     );
+
+    @Query(value = "SELECT * FROM ocean ORDER BY RAND() LIMIT 1", nativeQuery = true)
+    Optional<Ocean> findRandomOcean();
 }
