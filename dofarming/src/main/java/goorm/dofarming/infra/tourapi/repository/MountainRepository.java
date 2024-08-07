@@ -23,6 +23,6 @@ public interface MountainRepository extends JpaRepository<Mountain, Long> {
             @Param("radius") double radius
     );
 
-    @Query(value = "SELECT * FROM mountain ORDER BY RAND() LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM location WHERE theme = '2' ORDER BY RAND() LIMIT 1", nativeQuery = true)
     Optional<Mountain> findRandomMountain();
 }

@@ -22,6 +22,6 @@ public interface OceanRepository extends JpaRepository<Ocean, Long> {
             @Param("radius") double radius
     );
 
-    @Query(value = "SELECT * FROM ocean ORDER BY RAND() LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM location WHERE theme = '1' ORDER BY RAND() LIMIT 1", nativeQuery = true)
     Optional<Ocean> findRandomOcean();
 }
