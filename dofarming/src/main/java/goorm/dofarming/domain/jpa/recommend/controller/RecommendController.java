@@ -2,7 +2,10 @@ package goorm.dofarming.domain.jpa.recommend.controller;
 
 import goorm.dofarming.domain.jpa.recommend.entity.RecommendDTO;
 import goorm.dofarming.domain.jpa.recommend.service.RecommendService;
+import goorm.dofarming.domain.jpa.user.entity.User;
+import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.auth.DofarmingUserDetails;
+import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.ErrorResponse;
 import goorm.dofarming.global.common.error.exception.CustomException;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RecommendController {
 
     private final RecommendService recommendService;
+    private final UserRepository userRepository;
 
     @Operation(
             operationId = "recommendOcean",
@@ -75,9 +79,7 @@ public class RecommendController {
     public RecommendDTO recommendOcean(
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user
     ) {
-        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
-        Long userId = user.getUserId();
-        return recommendService.recommendOcean(userId);
+        return recommendService.recommendOcean(user.getUserId());
     }
 
     @Operation(
@@ -115,9 +117,7 @@ public class RecommendController {
     public RecommendDTO recommendMountain(
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user
     ) {
-        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
-        Long userId = user.getUserId();
-        return recommendService.recommendMountain(userId);
+        return recommendService.recommendMountain(user.getUserId());
     }
 
     @Operation(
@@ -159,9 +159,7 @@ public class RecommendController {
             @Parameter(description = "경도") @RequestParam("mapY") double mapY,
             @Parameter(description = "주소") @RequestParam("address") String address
     ) {
-        if (user == null) throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원정보가 일치하지 않습니다.");
-        Long userId = user.getUserId();
-        return recommendService.recommendTheme(dataType, mapX, mapY, userId, address);
+        return recommendService.recommendTheme(dataType, mapX, mapY, user.getUserId(), address);
     }
 
     @Operation(
@@ -202,11 +200,8 @@ public class RecommendController {
             @Parameter(description = "주소") @RequestParam("address") String address,
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user
     ) {
-        if (user != null) {
-            Long userId = user.getUserId();
-            return recommendService.recommendRandomForUser(mapX, mapY, userId, address);
-        } else {
-            return recommendService.recommendRandomForGuest(mapX, mapY, address);
-        }
+        return userRepository.findByUserIdAndStatus(user.getUserId(), Status.ACTIVE)
+                .map(findUser -> recommendService.recommendRandomForUser(mapX, mapY, findUser.getUserId(), address))
+                .orElseGet(() -> recommendService.recommendRandomForGuest(mapX, mapY, address));
     }
 }

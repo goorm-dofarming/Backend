@@ -50,6 +50,7 @@ public class RecommendService {
 
     // 바다 테마 선택, 바다 테마의 종류는 422가지
     public RecommendDTO recommendOcean(Long userId) {
+
         User user = getExistUser(userId);
 
         List<Location> recommendList = new ArrayList<>();
