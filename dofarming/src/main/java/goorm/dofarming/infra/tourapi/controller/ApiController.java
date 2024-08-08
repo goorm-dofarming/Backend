@@ -15,11 +15,6 @@ public class ApiController {
     private final TestApiService testApiService;
     private final DownloadApiService downloadApiService;
 
-    @GetMapping("/testApi")
-    public String testApi() {
-        return testApiService.DownloadRestaurantDataByCat3();
-    }
-
     @GetMapping("/download/Restaurant")
     public String updateRestaurant() {
         return downloadApiService.DownloadRestaurantListByCat3();
