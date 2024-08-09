@@ -3,6 +3,8 @@ package goorm.dofarming.domain.jpa.like.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import goorm.dofarming.domain.jpa.chatroom.entity.Region;
 import goorm.dofarming.domain.jpa.like.entity.Like;
@@ -117,8 +119,19 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
                 return like.location.likeCount.desc();
             case LowLike:
                 return like.location.likeCount.asc();
+            case HighScore:
+                NumberExpression<Double> HighAvgScore = getAvgScoreExpression();
+                return HighAvgScore.desc();
+            case LowScore:
+                NumberExpression<Double> LowAvgScore = getAvgScoreExpression();
+                return LowAvgScore.asc();
             default:
                 return like.updatedAt.desc(); // 기본 정렬
         }
+    }
+
+    private static NumberExpression<Double> getAvgScoreExpression() {
+        NumberExpression<Double> avgScore = Expressions.numberTemplate(Double.class, "coalesce({0}, 0) / nullif({1}, 0)", like.location.totalScore, like.location.reviewCount);
+        return avgScore;
     }
 }
