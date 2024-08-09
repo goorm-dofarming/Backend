@@ -28,6 +28,7 @@ public class Message extends BaseEntity {
     private String nickname;
 
     @Schema(description = "메시지 타입", example = "SEND")
+    @Enumerated(EnumType.STRING)
     private MessageType messageType;
 
     @Schema(description = "메시지 내용", example = "Hello!")
