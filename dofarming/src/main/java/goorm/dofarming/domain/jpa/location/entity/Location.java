@@ -34,8 +34,8 @@ public abstract class Location extends BaseEntity {
     private Double mapY;
     @Column(insertable = false, updatable = false)
     private String theme;
-    private int likeCount = 0;
-    private int reviewCount = 0;
+    private Integer likeCount = 0;
+    private Integer reviewCount = 0;
     private Double totalScore = 0.0;
 
     @Enumerated(EnumType.STRING)

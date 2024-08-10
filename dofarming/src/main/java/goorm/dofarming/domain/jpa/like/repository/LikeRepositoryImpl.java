@@ -31,7 +31,7 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
     }
 
     @Override
-    public List<Like> search(Long userId, Long likeId, LocalDateTime updatedAt, String title, List<String> themes, List<Region> regions, SortType sortType) {
+    public List<Like> search(Long userId, Long likeId, LocalDateTime updatedAt, Integer likeCount, Double avgScore, String title, List<String> themes, List<Region> regions, SortType sortType) {
 
         List<Long> likeIds = queryFactory
                 .select(like.likeId)
@@ -41,6 +41,8 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
                 .where(
                         userIdEq(userId),
                         cursorCondition(likeId, updatedAt, sortType),
+                        cursorLike(likeCount, likeId, sortType),
+                        cursorScore(avgScore, likeId, sortType),
                         titleContains(title),
                         themesEq(themes),
                         orRegion(regions),
@@ -82,11 +84,59 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
 
         if (sortType.equals(SortType.Earliest)) {
             return like.updatedAt.after(updatedAt)
-                    .or(like.updatedAt.eq(updatedAt)).and(like.likeId.gt(likeId));
+                    .or(
+                            like.updatedAt.eq(updatedAt)
+                                    .and(like.likeId.gt(likeId))
+                    );
         }
 
         return like.updatedAt.before(updatedAt)
-                .or(like.updatedAt.eq(updatedAt).and(like.likeId.lt(likeId)));
+                .or(
+                        like.updatedAt.eq(updatedAt)
+                                .and(like.likeId.lt(likeId))
+                );
+    }
+
+    private BooleanExpression cursorLike(Integer likeCount, Long likeId, SortType sortType) {
+        if (likeId == null || likeCount == null) {
+            return null;
+        }
+
+        if (sortType.equals(SortType.LowLike)) {
+            return like.location.likeCount.lt(likeCount)
+                    .or(
+                            like.location.likeCount.eq(likeCount)
+                                    .and(like.likeId.lt(likeId))
+                    );
+        }
+
+        return like.location.likeCount.gt(likeCount)
+                .or(
+                        like.location.likeCount.eq(likeCount)
+                                .and(like.likeId.lt(likeId))
+                );
+    }
+
+    private BooleanExpression cursorScore(Double avgScore, Long likeId, SortType sortType) {
+        if (likeId == null || avgScore == null) {
+            return null;
+        }
+
+        NumberExpression<Double> calcAvgScore = getAvgScoreExpression();
+
+        if (sortType.equals(SortType.LowScore)) {
+            return calcAvgScore.gt(avgScore)
+                    .or(
+                            calcAvgScore.eq(avgScore)
+                                    .and(like.likeId.lt(likeId))
+                    );
+        }
+
+        return calcAvgScore.lt(avgScore)
+                .or(
+                        calcAvgScore.eq(avgScore)
+                                .and(like.likeId.lt(likeId))
+                );
     }
     private BooleanExpression statusEq(Status status) {
         return hasText(status.name()) ? like.status.eq(status) : null;
@@ -131,7 +181,7 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
     }
 
     private static NumberExpression<Double> getAvgScoreExpression() {
-        NumberExpression<Double> avgScore = Expressions.numberTemplate(Double.class, "coalesce({0}, 0) / nullif({1}, 0)", like.location.totalScore, like.location.reviewCount);
+        NumberExpression<Double> avgScore = Expressions.numberTemplate(Double.class, "coalesce(coalesce({0}, 0) / nullif({1}, 0), 0)", like.location.totalScore, like.location.reviewCount);
         return avgScore;
     }
 }
