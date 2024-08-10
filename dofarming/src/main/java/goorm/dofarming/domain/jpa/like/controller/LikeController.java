@@ -92,11 +92,13 @@ public class LikeController {
             @Parameter(description = "인증된 사용자 정보") @AuthenticationPrincipal DofarmingUserDetails user,
             @Parameter(description = "like ID") @RequestParam(required = false) Long likeId,
             @Parameter(description = "생성 일자") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime updatedAt,
+            @Parameter(description = "마지막 좋아요 수") @RequestParam(required = false) Integer likeCount,
+            @Parameter(description = "마지막 평점") @RequestParam(required = false) Double avgScore,
             @Parameter(description = "제목 검색") @RequestParam(required = false) String title,
             @Parameter(description = "테마 종류") @RequestParam(required = false) List<String> themes,
             @Parameter(description = "지역 이름") @RequestParam(required = false) List<Region> regions,
             @Parameter(description = "정렬 순서") @RequestParam SortType sortType
     ) {
-        return likeService.getLikeList(user.getUserId(), likeId, updatedAt, title, themes, regions, sortType);
+        return likeService.getLikeList(user.getUserId(), likeId, updatedAt, likeCount, avgScore, title, themes, regions, sortType);
     }
 }
