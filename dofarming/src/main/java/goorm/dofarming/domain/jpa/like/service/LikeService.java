@@ -34,11 +34,11 @@ public class LikeService {
     private final LocationRepository locationRepository;
     private final ImageRepository imageRepository;
 
-    public List<LikeResponse> getLikeList(Long userId, Long likeId, LocalDateTime updatedAt, String title, List<String> themes, List<Region> regions, SortType sortType) {
+    public List<LikeResponse> getLikeList(Long userId, Long likeId, LocalDateTime updatedAt, Integer likeCount, Double avgScore, String title, List<String> themes, List<Region> regions, SortType sortType) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "회원이 존재하지 않습니다."));
 
-        return likeRepository.search(user.getUserId(), likeId, updatedAt, title, themes, regions, sortType)
+        return likeRepository.search(user.getUserId(), likeId, updatedAt, likeCount, avgScore, title, themes, regions, sortType)
                 .stream().map(like -> {
                     String imageUrl = imageRepository.findTopImageByReviewLike(like.getLocation().getLocationId())
                             .map(Image::getImageUrl).orElse("");
