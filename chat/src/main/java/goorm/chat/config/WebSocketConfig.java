@@ -19,7 +19,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("https://api.dofarming.net", "https://dofarming.run", "http://localhost:4000")
+                .setAllowedOrigins("https://api.dofarming.net", "https://dofarming.run", "https://dofarming.run/", "http://localhost:4000")
                 .withSockJS();
     }
 }
