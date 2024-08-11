@@ -25,7 +25,7 @@ public class Image extends BaseEntity {
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    private Status status;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "review_id")

@@ -47,7 +47,7 @@ public class Review extends BaseEntity {
     private Location location;
 
     @Enumerated(EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    private Status status;
 
     public static Review review(User user, Location location, ReviewCreateRequest request) {
         Review review = new Review();

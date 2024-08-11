@@ -20,7 +20,6 @@ import static jakarta.persistence.FetchType.*;
 @Schema(description = "로그 엔티티")
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Log extends BaseEntity {
 
@@ -48,11 +47,9 @@ public class Log extends BaseEntity {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
-    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "log", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<Recommend> recommends = new ArrayList<>();
 
     //== 생성 메서드 ==//
