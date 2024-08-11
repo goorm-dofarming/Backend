@@ -9,6 +9,7 @@ import goorm.dofarming.domain.jpa.join.entity.QJoin;
 import goorm.dofarming.domain.jpa.user.entity.QUser;
 import goorm.dofarming.global.common.entity.Status;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 
 import static goorm.dofarming.domain.jpa.chatroom.entity.QChatroom.*;
 import static goorm.dofarming.domain.jpa.join.entity.QJoin.*;
@@ -20,6 +21,7 @@ import static org.springframework.util.StringUtils.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
@@ -36,8 +38,8 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
                 .or(regionContains(condition))
                 .or(tagContains(condition));
 
-        List<Chatroom> rooms = queryFactory
-                .select(chatroom)
+        List<Long> rooms = queryFactory
+                .select(chatroom.roomId)
                 .from(chatroom)
                 .leftJoin(chatroom.tags, tag)
                 .where(
@@ -57,7 +59,7 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
                 .from(chatroom)
                 .leftJoin(chatroom.joins, join).fetchJoin()
                 .where(
-                        chatroom.in(rooms),
+                        chatroom.roomId.in(rooms),
                         joinStatusEq(Status.ACTIVE)
                 )
                 .orderBy(
