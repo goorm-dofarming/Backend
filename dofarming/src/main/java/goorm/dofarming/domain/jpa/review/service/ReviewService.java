@@ -107,14 +107,14 @@ public class ReviewService {
         review.delete();
     }
 
-    public List<ReviewResponse> getReviews(Long userId, Long locationId, Long reviewId, LocalDateTime createdAt, SortType sortType) {
+    public List<ReviewResponse> getReviews(Long userId, Integer reviewLikeCount, Double score, Long locationId, Long reviewId, LocalDateTime createdAt, SortType sortType) {
         User user = userRepository.findByUserIdAndStatus(userId, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 유저입니다."));
 
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 장소가 존재하지 않습니다."));
 
-        return reviewRepository.search(user.getUserId(), location.getLocationId(), reviewId, createdAt, sortType)
+        return reviewRepository.search(user.getUserId(), reviewLikeCount, score, location.getLocationId(), reviewId, createdAt, sortType)
                 .stream().map(review -> {
                     boolean liked = reviewLikeRepository.existsByReview_ReviewIdAndUser_UserIdAndStatus(review.getReviewId(), user.getUserId(), Status.ACTIVE);
                     return ReviewResponse.of(liked, review);
