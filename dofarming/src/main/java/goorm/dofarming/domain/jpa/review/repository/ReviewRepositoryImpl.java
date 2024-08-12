@@ -102,14 +102,14 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         }
 
         if (sortType.equals(SortType.LowLike)) {
-            return review.reviewLikeCount.lt(reviewLikeCount)
+            return review.reviewLikeCount.gt(reviewLikeCount)
                     .or(
                             review.reviewLikeCount.eq(reviewLikeCount)
                                     .and(review.reviewId.lt(reviewId))
                     );
         }
 
-        return review.reviewLikeCount.gt(reviewLikeCount)
+        return review.reviewLikeCount.lt(reviewLikeCount)
                 .or(
                         review.reviewLikeCount.eq(reviewLikeCount)
                                 .and(review.reviewId.lt(reviewId))

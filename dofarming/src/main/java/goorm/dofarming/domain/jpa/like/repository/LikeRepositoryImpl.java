@@ -103,14 +103,14 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
         }
 
         if (sortType.equals(SortType.LowLike)) {
-            return like.location.likeCount.lt(likeCount)
+            return like.location.likeCount.gt(likeCount)
                     .or(
                             like.location.likeCount.eq(likeCount)
                                     .and(like.likeId.lt(likeId))
                     );
         }
 
-        return like.location.likeCount.gt(likeCount)
+        return like.location.likeCount.lt(likeCount)
                 .or(
                         like.location.likeCount.eq(likeCount)
                                 .and(like.likeId.lt(likeId))
