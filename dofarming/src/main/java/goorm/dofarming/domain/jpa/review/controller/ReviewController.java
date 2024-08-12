@@ -68,12 +68,14 @@ public class ReviewController {
     @GetMapping("")
     public ResponseEntity<List<ReviewResponse>> getReviewList(
             @AuthenticationPrincipal DofarmingUserDetails user,
+            @Parameter(description = "리뷰 좋아요 수") @RequestParam(required = false) Integer reviewLikeCount,
+            @Parameter(description = "평점") @RequestParam(required = false) Double score,
             @Parameter(description = "장소 ID") @RequestParam(required = false) Long locationId,
             @Parameter(description = "리뷰 ID") @RequestParam(required = false) Long reviewId,
             @Parameter(description = "리뷰 생성 날짜") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt,
             @Parameter(description = "정렬 타입") @RequestParam SortType sortType
     ) {
-        return ResponseEntity.ok().body(reviewService.getReviews(user.getUserId(), locationId, reviewId, createdAt, sortType));
+        return ResponseEntity.ok().body(reviewService.getReviews(user.getUserId(), reviewLikeCount, score, locationId, reviewId, createdAt, sortType));
     }
 
     @GetMapping("/{locationId}")

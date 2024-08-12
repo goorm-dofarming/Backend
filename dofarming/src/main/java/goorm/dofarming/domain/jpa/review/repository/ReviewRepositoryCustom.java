@@ -7,5 +7,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReviewRepositoryCustom {
-    List<Review> search(Long userId, Long locationId, Long reviewId, LocalDateTime createdAt, SortType sortType);
+    List<Review> search(Long userId, Integer reviewLikeCount, Double score, Long locationId, Long reviewId, LocalDateTime createdAt, SortType sortType);
 }

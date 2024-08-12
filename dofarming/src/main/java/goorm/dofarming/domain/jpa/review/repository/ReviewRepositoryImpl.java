@@ -2,6 +2,7 @@ package goorm.dofarming.domain.jpa.review.repository;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
 import goorm.dofarming.domain.jpa.like.entity.SortType;
@@ -34,7 +35,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     }
 
     @Override
-    public List<Review> search(Long userId, Long locationId, Long reviewId, LocalDateTime createdAt, SortType sortType) {
+    public List<Review> search(Long userId, Integer reviewLikeCount, Double score, Long locationId, Long reviewId, LocalDateTime createdAt, SortType sortType) {
         List<Long> reviewIds = queryFactory
                 .select(review.reviewId)
                 .from(review)
@@ -43,6 +44,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                         userIdNotEq(userId),
                         locationIdEq(locationId),
                         cursorCondition(reviewId, createdAt, sortType),
+                        cursorLike(reviewLikeCount, reviewId, sortType),
+                        cursorScore(score, reviewId, sortType),
                         statusEq(Status.ACTIVE)
                 )
                 .orderBy(
@@ -80,11 +83,57 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 
         if (sortType.equals(SortType.Earliest)) {
             return review.createdAt.after(createdAt)
-                    .or(review.createdAt.eq(createdAt)).and(review.reviewId.gt(reviewId));
+                    .or(
+                            review.createdAt.eq(createdAt)
+                                    .and(review.reviewId.gt(reviewId))
+                    );
         }
 
         return review.createdAt.before(createdAt)
-                .or(review.createdAt.eq(createdAt).and(review.reviewId.lt(reviewId)));
+                .or(
+                        review.createdAt.eq(createdAt)
+                                .and(review.reviewId.lt(reviewId))
+                );
+    }
+
+    private BooleanExpression cursorLike(Integer reviewLikeCount, Long reviewId, SortType sortType) {
+        if (reviewId == null || reviewLikeCount == null) {
+            return null;
+        }
+
+        if (sortType.equals(SortType.LowLike)) {
+            return review.reviewLikeCount.lt(reviewLikeCount)
+                    .or(
+                            review.reviewLikeCount.eq(reviewLikeCount)
+                                    .and(review.reviewId.lt(reviewId))
+                    );
+        }
+
+        return review.reviewLikeCount.gt(reviewLikeCount)
+                .or(
+                        review.reviewLikeCount.eq(reviewLikeCount)
+                                .and(review.reviewId.lt(reviewId))
+                );
+    }
+
+    private BooleanExpression cursorScore(Double score, Long reviewId, SortType sortType) {
+        if (reviewId == null || score == null) {
+            return null;
+        }
+
+        if (sortType.equals(SortType.LowScore)) {
+            return review.score.gt(score)
+                    .or(
+                            review.score.eq(score)
+                                    .and(review.reviewId.lt(reviewId))
+                    );
+        }
+
+        return review.score.lt(score)
+                .or(
+                        review.score.eq(score)
+                                .and(review.reviewId.lt(reviewId))
+                );
     }
     private BooleanExpression statusEq(Status status) {
         return hasText(status.name()) ? review.status.eq(status) : null;
