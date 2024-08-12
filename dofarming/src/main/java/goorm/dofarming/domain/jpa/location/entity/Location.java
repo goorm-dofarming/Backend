@@ -90,10 +90,10 @@ public abstract class Location extends BaseEntity {
         this.totalScore -= score;
     }
 
-    public String avgScore() {
-        if (this.totalScore == null) {
-            return "0.0";
+    public Double avgScore() {
+        if (this.totalScore == null || this.totalScore == 0 || reviewCount == 0) {
+            return 0.0;
         }
-        return String.format("%.1f", this.totalScore / reviewCount);
+        return this.totalScore / reviewCount;
     }
 }

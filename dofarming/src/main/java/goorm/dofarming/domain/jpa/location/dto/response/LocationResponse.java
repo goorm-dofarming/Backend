@@ -19,7 +19,7 @@ public record LocationResponse(
 
         @Schema(description = "평균 점수", example = "4.5", nullable = true)
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        String averageScore,
+        Double averageScore,
 
         @Schema(description = "총 리뷰 수", example = "10", nullable = true)
         @JsonInclude(JsonInclude.Include.NON_NULL)
