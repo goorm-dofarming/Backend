@@ -308,13 +308,6 @@ Backend Developer
 <br>
 <br>
 
-<h1 align="center">📹 시연 영상</h1>
-
-[![Dofarming 시연 영상입니다](https://drive.google.com/file/d/13Cqsoy8Ljm29I0b-1axqaVcIttgiE4xE/view?usp=sharing)](https://drive.google.com/file/d/1aUmNRRt4PmWfuq21tQtLMtjEatWM_RsJ/view?usp=sharing)
-
-<br>
-<br>
-
 <h1 align="center">🛠️ 개발 환경</h1>
 
 - Java 17.0.10
