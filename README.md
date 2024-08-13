@@ -339,7 +339,7 @@ Backend Developer
 
 - H2 Database 2.2.224
 - MySQL 5.7.44
-- 
+
 ### ☁️ 클라우드
 
 - AWS S3 (Spring Cloud Starter 2.2.6.RELEASE)
