@@ -6,43 +6,57 @@
 
 **Project duration** : 24.06.26 ~ 24.08.14
 
-**Project Summaries** :
+**Project Summaries** : 틀에 박힌 일상에서 벗어나 어디론가 무작정 여행을 가고 싶어하는 사람들을 위한 여행 추천 웹 어플리케이션 입니다.
+<br>
+<br>
 
 
 <h1 align="center">🌟 Stack </h1>
 
 <div align="center">
 
-   [![Java](https://img.shields.io/badge/Java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white)](https://www.oracle.com/java/)
-   [![Spring](https://img.shields.io/badge/Spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/)
-   [![Spring Security](https://img.shields.io/badge/Spring%20Security-%236DB33F.svg?style=for-the-badge&logo=spring-security&logoColor=white)](https://spring.io/projects/spring-security)
-   [![JWT](https://img.shields.io/badge/JWT-%23000000.svg?style=for-the-badge&logo=JSON%20web%20tokens)](https://jwt.io/)
-   [![Gradle](https://img.shields.io/badge/Gradle-%2302303A.svg?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org/)
+[![Java](https://img.shields.io/badge/Java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white)](https://www.oracle.com/java/)
+[![Spring](https://img.shields.io/badge/Spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-%236DB33F.svg?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/)
+[![Spring Security](https://img.shields.io/badge/Spring%20Security-%236DB33F.svg?style=for-the-badge&logo=spring-security&logoColor=white)](https://spring.io/projects/spring-security)
    
-   [![MySQL](https://img.shields.io/badge/MySQL-%234479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
-   [![H2](https://img.shields.io/badge/H2-%230072B1.svg?style=for-the-badge&logo=h2&logoColor=white)](https://www.h2database.com/)
-   [![Kafka](https://img.shields.io/badge/Apache%20Kafka-231F20.svg?style=for-the-badge&logo=apache-kafka&logoColor=white)](https://kafka.apache.org/)
-   [![STOMP](https://img.shields.io/badge/STOMP-%23FF6347.svg?style=for-the-badge)](https://stomp.github.io/stomp-specification-1.2.html)
-   [![MongoDB](https://img.shields.io/badge/MongoDB-%2347A248.svg?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![JPA](https://img.shields.io/badge/JPA-%2347A248.svg?style=for-the-badge&logo=jpa&logoColor=white)]()
+[![QueryDSL](https://img.shields.io/badge/Query%20DSL-527FFF.svg?style=for-the-badge&logo=jpa&logoColor=white)]()
+[![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-000?style=for-the-badge&logo=apachekafka)]()
+[![STOMP](https://img.shields.io/badge/STOMP-%23FF6347.svg?style=for-the-badge)](https://stomp.github.io/stomp-specification-1.2.html)
+      
+[![MySQL](https://img.shields.io/badge/MySQL-%234479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![H2](https://img.shields.io/badge/H2-%230072B1.svg?style=for-the-badge&logo=h2&logoColor=white)](https://www.h2database.com/)
+[![JWT](https://img.shields.io/badge/JWT-%23000000.svg?style=for-the-badge&logo=JSON%20web%20tokens)](https://jwt.io/)
+[![Gradle](https://img.shields.io/badge/Gradle-%2302303A.svg?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org/)
+
    
-   [![GitHub](https://img.shields.io/badge/GitHub-%23181717.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/)
-   [![Git](https://img.shields.io/badge/Git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)](https://git-scm.com/)
-   [![AWS](https://img.shields.io/badge/AWS-%23232F3E.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
-   [![Jira](https://img.shields.io/badge/Jira-%230A0FFF.svg?style=for-the-badge&logo=jira&logoColor=white)](https://www.atlassian.com/software/jira)
-   [![Docker](https://img.shields.io/badge/Docker-%232496ED.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![GitHub](https://img.shields.io/badge/GitHub-%23181717.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/)
+[![Git](https://img.shields.io/badge/Git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)](https://git-scm.com/)
+[![Notion](https://img.shields.io/badge/Notion-000000.svg?style=for-the-badge&logo=notion&logoColor=white)](https://aws.amazon.com/)
+[![Jira](https://img.shields.io/badge/Jira-%230A0FFF.svg?style=for-the-badge&logo=jira&logoColor=white)](https://www.atlassian.com/software/jira)
+
+[![AWS EC2](https://img.shields.io/badge/AWS%20EC2-FF9900.svg?style=for-the-badge&logo=amazonec2&logoColor=white)](https://aws.amazon.com/)
+[![AWS ELB](https://img.shields.io/badge/AWS%20Elastic%20Load%20Balancing-8C4FFF.svg?style=for-the-badge&logo=awselasticloadbalancing&logoColor=white)](https://aws.amazon.com/)
+[![AWS S3](https://img.shields.io/badge/AWS%20S3-569A31.svg?style=for-the-badge&logo=amazons3&logoColor=white)](https://aws.amazon.com/)
+[![AWS CodeDeploy](https://img.shields.io/badge/AWS%20Codedeploy-DD344C.svg?style=for-the-badge&logo=amazonwebservices&logoColor=white)](https://aws.amazon.com/)
 
 </div>
+<br>
+<br>
 
 <h1 align="center">👥 Team 프로필 </h1>
 
 <div align="center">
 
-| ![이호성](https://example.com/image1.png) | ![홍진석](https://example.com/image2.png) | ![김태우](https://example.com/image3.png) | ![김현희](https://example.com/image4.png) |
+| <img src="https://github.com/user-attachments/assets/d33410ad-5019-45a8-81dd-3f5f930c8253" width="150" height="150"/>| <img src="https://github.com/user-attachments/assets/ee104c83-3aa6-46f0-99aa-4242ebb668de" width="150" height="150"/> | <img src="https://github.com/user-attachments/assets/fec0e7f6-e88d-4e5c-8ab4-9ff4ed4fe538" width="150" height="150"/> | <img src="https://github.com/user-attachments/assets/ed2a971d-ccf0-47dc-9f38-55e8c02a24ff" width="150" height="150"/> |
 |:---------------------------------------:|:--------------------------------------:|:---------------------------------------:|:--------------------------------------:|
 | **BE_이호성** | **BE_홍진석** | **BE_김태우** | **BE_김현희** |
 | [@githublees](https://github.com/githublees) | [@Hong-JinSuk](https://github.com/Hong-JinSuk) | [@anothercod](https://github.com/anothercod) | [@hyeonhoi11](https://github.com/hyeonhoi11) |
 
 </div>
+<br>
+<br>
 
 
 <details>
@@ -51,7 +65,8 @@
 **Backend Developer, Backend 리더**
 - JWT와 Spring Security를 통한 회원 기능 구현
 - OAuth를 사용한 소셜 회원가입/로그인 구현
-- Kafka를 사용하여 채팅 서버, 알림 서버 연동 및 구현
+- Kafka 클러스터 구현
+- 채팅 서버, 알림 서버 연동 및 구현
 - QueryDsl을 사용하여 리뷰 및 좋아요 리스트 정렬 기능 구현
 - 전체 엔티티 작성 및 연관관계 설정
 - 공통 기능 및 글로벌 에러 처리 작성
@@ -95,40 +110,223 @@ Backend Developer
 
 
 <h1 align="center">🚀 시스템 구상도</h1>
-  <h2>Directory hierarchies</h2>
-     <dev>
-        [!image]()
-     </dev>
+<h2>Directory hierarchies</h2>
 
+### Rest API
+```
+        └─src
+    ├─main
+    │  ├─java
+    │  │  └─goorm
+    │  │      └─dofarming
+    │  │          ├─domain
+    │  │          │  └─jpa
+    │  │          │      ├─auth
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  ├─request
+    │  │          │      │  │  └─response
+    │  │          │      │  └─service
+    │  │          │      ├─chatroom
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  ├─request
+    │  │          │      │  │  └─response
+    │  │          │      │  ├─entity
+    │  │          │      │  ├─repository
+    │  │          │      │  └─service
+    │  │          │      ├─email
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  └─request
+    │  │          │      │  └─service
+    │  │          │      ├─image
+    │  │          │      │  ├─config
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  └─response
+    │  │          │      │  ├─entity
+    │  │          │      │  ├─repository
+    │  │          │      │  └─service
+    │  │          │      ├─join
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  ├─request
+    │  │          │      │  │  └─response
+    │  │          │      │  ├─entity
+    │  │          │      │  ├─repository
+    │  │          │      │  └─service
+    │  │          │      ├─like
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  ├─request
+    │  │          │      │  │  └─response
+    │  │          │      │  ├─entity
+    │  │          │      │  ├─repository
+    │  │          │      │  └─service
+    │  │          │      ├─location
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  ├─request
+    │  │          │      │  │  └─response
+    │  │          │      │  ├─entity
+    │  │          │      │  ├─repository
+    │  │          │      │  └─service
+    │  │          │      ├─log
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  ├─request
+    │  │          │      │  │  └─response
+    │  │          │      │  ├─entity
+    │  │          │      │  ├─repository
+    │  │          │      │  └─service
+    │  │          │      ├─message
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  └─response
+    │  │          │      │  ├─entity
+    │  │          │      │  ├─repository
+    │  │          │      │  └─service
+    │  │          │      ├─recommend
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  ├─request
+    │  │          │      │  │  └─response
+    │  │          │      │  ├─entity
+    │  │          │      │  ├─repository
+    │  │          │      │  ├─service
+    │  │          │      │  └─util
+    │  │          │      ├─review
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  └─request
+    │  │          │      │  ├─entity
+    │  │          │      │  ├─repository
+    │  │          │      │  └─service
+    │  │          │      ├─review_like
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─entity
+    │  │          │      │  ├─repository
+    │  │          │      │  └─service
+    │  │          │      ├─tag
+    │  │          │      │  ├─controller
+    │  │          │      │  ├─dto
+    │  │          │      │  │  └─response
+    │  │          │      │  ├─entity
+    │  │          │      │  └─repository
+    │  │          │      └─user
+    │  │          │          ├─controller
+    │  │          │          ├─dto
+    │  │          │          │  ├─request
+    │  │          │          │  └─response
+    │  │          │          ├─entity
+    │  │          │          ├─repository
+    │  │          │          └─service
+    │  │          ├─global
+    │  │          │  ├─auth
+    │  │          │  ├─common
+    │  │          │  │  ├─dto
+    │  │          │  │  │  ├─request
+    │  │          │  │  │  └─response
+    │  │          │  │  ├─entity
+    │  │          │  │  └─error
+    │  │          │  │      └─exception
+    │  │          │  ├─config
+    │  │          │  │  └─kafka
+    │  │          │  ├─filter
+    │  │          │  └─util
+    │  │          └─infra
+    │  │              ├─https
+    │  │              └─tourapi
+    │  │                  ├─config
+    │  │                  ├─controller
+    │  │                  ├─domain
+    │  │                  ├─dto
+    │  │                  ├─repository
+    │  │                  └─service
+    │  │                      └─testpackage
+    │  └─resources
+    │      ├─static
+    │      └─templates
+    └─test
+        └─java
+            └─goorm
+                └─dofarming
+```
 
+### Chat
+```
+└─src
+    ├─main
+    │  ├─java
+    │  │  └─goorm
+    │  │      └─chat
+    │  │          ├─config
+    │  │          ├─controller
+    │  │          ├─domain
+    │  │          ├─dto
+    │  │          └─service
+    │  └─resources
+    │      ├─static
+    │      └─templates
+    └─test
+        └─java
+            └─goorm
+                └─chat
+```
+
+### Notification
+```
+└─src
+    ├─main
+    │  ├─java
+    │  │  └─goorm
+    │  │      └─notification
+    │  │          ├─config
+    │  │          │  └─kafka
+    │  │          ├─controller
+    │  │          ├─dto
+    │  │          ├─repository
+    │  │          └─service
+    │  └─resources
+    │      ├─static
+    │      └─templates
+    └─test
+        └─java
+            └─goorm
+                └─notification
+```
   
-  <h2>Dofarming ERD</h2> 
-   <dev>
-        [!image]()
-   </dev>
+<h2>Dofarming ERD</h2>
+  
+![image](https://github.com/user-attachments/assets/b492a401-5d47-4487-abe6-cffaa2256670)
 
-  <h2>System Architecture</h2>
-     <dev>
-        [!image]()
-     </dev>
+<h2>System Architecture</h2>
+  
+![image](https://github.com/user-attachments/assets/066d3cdb-41cc-4d94-9e67-8aa2a6e43752)
+
+<br>
+<br>
 
 <h1 align="center">📹 시연 영상</h1>
 
 [![Dofarming 시연 영상입니다](https://drive.google.com/file/d/13Cqsoy8Ljm29I0b-1axqaVcIttgiE4xE/view?usp=sharing)](https://drive.google.com/file/d/1aUmNRRt4PmWfuq21tQtLMtjEatWM_RsJ/view?usp=sharing)
 
+<br>
+<br>
 
 <h1 align="center">🛠️ 개발 환경</h1>
 
-- Java 17
-- Gradle
+- Java 17.0.10
+- Gradle 9.0
 - Spring Boot 3.3.1
-- Spring Dependency Management 1.1.5
 
 ### 📚 주요 라이브러리
 
-- Spring Boot Starter (Data JPA, Security, Web, Validation, Mail, Webflux)
-- Spring Kafka
-- Springdoc OpenAPI UI 2.0.2
+- Spring Data JPA
+- Spring Security
+- Spring Validation
+- Spring Kafka 3.7.0
 - QueryDSL JPA 5.0.0 (jakarta)
 - Hibernate Validator 8.0.1.Final
 
@@ -141,23 +339,18 @@ Backend Developer
 
 - H2 Database 2.2.224
 - MySQL 5.7.44
-- MongoDB 5.0.1
-
+- 
 ### ☁️ 클라우드
 
 - AWS S3 (Spring Cloud Starter 2.2.6.RELEASE)
 
 ### 🔧 유틸리티
 
+- spring-boot-starter-mail
 - Expiring Map 0.5.9
 - Guava 33.2.1-jre
-- Jackson XML 2.14.1
 
 ### 🛠️ 개발 도구
 
 - Lombok
-- JUnit Platform
-- Netty 4.1.104.Final
-
-
-- **Tomcat:** 10.1.24
+- org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2
