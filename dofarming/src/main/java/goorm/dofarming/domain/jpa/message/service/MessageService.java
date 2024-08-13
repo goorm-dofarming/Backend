@@ -34,7 +34,6 @@ public class MessageService {
      */
     public List<MessageResponse> searchMessageList(Long userId, Long messageId, Long roomId, LocalDateTime createdAt) {
 
-
         Join join = joinRepository.findByUser_UserIdAndChatroom_RoomIdAndStatus(userId, roomId, Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "Join not found."));
 
