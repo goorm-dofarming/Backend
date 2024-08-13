@@ -119,37 +119,42 @@ Backend Developer
 
 <h1 align="center">🛠️ 개발 환경</h1>
 
-- **Programming Language:** Java 17
-- **Build Tool:** Gradle
-- **Spring Framework:** Spring Framework 6.1.8
-  - Spring Boot 3.3.0
-- **Library and Dependency Management:** Spring Dependency Management Plugin 1.1.5
+- Java 17
+- Gradle
+- Spring Boot 3.3.1
+- Spring Dependency Management 1.1.5
 
----
+### 📚 주요 라이브러리
 
-## 🌟 프로젝트 버전 관리
+- Spring Boot Starter (Data JPA, Security, Web, Validation, Mail, Webflux)
+- Spring Kafka
+- Springdoc OpenAPI UI 2.0.2
+- QueryDSL JPA 5.0.0 (jakarta)
+- Hibernate Validator 8.0.1.Final
 
-### 데이터베이스 / Database 💾
+### 🔒 보안
 
-- **H2:** 2.2.224
-- **MySQL:** 5.7.44
-- **MongoDB:** 5.0.1
+- JWT 0.11.5
+- Bouncy Castle 1.69
 
-### 보안 / Security 🔒
+### 💾 데이터베이스
 
-- **Spring Security:** 6.3.0
-- **JWT:** 0.11.5
-- **Bouncy Castle Provider:** 1.69
+- H2 Database 2.2.224
+- MySQL 5.7.44
+- MongoDB 5.0.1
 
-### 유효성 검사 / Validation ✅
+### ☁️ 클라우드
 
-- **Spring-boot-starter-data-jpa:** 3.3.0
-- **Spring-boot-starter-data-mongodb:** 4.3.0
-- **Hibernate**
-  - hibernate-core : 6.5.2.Final
-  - hibernate-validator: 8.0.1.Final
-  - hibernate-commons-annotations: 6.0.6.Final
+- AWS S3 (Spring Cloud Starter 2.2.6.RELEASE)
 
-### 추가 라이브러리
+### 🔧 유틸리티
 
-- **Tomcat:** 10.1.24
+- Expiring Map 0.5.9
+- Guava 33.2.1-jre
+- Jackson XML 2.14.1
+
+### 🛠️ 개발 도구
+
+- Lombok
+- JUnit Platform
+- Netty 4.1.104.Final
