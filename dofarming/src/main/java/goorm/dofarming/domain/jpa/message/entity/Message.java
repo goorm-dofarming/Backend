@@ -42,10 +42,10 @@ public class Message extends BaseEntity {
     @JoinColumn(name = "room_id")
     private Chatroom chatroom;
 
-    public static Message message(Join join, String nickname, MessageType messageType, String content) {
+    public static Message message(Join join, Chatroom chatroom, String nickname, MessageType messageType, String content) {
         Message message = new Message();
         message.addJoin(join);
-        message.addMessage(join);
+        message.addRoom(chatroom);
         message.nickname = nickname;
         message.messageType = messageType;
         message.content = content;
@@ -58,8 +58,8 @@ public class Message extends BaseEntity {
         join.getMessages().add(this);
     }
 
-    public void addMessage(Join join) {
-        this.chatroom = join.getChatroom();
-        join.getChatroom().getMessages().add(this);
+    public void addRoom(Chatroom chatroom) {
+        this.chatroom = chatroom;
+        chatroom.getMessages().add(this);
     }
 }
