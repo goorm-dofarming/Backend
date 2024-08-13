@@ -2,6 +2,7 @@ package goorm.dofarming.domain.jpa.message.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import goorm.dofarming.domain.jpa.chatroom.entity.Chatroom;
 import goorm.dofarming.domain.jpa.chatroom.repository.ChatroomRepository;
 import goorm.dofarming.domain.jpa.chatroom.service.ChatroomService;
 import goorm.dofarming.domain.jpa.join.dto.request.AlarmDto;
@@ -12,6 +13,8 @@ import goorm.dofarming.domain.jpa.message.dto.response.MessageResponse;
 import goorm.dofarming.domain.jpa.message.entity.Message;
 import goorm.dofarming.domain.jpa.message.entity.MessageType;
 import goorm.dofarming.domain.jpa.message.repository.MessageRepository;
+import goorm.dofarming.domain.jpa.user.entity.User;
+import goorm.dofarming.domain.jpa.user.repository.UserRepository;
 import goorm.dofarming.global.common.entity.Status;
 import goorm.dofarming.global.common.error.ErrorCode;
 import goorm.dofarming.global.common.error.exception.CustomException;
@@ -32,8 +35,10 @@ import java.io.IOException;
 public class KafkaMessageService {
 
     private final JoinRepository joinRepository;
+    private final UserRepository userRepository;
     private final MessageRepository messageRepository;
     private final ChatroomService chatroomService;
+    private final ChatroomRepository chatroomRepository;
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper mapper;
@@ -53,10 +58,16 @@ public class KafkaMessageService {
     public void messagingProcess(String message) throws IOException {
         MessageDto messageDto = mapper.readValue(message, MessageDto.class);
 
-        Join findJoin = joinRepository.findByUser_UserIdAndChatroom_RoomIdAndStatus(messageDto.userId(), messageDto.roomId(), Status.ACTIVE)
+        User findUser = userRepository.findByUserIdAndStatus(messageDto.userId(), Status.ACTIVE)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "User not found"));
+
+        Chatroom findRoom = chatroomRepository.findByRoomIdAndStatus(messageDto.roomId(), Status.ACTIVE)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "Room not found"));
+
+        Join findJoin = joinRepository.findByUser_UserIdAndChatroom_RoomIdAndStatus(findUser.getUserId(), findRoom.getRoomId(), Status.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "Join not found"));
 
-        Message createMessage = Message.message(findJoin, messageDto.nickname(), messageDto.messageType(), messageDto.content());
+        Message createMessage = Message.message(findJoin, findRoom, messageDto.nickname(), messageDto.messageType(), messageDto.content());
         messageRepository.save(createMessage);
         send(MessageResponse.from(createMessage));
 
